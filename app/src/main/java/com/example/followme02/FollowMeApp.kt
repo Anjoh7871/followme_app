@@ -29,8 +29,10 @@ import com.example.followme02.screen.journey.JourneyLogScreen
 import com.example.followme02.screen.leaderboard.LeaderboardScreen
 import com.example.followme02.screen.profile.ProfileScreen
 import com.example.followme02.screen.social.SocialScreen
+import com.example.followme02.screen.social.TeamScreen
 import com.example.followme02.screen.workout.WorkoutScreen2
 import com.example.followme02.viewmodel.ProfileViewModel
+import com.example.followme02.viewmodel.SocialViewModel
 import com.example.followme02.viewmodel.WorkoutViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,13 +42,13 @@ fun FollowMeApp(
     isDarkMode: Boolean,
     onToggleDarkMode: () -> Unit
 ) {
-
     val navController = rememberNavController()
 
     val authViewModel: AuthViewModel = viewModel()
     val profileViewModel: ProfileViewModel = viewModel()
     val achievementViewModel: AchievementViewModel = viewModel()
     val workoutViewModel: WorkoutViewModel = viewModel()
+    val socialViewModel: SocialViewModel = viewModel()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -102,7 +104,17 @@ fun FollowMeApp(
             }
 
             composable("social") {
-                SocialScreen()
+                SocialScreen(
+                    navController = navController,
+                    viewModel = socialViewModel
+                )
+            }
+
+            composable("team") {
+                TeamScreen(
+                    navController = navController,
+                    viewModel = socialViewModel
+                )
             }
 
             composable("achievements") {
