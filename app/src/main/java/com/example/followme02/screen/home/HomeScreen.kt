@@ -130,7 +130,7 @@ fun HomeScreen(
             JourneyCard(
                 currentKm = currentJourneyKm,
                 targetKm = selectedDestination?.kmThreshold ?: 0.0,
-                destinationName = selectedDestination?.name ?: "Choose Shrek",
+                destinationName = selectedDestination?.name ?: "Choose destination",
                 onClick = {
                     showDestinationDialog = true
                 }
