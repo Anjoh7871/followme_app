@@ -1,0 +1,84 @@
+<resources>
+
+    <!-- App -->
+    <string name="app_name">FollowMe02</string>
+
+    <!-- ================= WORKOUT DRAFT DEMO ================= -->
+
+    <!-- Screen -->
+    <string name="workout_draft_demo_title">Workout draft demo</string>
+
+    <!-- Distance -->
+    <string name="label_distance_km">Distance (km)</string>
+    <string name="placeholder_distance">e.g. 3.5 or 3,5</string>
+
+    <!-- Date -->
+    <string name="label_date_temp">Date (midlertidig)</string>
+    <string name="placeholder_date_millis">f.eks. 1700000000000 (millis)</string>
+
+    <!-- Type -->
+    <string name="label_activity_type">Activity type</string>
+    <string name="placeholder_activity_type">f.eks. Run / Walk / Strength</string>
+
+    <!-- Button -->
+    <string name="btn_save_to_draft">Save to draft</string>
+
+    <!-- Errors -->
+    <string name="error_invalid_date_millis">Dato er ugyldig akkurat nå. Bruk millis midlertidig.</string>
+    <string name="error_activity_type_required">Treningstype må fylles ut.</string>
+    <string name="error_distance_required">Distance is required.</string>
+    <string name="error_distance_invalid_number">Invalid number. Use e.g. 3.5</string>
+    <string name="error_distance_must_be_gt_zero">Distance must be greater than 0.</string>
+
+    <!-- Draft output -->
+    <string name="draft_distance_prefix">Draft distance:</string>
+    <string name="draft_date_prefix">Draft dateTimeMillis:</string>
+    <string name="draft_type_prefix">Draft activityType:</string>
+    <string name="dash">-</string>
+    <string name="km_suffix">km</string>
+
+    <!-- ================= PROFILE SCREEN ================= -->
+
+    <!-- Header -->
+    <string name="profile_title">Your Profile 👤</string>
+    <string name="profile_subtitle">Track your progress and show off your journey!</string>
+    <string name="profile_motivation">Keep moving toward your next goal.</string>
+
+    <!-- Badges -->
+    <string name="profile_level">Level</string>
+    <string name="profile_points">Points</string>
+
+    <!-- Buttons -->
+    <string name="profile_edit_button">Edit Profile</string>
+    <string name="profile_achievements_button">Achievements</string>
+
+    <!-- Stats -->
+    <string name="profile_total_km">Total km</string>
+    <string name="profile_workouts">Workouts</string>
+    <string name="profile_streak">Streak</string>
+    <string name="profile_team">Team</string>
+
+    <!-- Stat values -->
+    <string name="profile_total_km_value">%1$s km</string>
+    <string name="profile_streak_days">%1$d days</string>
+
+    <!-- Journey -->
+    <string name="profile_current_journey_goal">Virtual Journey History</string>
+    <string name="profile_goal_route">Narvik to Tromsø</string>
+    <string name="profile_goal_progress">%1$d / %2$d km</string>
+    <string name="profile_goal_remaining">%1$d km left to reach Tromsø!</string>
+
+    <!-- Details -->
+    <string name="profile_details_title">Profile Details</string>
+    <string name="profile_favorite_activity">Favorite activity</string>
+    <string name="profile_location">Location</string>
+    <string name="profile_member_since">Member since</string>
+
+    <!-- Content Descriptions (Accessibility) -->
+    <string name="profile_avatar_content_description">Profile avatar</string>
+    <string name="profile_level_icon_content_description">Level</string>
+    <string name="profile_points_icon_content_description">Points</string>
+    <string name="profile_edit_icon_content_description">Edit profile</string>
+    <string name="profile_achievements_icon_content_description">Achievements</string>
+
+</resources>
