@@ -258,7 +258,7 @@ private fun ProgressOverviewCard(
                 )
 
                 Text(
-                    text = "$totalUnlocked / $totalAchievements unlocked",
+                    text = "$totalUnlocked / $totalAchievements Unlocked",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = subtitleColor
