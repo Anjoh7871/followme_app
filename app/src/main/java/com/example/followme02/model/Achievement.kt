@@ -13,7 +13,7 @@ data class Achievement(
     val description: String?,
 
     @SerialName("points_reward")
-    val pointsReward: Int = 0,
+    val pointsReward: Int? = null,
 
     @SerialName("type_id")
     val typeId: Long,
