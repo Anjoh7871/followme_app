@@ -71,7 +71,8 @@ fun FollowMeApp(
             navController = navController,
             startDestination = "login",
             modifier = Modifier.padding(padding)
-        ) {
+        )
+        {
 
             composable("login") {
                 LoginScreen(navController, authViewModel)

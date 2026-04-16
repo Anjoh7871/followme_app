@@ -110,7 +110,7 @@ fun HomeScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add workout",
+                    contentDescription = "Add Workout",
                     modifier = Modifier.size(32.dp)
                 )
             }
