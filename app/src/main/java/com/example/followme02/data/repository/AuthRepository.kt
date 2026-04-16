@@ -34,26 +34,6 @@ class AuthRepository @Inject constructor() {
             // 2. Hent auth-id fra session
             val authId = supabase.auth.currentUserOrNull()?.id
 
-            if (authId == null) {
-                Log.e("REGISTER", "Auth user ID is null after signup")
-                return false
-            }
-
-            Log.d("REGISTER", "Auth user after signup: $authId")
-
-            // 3. Legg inn i users-tabellen
-            supabase.from("users").insert(
-                mapOf(
-                    "auth_id" to authId,
-                    "username" to username,
-                    "email" to email,
-                    "current_level" to 1,
-                    "total_points" to 0,
-                    "total_accumulated_km" to 0.0,
-                    "is_active" to true
-                )
-            )
-
             Log.d("REGISTER", "Inserted user row with auth_id = $authId")
             true
 
