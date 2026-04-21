@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.followme02.screen.profile.ProfileAvatar
@@ -144,7 +145,8 @@ fun SocialSearchCard(
     onValueChange: (String) -> Unit,
     placeholder: String,
     buttonText: String,
-    onButtonClick: () -> Unit
+    onButtonClick: () -> Unit,
+    leadingIcon: ImageVector = Icons.Default.Search
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
@@ -177,7 +179,7 @@ fun SocialSearchCard(
                 placeholder = { Text(placeholder) },
                 singleLine = true,
                 leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null)
+                    Icon(leadingIcon, contentDescription = null)
                 },
                 shape = RoundedCornerShape(18.dp),
                 colors = OutlinedTextFieldDefaults.colors(
