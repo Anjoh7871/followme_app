@@ -185,13 +185,14 @@ fun ProfileDetailRow(
     label: String,
     value: String,
     icon: ImageVector,
-    iconTint: Color
+    iconTint: Color,
+    modifier: Modifier = Modifier
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isDark) {
