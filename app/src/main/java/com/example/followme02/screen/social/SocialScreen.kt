@@ -216,17 +216,6 @@ fun SocialScreen(
                                     }
                                 }
 
-                                item {
-                                    SocialSearchCard(
-                                        title = "Create a team",
-                                        value = state.createTeamName,
-                                        onValueChange = viewModel::onCreateTeamNameChange,
-                                        placeholder = "Team name...",
-                                        buttonText = "Create team",
-                                        onButtonClick = viewModel::createTeam,
-                                        leadingIcon = Icons.Default.Groups
-                                    )
-                                }
 
                                 item {
                                     SectionHeader(
@@ -244,11 +233,23 @@ fun SocialScreen(
                                     }
                                 } else {
                                     items(state.recentTeamActivity) { activity ->
-                                        NotificationRow(
+                                        RecentActivityRow(
                                             title = activity.title,
                                             description = formatActivityDescription(activity)
                                         )
                                     }
+                                }
+
+                                item {
+                                    SocialSearchCard(
+                                        title = "Create a team",
+                                        value = state.createTeamName,
+                                        onValueChange = viewModel::onCreateTeamNameChange,
+                                        placeholder = "Team name...",
+                                        buttonText = "Create team",
+                                        onButtonClick = viewModel::createTeam,
+                                        leadingIcon = Icons.Default.Groups
+                                    )
                                 }
 
                                 item {
