@@ -2,6 +2,8 @@ package com.example.followme02.screen.auth
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -10,6 +12,9 @@ import androidx.navigation.NavController
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,6 +40,8 @@ fun RegisterScreen(
     var passwordVisible by remember { mutableStateOf(false) }
 
     val registerMessage = viewModel.registerMessage.value
+
+    val focusManager = LocalFocusManager.current
 
     // Naviger når success
     LaunchedEffect(registerMessage) {
@@ -62,6 +69,14 @@ fun RegisterScreen(
             value = username,
             onValueChange = { username = it },
             label = { Text("Username") },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
+            ),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -72,6 +87,14 @@ fun RegisterScreen(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
+            ),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -82,6 +105,9 @@ fun RegisterScreen(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
             visualTransformation =
                 if (passwordVisible) VisualTransformation.None
                 else PasswordVisualTransformation(),

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -222,7 +223,8 @@ fun SocialScreen(
                                         onValueChange = viewModel::onCreateTeamNameChange,
                                         placeholder = "Team name...",
                                         buttonText = "Create team",
-                                        onButtonClick = viewModel::createTeam
+                                        onButtonClick = viewModel::createTeam,
+                                        leadingIcon = Icons.Default.Groups
                                     )
                                 }
 
