@@ -32,6 +32,11 @@ class SocialViewModel : ViewModel() {
                 val friendRequests = repository.getFriendRequests()
                 val currentTeam = repository.getCurrentTeam()
                 val teamMembers = currentTeam?.let { repository.getTeamMembers(it.teamId) } ?: emptyList()
+                val recentTeamActivity = if (currentTeam != null) {
+                    repository.getRecentTeamActivity()
+                } else {
+                    emptyList()
+                }
                 val availableTeams = repository.getAllTeams()
                 val destinations = repository.getAvailableDestinations()
 
@@ -43,6 +48,7 @@ class SocialViewModel : ViewModel() {
                     friendRequests = friendRequests,
                     currentTeam = currentTeam,
                     teamMembers = teamMembers,
+                    recentTeamActivity = recentTeamActivity,
                     availableTeams = availableTeams
                 )
             } catch (e: Exception) {

@@ -229,14 +229,26 @@ fun SocialScreen(
                                 }
 
                                 item {
-                                    SectionHeader(title = "Recent Activity")
+                                    SectionHeader(
+                                        title = "Recent Activity",
+                                        trailing = "${state.recentTeamActivity.size} updates"
+                                    )
                                 }
 
-                                item {
-                                    EmptyStateCard(
-                                        title = "No recent team activity yet",
-                                        description = "This section is ready in the UI, but we need to connect it to real team activity data next."
-                                    )
+                                if (state.recentTeamActivity.isEmpty()) {
+                                    item {
+                                        EmptyStateCard(
+                                            title = "No recent team activity yet",
+                                            description = "When someone joins your team, it will show up here."
+                                        )
+                                    }
+                                } else {
+                                    items(state.recentTeamActivity) { activity ->
+                                        NotificationRow(
+                                            title = activity.title,
+                                            description = formatActivityDescription(activity)
+                                        )
+                                    }
                                 }
 
                                 item {
@@ -424,5 +436,15 @@ private fun SocialHeader(
                 )
             }
         }
+    }
+}
+
+private fun formatActivityDescription(activity: SocialActivityUi): String {
+    val date = activity.createdAt?.take(10)
+
+    return if (date.isNullOrBlank()) {
+        activity.description
+    } else {
+        "${activity.description}\n$date"
     }
 }

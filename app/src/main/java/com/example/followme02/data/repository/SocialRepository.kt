@@ -14,6 +14,7 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import com.example.followme02.screen.social.SocialActivityUi
 
 @Serializable
 private data class SocialDbUserIdRow(
@@ -68,7 +69,9 @@ private data class SocialDbTeamMembershipRow(
     @SerialName("team_id")
     val teamId: Int,
     @SerialName("user_id")
-    val userId: Int
+    val userId: Int,
+    @SerialName("joined_at")
+    val joinedAt: String? = null
 )
 
 @Serializable
@@ -476,6 +479,50 @@ class SocialRepository {
             }.sortedByDescending { it.totalPoints }
         } catch (e: Exception) {
             Log.e("SOCIAL_REPOSITORY", "Error fetching team members", e)
+            emptyList()
+        }
+    }
+
+    suspend fun getRecentTeamActivity(): List<SocialActivityUi> {
+        return try {
+            val currentUserId = getCurrentDbUserId() ?: return emptyList()
+            val team = getCurrentTeamDbRow(currentUserId) ?: return emptyList()
+
+            val memberships = supabase
+                .from("team_memberships")
+                .select(columns = Columns.list("team_id", "user_id", "joined_at")) {
+                    filter {
+                        eq("team_id", team.teamId)
+                    }
+                }
+                .decodeList<SocialDbTeamMembershipRow>()
+
+            memberships
+                .mapNotNull { membership ->
+                    val user = getUserRow(membership.userId) ?: return@mapNotNull null
+
+                    val title = if (user.userId == currentUserId) {
+                        "You joined ${team.teamName}"
+                    } else {
+                        "${user.username} joined ${team.teamName}"
+                    }
+
+                    val description = if (user.userId == currentUserId) {
+                        "You became a member of this team."
+                    } else {
+                        "${user.username} became a member of your team."
+                    }
+
+                    SocialActivityUi(
+                        title = title,
+                        description = description,
+                        createdAt = membership.joinedAt
+                    )
+                }
+                .sortedByDescending { it.createdAt ?: "" }
+                .take(5)
+        } catch (e: Exception) {
+            Log.e("SOCIAL_REPOSITORY", "Error fetching recent team activity", e)
             emptyList()
         }
     }
