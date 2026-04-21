@@ -1,6 +1,7 @@
 package com.example.followme02.screen.auth
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -185,6 +186,20 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Register")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        //  Back to Login
+        TextButton(
+            onClick = {
+                navController.navigate("login") {
+                    popUpTo("register") { inclusive = true }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Har du allerede en konto? Logg inn")
         }
     }
 }
