@@ -182,6 +182,7 @@ fun SmallStatCard(
 
 @Composable
 fun ProfileDetailRow(
+    onClick: () -> Unit = {},
     label: String,
     value: String,
     icon: ImageVector,
@@ -191,6 +192,7 @@ fun ProfileDetailRow(
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
 
     Card(
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
