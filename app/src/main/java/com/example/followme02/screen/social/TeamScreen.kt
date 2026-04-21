@@ -49,6 +49,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.followme02.screen.profile.ProfileAvatar
 import com.example.followme02.viewmodel.SocialViewModel
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,6 +65,7 @@ fun TeamScreen(
 
     var showJourneyPicker by remember { mutableStateOf(false) }
     var selectedMember by remember { mutableStateOf<TeamMemberUi?>(null) }
+    var showLeaveTeamDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadSocialData()
@@ -131,15 +134,29 @@ fun TeamScreen(
 
                 item {
                     if (state.currentTeam != null) {
-                        TeamJourneyCard(
-                            team = state.currentTeam,
-                            isLeader = state.currentTeam.isCurrentUserLeader,
-                            onClick = {
-                                if (state.currentTeam.isCurrentUserLeader) {
-                                    showJourneyPicker = true
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            TeamJourneyCard(
+                                team = state.currentTeam,
+                                isLeader = state.currentTeam.isCurrentUserLeader,
+                                onClick = {
+                                    if (state.currentTeam.isCurrentUserLeader) {
+                                        showJourneyPicker = true
+                                    }
+                                }
+                            )
+
+                            if (!state.currentTeam.isCurrentUserLeader) {
+                                OutlinedButton(
+                                    onClick = { showLeaveTeamDialog = true },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(16.dp)
+                                ) {
+                                    Text("Leave team")
                                 }
                             }
-                        )
+                        }
                     } else {
                         EmptyStateCard(
                             title = "You are not in a team",
@@ -258,7 +275,36 @@ fun TeamScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
     }
+    if (showLeaveTeamDialog) {
+        AlertDialog(
+            onDismissRequest = { showLeaveTeamDialog = false },
+            title = {
+                Text("Leave team")
+            },
+            text = {
+                Text("Are you sure you want to leave this team?")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLeaveTeamDialog = false
+                       // TODO: connect real leave-team logic later
+                    }
+                ) {
+                    Text("Leave")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showLeaveTeamDialog = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
+
 
 @Composable
 private fun TeamJourneyCard(

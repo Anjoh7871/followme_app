@@ -463,8 +463,8 @@ fun ProfileScreen(
                                 )
 
                                 ProfileDetailRow(
-                                    onClick = {navController.navigate("team")},
-                                    label = stringResource(R.string.profile_team),
+                                    onClick = { navController.navigate("team") },
+                                    label = "Team",
                                     value = profile.teamName,
                                     icon = Icons.Default.Groups,
                                     iconTint = colorScheme.secondary
