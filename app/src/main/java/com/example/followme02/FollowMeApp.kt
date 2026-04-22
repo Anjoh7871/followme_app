@@ -29,10 +29,12 @@ import com.example.followme02.screen.home.HomeScreen
 import com.example.followme02.screen.journey.JourneyLogScreen
 import com.example.followme02.screen.leaderboard.LeaderboardScreen
 import com.example.followme02.screen.profile.ProfileScreen
+import com.example.followme02.screen.settings.SettingsScreen
 import com.example.followme02.screen.social.SocialScreen
 import com.example.followme02.screen.social.TeamScreen
 import com.example.followme02.screen.workout.WorkoutScreen2
 import com.example.followme02.viewmodel.ProfileViewModel
+import com.example.followme02.viewmodel.SettingsViewModel
 import com.example.followme02.viewmodel.SocialViewModel
 import com.example.followme02.viewmodel.WorkoutViewModel
 
@@ -52,6 +54,7 @@ fun FollowMeApp(
     val achievementViewModel: AchievementViewModel = viewModel()
     val workoutViewModel: WorkoutViewModel = viewModel()
     val socialViewModel: SocialViewModel = viewModel()
+    val settingsViewModel: SettingsViewModel = viewModel()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -141,6 +144,13 @@ fun FollowMeApp(
                     authViewModel = authViewModel,
                     isDarkMode = isDarkMode,
                     onToggleDarkMode = onToggleDarkMode
+                )
+            }
+
+            composable("settings") {
+                SettingsScreen(
+                    navController = navController,
+                    viewModel = settingsViewModel
                 )
             }
 

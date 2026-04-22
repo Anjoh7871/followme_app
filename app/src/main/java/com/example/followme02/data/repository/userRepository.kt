@@ -126,4 +126,50 @@ class UserRepository {
             "Not in a team"
         }
     }
+
+    suspend fun updateUsername(newUsername: String): Boolean {
+        return try {
+            val authUserId = supabase.auth.currentUserOrNull()?.id
+                ?: return false
+
+            supabase
+                .from("users")
+                .update(
+                    mapOf("username" to newUsername)
+                ) {
+                    filter {
+                        eq("auth_id", authUserId)
+                    }
+                }
+
+            Log.d("PROFILE", "Username updated to $newUsername")
+            true
+
+        } catch (e: Exception) {
+            Log.e("PROFILE", "Error updating username", e)
+            false
+        }
+    }
+
+    suspend fun deleteUserProfile(): Boolean {
+        return try {
+            val authUserId = supabase.auth.currentUserOrNull()?.id
+                ?: return false
+
+            supabase
+                .from("users")
+                .delete {
+                    filter {
+                        eq("auth_id", authUserId)
+                    }
+                }
+
+            Log.d("PROFILE", "User profile deleted")
+            true
+
+        } catch (e: Exception) {
+            Log.e("PROFILE", "Error deleting profile", e)
+            false
+        }
+    }
 }
