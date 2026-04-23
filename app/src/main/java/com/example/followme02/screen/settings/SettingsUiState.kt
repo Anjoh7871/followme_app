@@ -4,7 +4,6 @@ import com.example.followme02.model.Users
 
 
 data class SettingsUiState(
-    val isDarkMode: Boolean = false,
 
     // Notifications
     val notificationsActivity: Boolean = true,
