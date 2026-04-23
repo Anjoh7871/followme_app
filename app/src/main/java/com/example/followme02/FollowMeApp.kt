@@ -141,16 +141,15 @@ fun FollowMeApp(
             composable("profile") {
                 ProfileScreen(
                     navController = navController,
-                    authViewModel = authViewModel,
                     isDarkMode = isDarkMode,
-                    onToggleDarkMode = onToggleDarkMode
                 )
             }
 
             composable("settings") {
                 SettingsScreen(
                     navController = navController,
-                    viewModel = settingsViewModel
+                    isDarkMode = isDarkMode,
+                    onToggleDarkMode = onToggleDarkMode
                 )
             }
 

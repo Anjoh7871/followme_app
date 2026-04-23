@@ -24,6 +24,8 @@ import com.example.followme02.viewmodel.SettingsViewModel
 @Composable
 fun SettingsScreen(
     navController: NavController,
+    isDarkMode: Boolean,
+    onToggleDarkMode: () -> Unit,
     viewModel: SettingsViewModel = viewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -56,9 +58,9 @@ fun SettingsScreen(
 
         item {
             SettingsToggle(
-                "Dark mode",
-                state.isDarkMode,
-                { viewModel.toggleDarkMode() }
+                text = "Dark mode",
+                checked = isDarkMode,
+                onCheckedChange = { onToggleDarkMode() }
             )
         }
 

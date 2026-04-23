@@ -23,13 +23,6 @@ class SettingsViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
-    // ---------------- DARK MODE ----------------
-    fun toggleDarkMode() {
-        _uiState.update {
-            it.copy(isDarkMode = !it.isDarkMode)
-        }
-    }
-
     // ---------------- NOTIFICATIONS ----------------
     fun setNotificationActivity(enabled: Boolean) {
         _uiState.update { it.copy(notificationsActivity = enabled) }
