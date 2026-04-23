@@ -48,10 +48,10 @@ android {
     buildFeatures {
         compose = true
     }
-    compileOptions {
+    /*compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
+    }*/
 }
 
 dependencies {
@@ -79,6 +79,14 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
     //implementation("com.google.dagger:hilt-android:2.57.1")
     //ksp("com.google.dagger:hilt-android-compiler:2.57.1")
+    // HTTP requests
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    // JSON parsing
+    implementation("org.json:json:20230227")
+    // OSM
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
+    // PreferenceManager
+    implementation("androidx.preference:preference-ktx:1.2.1")
     implementation(libs.hilt.android)
     implementation(libs.androidx.ui.text.google.fonts)
     ksp(libs.hilt.android.compiler)
