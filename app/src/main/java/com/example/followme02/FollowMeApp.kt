@@ -9,6 +9,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,10 +29,12 @@ import com.example.followme02.screen.home.HomeScreen
 import com.example.followme02.screen.journey.JourneyLogScreen
 import com.example.followme02.screen.leaderboard.LeaderboardScreen
 import com.example.followme02.screen.profile.ProfileScreen
+import com.example.followme02.screen.settings.SettingsScreen
 import com.example.followme02.screen.social.SocialScreen
 import com.example.followme02.screen.social.TeamScreen
 import com.example.followme02.screen.workout.WorkoutScreen2
 import com.example.followme02.viewmodel.ProfileViewModel
+import com.example.followme02.viewmodel.SettingsViewModel
 import com.example.followme02.viewmodel.SocialViewModel
 import com.example.followme02.viewmodel.WorkoutViewModel
 
@@ -40,7 +43,9 @@ import com.example.followme02.viewmodel.WorkoutViewModel
 @Composable
 fun FollowMeApp(
     isDarkMode: Boolean,
-    onToggleDarkMode: () -> Unit
+    onToggleDarkMode: () -> Unit,
+    onLoadDarkMode: () -> Unit,
+    onResetDarkMode: () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -49,9 +54,18 @@ fun FollowMeApp(
     val achievementViewModel: AchievementViewModel = viewModel()
     val workoutViewModel: WorkoutViewModel = viewModel()
     val socialViewModel: SocialViewModel = viewModel()
+    val settingsViewModel: SettingsViewModel = viewModel()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    LaunchedEffect(currentRoute) {
+        when (currentRoute) {
+            "login", "register" -> onResetDarkMode()
+            null -> Unit
+            else -> onLoadDarkMode()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -71,9 +85,7 @@ fun FollowMeApp(
             navController = navController,
             startDestination = "login",
             modifier = Modifier.padding(padding)
-        )
-        {
-
+        ) {
             composable("login") {
                 LoginScreen(navController, authViewModel)
             }
@@ -132,6 +144,13 @@ fun FollowMeApp(
                     authViewModel = authViewModel,
                     isDarkMode = isDarkMode,
                     onToggleDarkMode = onToggleDarkMode
+                )
+            }
+
+            composable("settings") {
+                SettingsScreen(
+                    navController = navController,
+                    viewModel = settingsViewModel
                 )
             }
 

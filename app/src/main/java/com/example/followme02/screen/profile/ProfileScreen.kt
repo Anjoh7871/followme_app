@@ -295,7 +295,7 @@ fun ProfileScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Button(
-                                        onClick = { },
+                                        onClick = { navController.navigate("settings") },
                                         modifier = Modifier.weight(1f),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = if (isDarkMode) {

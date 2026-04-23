@@ -4,11 +4,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.followme02.data.repository.AuthRepository
+import com.example.followme02.data.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
 
     private val repository = AuthRepository()
+    private val userRepository = UserRepository()
+
 
     var loginMessage = mutableStateOf<String?>(null)
         private set
@@ -24,8 +27,16 @@ class AuthViewModel : ViewModel() {
             val success = repository.login(email, password)
 
             if (success) {
-                currentUser.value = email
-                loginMessage.value = "Login successful"
+                val profile = userRepository.getProfile()
+
+                if (profile == null) {
+                    repository.logout()
+                    loginMessage.value = "No profile found"
+                } else {
+                    currentUser.value = email
+                    loginMessage.value = "Login successful"
+                }
+
             } else {
                 loginMessage.value = "Invalid username or password"
             }

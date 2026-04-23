@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.followme02.screen.profile.ProfileAvatar
+import androidx.compose.foundation.BorderStroke
 
 @Composable
 fun SocialTabSelector(
@@ -896,6 +897,88 @@ fun NotificationRow(
                 )
 
                 Spacer(modifier = Modifier.height(2.dp))
+
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun RecentActivityRow(
+    title: String,
+    description: String
+) {
+    val colorScheme = MaterialTheme.colorScheme
+    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(22.dp),
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (isDark) {
+                colorScheme.primary.copy(alpha = 0.18f)
+            } else {
+                colorScheme.outlineVariant.copy(alpha = 0.9f)
+            }
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isDark) {
+                colorScheme.primaryContainer.copy(alpha = 0.42f)
+            } else {
+                colorScheme.surface
+            }
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isDark) 1.dp else 3.dp
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(
+                        if (isDark) {
+                            colorScheme.primary.copy(alpha = 0.16f)
+                        } else {
+                            colorScheme.primaryContainer.copy(alpha = 0.65f)
+                        }
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = null,
+                    tint = if (isDark) {
+                        colorScheme.primary
+                    } else {
+                        colorScheme.onPrimaryContainer
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(3.dp))
 
                 Text(
                     text = description,
