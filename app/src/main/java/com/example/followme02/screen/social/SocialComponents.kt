@@ -282,7 +282,7 @@ fun FriendRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ProfileAvatar(
@@ -301,12 +301,20 @@ fun FriendRow(
                     color = colorScheme.onSurface
                 )
 
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
                     text = "Lv ${friend.level} · ${friend.totalPoints} pts · ${formatKm(friend.totalKm)} km",
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "Tap to view profile",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colorScheme.primary
                 )
             }
         }
