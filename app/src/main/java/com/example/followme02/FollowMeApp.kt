@@ -38,6 +38,9 @@ import com.example.followme02.viewmodel.SettingsViewModel
 import com.example.followme02.viewmodel.SocialViewModel
 import com.example.followme02.viewmodel.ThemeViewModel
 import com.example.followme02.viewmodel.WorkoutViewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.followme02.screen.profile.FriendProfileScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -143,16 +146,29 @@ fun FollowMeApp(
             composable("profile") {
                 ProfileScreen(
                     navController = navController,
-                    authViewModel = authViewModel,
                     isDarkMode = isDarkMode,
-                    onToggleDarkMode = onToggleDarkMode
+                )
+            }
+
+            composable(
+                route = "friend_profile/{userId}",
+                arguments = listOf(
+                    navArgument("userId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getInt("userId") ?: return@composable
+
+                FriendProfileScreen(
+                    navController = navController,
+                    friendUserId = userId
                 )
             }
 
             composable("settings") {
                 SettingsScreen(
                     navController = navController,
-                    settingsviewModel = settingsViewModel,
+                    isDarkMode = isDarkMode,
+                    onToggleDarkMode = onToggleDarkMode,
                     themeViewModel = themeViewModel
                 )
             }

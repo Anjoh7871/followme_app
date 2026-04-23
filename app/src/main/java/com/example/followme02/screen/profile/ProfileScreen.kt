@@ -30,40 +30,31 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.followme02.R
-import com.example.followme02.data.remote.SupabaseProvider
-import com.example.followme02.screen.auth.AuthViewModel
 import com.example.followme02.viewmodel.ProfileViewModel
-import io.github.jan.supabase.auth.auth
-import kotlinx.coroutines.launch
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
 
 @Composable
 fun ProfileScreen(
     navController: NavController,
-    authViewModel: AuthViewModel,
     isDarkMode: Boolean,
-    onToggleDarkMode: () -> Unit,
     viewModel: ProfileViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
     val profile = viewModel.uiState.value
     val isLoading = viewModel.isLoading.value
     val error = viewModel.errorMessage.value
-    val scope = rememberCoroutineScope()
     val colorScheme = MaterialTheme.colorScheme
 
     LaunchedEffect(Unit) {
@@ -76,11 +67,7 @@ fun ProfileScreen(
         "${profile.totalAccumulatedKm} km"
     }
 
-    val screenBackground = if (isDarkMode) {
-        colorScheme.background
-    } else {
-        colorScheme.background
-    }
+    val screenBackground = colorScheme.background
 
     val mainCardColor = if (isDarkMode) {
         colorScheme.surfaceContainer
@@ -100,28 +87,10 @@ fun ProfileScreen(
         colorScheme.surface
     }
 
-    val featuredJourneyColor = if (isDarkMode) {
-        colorScheme.primaryContainer.copy(alpha = 0.78f)
-    } else {
-        colorScheme.primaryContainer
-    }
-
     val featuredJourneyTitleColor = if (isDarkMode) {
         colorScheme.onPrimaryContainer
     } else {
         colorScheme.onPrimaryContainer.copy(alpha = 0.82f)
-    }
-
-    val logoutContainerColor = if (isDarkMode) {
-        colorScheme.errorContainer
-    } else {
-        colorScheme.error
-    }
-
-    val logoutContentColor = if (isDarkMode) {
-        colorScheme.onErrorContainer
-    } else {
-        colorScheme.onError
     }
 
     Surface(
@@ -173,7 +142,7 @@ fun ProfileScreen(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = stringResource(R.string.profile_subtitle),
+                            text = "Track your progress and show off your journey!",
                             style = MaterialTheme.typography.bodyMedium,
                             color = colorScheme.onSurfaceVariant
                         )
@@ -230,7 +199,7 @@ fun ProfileScreen(
                                         Spacer(modifier = Modifier.height(4.dp))
 
                                         Text(
-                                            text = stringResource(R.string.profile_motivation),
+                                            text = "Keep moving toward your next goal.",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = colorScheme.onSurfaceVariant
                                         )
@@ -244,7 +213,7 @@ fun ProfileScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     StatBadge(
-                                        title = stringResource(R.string.level),
+                                        title = "Level",
                                         value = profile.currentLevel.toString(),
                                         backgroundColor = if (isDarkMode) {
                                             colorScheme.secondaryContainer.copy(alpha = 0.55f)
@@ -266,7 +235,7 @@ fun ProfileScreen(
                                     )
 
                                     StatBadge(
-                                        title = stringResource(R.string.points),
+                                        title = "Points",
                                         value = profile.totalPoints.toString(),
                                         backgroundColor = if (isDarkMode) {
                                             colorScheme.tertiaryContainer.copy(alpha = 0.60f)
@@ -306,7 +275,12 @@ fun ProfileScreen(
                                             contentColor = colorScheme.onPrimary
                                         )
                                     ) {
-                                        Text(stringResource(R.string.edit_profile))
+                                        Icon(
+                                            imageVector = Icons.Default.Settings,
+                                            contentDescription = "Settings",
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("Settings")
                                     }
 
                                     Button(
@@ -327,7 +301,8 @@ fun ProfileScreen(
                                             }
                                         )
                                     ) {
-                                        Text(stringResource(R.string.achievements))
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("Achievements")
                                     }
                                 }
                             }
@@ -336,7 +311,7 @@ fun ProfileScreen(
                         Spacer(modifier = Modifier.height(18.dp))
 
                         Text(
-                            text = stringResource(R.string.training_stats),
+                            text = "Training Stats",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = colorScheme.onBackground
@@ -349,7 +324,7 @@ fun ProfileScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             SmallStatCard(
-                                title = stringResource(R.string.total_km),
+                                title = "Total km",
                                 value = totalKmText,
                                 icon = Icons.AutoMirrored.Filled.DirectionsRun,
                                 iconTint = colorScheme.primary,
@@ -357,7 +332,7 @@ fun ProfileScreen(
                             )
 
                             SmallStatCard(
-                                title =stringResource(R.string.workouts),
+                                title = "Workouts",
                                 value = profile.workouts.toString(),
                                 icon = Icons.Default.EmojiEvents,
                                 iconTint = colorScheme.secondary,
@@ -372,16 +347,16 @@ fun ProfileScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             SmallStatCard(
-                                title = stringResource(R.string.current_streak),
-                                value = stringResource(R.string.profile_streak_days, profile.streakDays),
+                                title = "Current streak",
+                                value = "${profile.streakDays} days",
                                 icon = Icons.Default.LocalFireDepartment,
                                 iconTint = colorScheme.error,
                                 modifier = Modifier.weight(1f)
                             )
 
                             SmallStatCard(
-                                title = stringResource(R.string.longest_streak),
-                                value = stringResource(R.string.profile_streak_days,profile.longestStreak),
+                                title = "Longest streak",
+                                value = "${profile.longestStreak} days",
                                 icon = Icons.Default.LocalFireDepartment,
                                 iconTint = colorScheme.tertiary,
                                 modifier = Modifier.weight(1f)
@@ -412,7 +387,7 @@ fun ProfileScreen(
                                     .padding(20.dp)
                             ) {
                                 Text(
-                                    text = stringResource(R.string.profile_current_journey_goal),
+                                    text = "Virtual Journey History",
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = featuredJourneyTitleColor
@@ -421,9 +396,7 @@ fun ProfileScreen(
                                 Spacer(modifier = Modifier.height(6.dp))
 
                                 Text(
-                                    text = stringResource(
-                                        R.string.view_your_current_journey_and_completed_routes
-                                    ),
+                                    text = "View your current journey and completed routes.",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = colorScheme.onPrimaryContainer.copy(
                                         alpha = if (isDarkMode) 0.88f else 1f
@@ -486,80 +459,6 @@ fun ProfileScreen(
                                     iconTint = colorScheme.primary
                                 )
                             }
-                        }
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(28.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = secondaryCardColor
-                            ),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = if (isDarkMode) 2.dp else 5.dp
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(20.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = "Dark mode",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = colorScheme.onSurface
-                                    )
-
-                                    Spacer(modifier = Modifier.height(4.dp))
-
-                                    Text(
-                                        text = "Switch between light and dark theme.",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = colorScheme.onSurfaceVariant
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.width(12.dp))
-
-                                Switch(
-                                    checked = isDarkMode,
-                                    onCheckedChange = { onToggleDarkMode() },
-                                    colors = SwitchDefaults.colors(
-                                        checkedThumbColor = colorScheme.primary,
-                                        checkedTrackColor = colorScheme.primary.copy(alpha = 0.45f),
-                                        uncheckedThumbColor = colorScheme.surfaceBright,
-                                        uncheckedTrackColor = colorScheme.surfaceVariant
-                                    )
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Button(
-                            onClick = {
-                                scope.launch {
-                                    SupabaseProvider.client.auth.signOut()
-                                    authViewModel.clearAuthState()
-
-                                    navController.navigate("login") {
-                                        popUpTo(0) { inclusive = true }
-                                        launchSingleTop = true
-                                    }
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = logoutContainerColor,
-                                contentColor = logoutContentColor
-                            )
-                        ) {
-                            Text("Log out")
                         }
 
                         Spacer(modifier = Modifier.height(36.dp))

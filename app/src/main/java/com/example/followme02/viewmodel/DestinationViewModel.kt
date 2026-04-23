@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.followme02.data.repository.DestinationRepository
 import com.example.followme02.data.repository.JourneyRepository
 import com.example.followme02.model.Destinations
+import com.example.followme02.model.UserVisitedDestinations
 import kotlinx.coroutines.launch
 
 class DestinationViewModel : ViewModel() {
@@ -43,6 +44,9 @@ class DestinationViewModel : ViewModel() {
     var recentlyCompletedDestination = mutableStateOf<Destinations?>(null)
         private set
 
+    var visitedDestinationIds = mutableStateOf<Set<Int>>(emptySet())
+        private set
+
     fun loadDestinations() {
         viewModelScope.launch {
             isLoading.value = true
@@ -58,6 +62,11 @@ class DestinationViewModel : ViewModel() {
                 val currentJourney = repository.getCurrentJourneySelection()
                 val selectedId = currentJourney?.selectedDestinationId
                 val startKm = currentJourney?.journeyStartKm ?: 0.0
+
+                val completedJourneys = journeyRepository.getCompletedJourneys()
+                visitedDestinationIds.value = completedJourneys
+                    .map { it.destinationId }
+                    .toSet()
 
                 selectedDestination.value = destinations.find { it.destinationId == selectedId }
                 journeyStartKm.value = startKm

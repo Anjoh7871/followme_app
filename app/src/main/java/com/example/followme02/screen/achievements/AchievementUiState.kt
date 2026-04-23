@@ -6,5 +6,6 @@ data class AchievementUiState(
     val isUnlocked: Boolean,
     val progress: Float, // 0.0 to 1.0
     val progressLabel: String, // e.g., "6.5 / 10"
-    val unlockedDate: String? = null
+    val unlockedDate: String? = null,
+    val iconUrl: String? = null
 )

@@ -1,5 +1,7 @@
 package com.example.followme02.screen.home
 
+import android.util.Log
+import android.view.View
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,43 +43,74 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.followme02.R
 import com.example.followme02.model.Destinations
 import com.example.followme02.viewmodel.DestinationViewModel
 import com.example.followme02.viewmodel.ProfileViewModel
-import com.example.followme02.R
+import com.example.followme02.screen.home.MapViewModel
+import com.example.followme02.screen.home.MapPointUI
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
+import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.input.pointer.pointerInput
 
 @Composable
 fun HomeScreen(
     navController: NavController,
     viewModel: ProfileViewModel = viewModel(),
-    destinationViewModel: DestinationViewModel = viewModel()
+    destinationViewModel: DestinationViewModel = viewModel(),
+    mapViewModel: MapViewModel = viewModel()
 ) {
     val profile = viewModel.uiState.value
     val selectedDestination = destinationViewModel.selectedDestination.value
     val currentJourneyKm = destinationViewModel.currentJourneyKm.value
     val recentlyCompletedDestination = destinationViewModel.recentlyCompletedDestination.value
     val colorScheme = MaterialTheme.colorScheme
+    val mapPoints = mapViewModel.mapPoints
+    Log.d("MAP_DEBUG", "mapPoints size = ${mapPoints.size}")
 
     var showDestinationDialog by remember { mutableStateOf(false) }
     var showChangeDestinationWarning by remember { mutableStateOf(false) }
     var pendingDestination by remember { mutableStateOf<Destinations?>(null) }
+    var mapBounds by remember { mutableStateOf<Rect?>(null) }
+    var isInteractingWithMap by remember { mutableStateOf(false) }
+
+    val destinations = destinationViewModel.allDestinations.value
+    val visited = destinationViewModel.visitedDestinationIds.value
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(Unit) {
         viewModel.loadUser()
         destinationViewModel.loadDestinations()
+    }
+
+    LaunchedEffect(destinations, visited) {
+        if (destinations.isNotEmpty()) {
+            mapViewModel.loadMapData(destinations, visited)
+        }
     }
 
     DisposableEffect(lifecycleOwner) {
@@ -112,16 +145,30 @@ fun HomeScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_workout),
+                    contentDescription = "Add Workout",
                     modifier = Modifier.size(32.dp)
                 )
             }
         }
     ) { padding ->
+        val scrollState = rememberScrollState()
+        var isInteractingWithMap by remember { mutableStateOf(false) }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .pointerInput(mapBounds, isInteractingWithMap) {
+                    detectTapGestures { tapOffset: Offset ->
+                        val bounds = mapBounds
+                        if (isInteractingWithMap && bounds != null && !bounds.contains(tapOffset)) {
+                            isInteractingWithMap = false
+                        }
+                    }
+                }
+                .verticalScroll(
+                    state = scrollState,
+                    enabled = !isInteractingWithMap
+                )
                 .padding(padding)
                 .padding(16.dp)
         ) {
@@ -132,7 +179,7 @@ fun HomeScreen(
             JourneyCard(
                 currentKm = currentJourneyKm,
                 targetKm = selectedDestination?.kmThreshold ?: 0.0,
-                destinationName = selectedDestination?.name ?: stringResource(R.string.choose_destination),
+                destinationName = selectedDestination?.name ?: "Choose destination",
                 onClick = {
                     showDestinationDialog = true
                 }
@@ -140,7 +187,12 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            MapJourneyCard()
+            MapJourneyCard(
+                currentKm = 700.00,
+                mapPoints = mapPoints,
+                onMapInteractionChanged = { isInteractingWithMap = it },
+                onBoundsChanged = { mapBounds = it }
+            )
 
             Spacer(modifier = Modifier.height(120.dp))
         }
@@ -200,12 +252,12 @@ fun HomeScreen(
                         destinationViewModel.clearRecentlyCompletedDestination()
                     }
                 ) {
-                    Text(stringResource(R.string.close))
+                    Text("Close")
                 }
             },
             title = {
                 Column {
-                    Text(stringResource(R.string.congratulations))
+                    Text("Congratulations! 🎉")
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(destination.name)
                 }
@@ -232,13 +284,13 @@ fun HomeScreen(
                     }
 
                     Text(
-                        text = stringResource(R.string.no_fun_fact, destination.name)
+                        text = "You completed your journey to ${destination.name}!"
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = destination.factText ?: stringResource(R.string.no_fun_fact)
+                        text = destination.factText ?: "No fun fact available."
                     )
                 }
             }
@@ -252,11 +304,12 @@ fun HomeScreen(
                 pendingDestination = null
             },
             title = {
-                Text(stringResource(R.string.change_destination))
+                Text("Change destination?")
             },
             text = {
                 Text(
-                    stringResource(R.string.change_destination_question))
+                    "You have already started this journey. If you choose a new destination now, you will lose your current progress."
+                )
             },
             confirmButton = {
                 TextButton(
@@ -271,7 +324,7 @@ fun HomeScreen(
                         pendingDestination = null
                     }
                 ) {
-                    Text(stringResource(R.string.ok))
+                    Text("OK")
                 }
             },
             dismissButton = {
@@ -281,7 +334,7 @@ fun HomeScreen(
                         pendingDestination = null
                     }
                 ) {
-                    Text(stringResource(R.string.cancel))
+                    Text("Cancel")
                 }
             }
         )
@@ -298,7 +351,7 @@ fun HeaderSection(viewModel: ProfileViewModel) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = stringResource(R.string.welcome_back, username),
+            text = "Welcome back, $username! 👋",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = colorScheme.onBackground
@@ -307,7 +360,7 @@ fun HeaderSection(viewModel: ProfileViewModel) {
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = stringResource(R.string.keep_moving_toward_your_destination),
+            text = "Keep moving toward your destination!",
             style = MaterialTheme.typography.bodyLarge,
             color = colorScheme.onSurfaceVariant
         )
@@ -319,7 +372,7 @@ fun HeaderSection(viewModel: ProfileViewModel) {
             modifier = Modifier.fillMaxWidth()
         ) {
             StatCard(
-                title = stringResource(R.string.level),
+                title = "Level",
                 value = profile.currentLevel.toString(),
                 containerColor = colorScheme.secondaryContainer,
                 contentColor = colorScheme.onSecondaryContainer,
@@ -327,7 +380,7 @@ fun HeaderSection(viewModel: ProfileViewModel) {
             )
 
             StatCard(
-                title = stringResource(R.string.points),
+                title = "Points",
                 value = profile.totalPoints.toString(),
                 containerColor = colorScheme.tertiaryContainer,
                 contentColor = colorScheme.onTertiaryContainer,
@@ -424,7 +477,7 @@ fun JourneyCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = stringResource(R.string.virtual_journey),
+                        text = "Your Virtual Journey",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = colorScheme.onPrimaryContainer
@@ -433,7 +486,7 @@ fun JourneyCard(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = stringResource(R.string.destination, destinationName),
+                        text = "Destination: $destinationName",
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
                     )
@@ -464,7 +517,7 @@ fun JourneyCard(
     }
 }
 
-@Composable
+/*@Composable
 fun MapJourneyCard() {
     val colorScheme = MaterialTheme.colorScheme
 
@@ -483,7 +536,7 @@ fun MapJourneyCard() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(R.string.map_route_placeholder),
+                text = "Map Route Placeholder",
                 style = MaterialTheme.typography.bodyLarge,
                 color = colorScheme.onSurfaceVariant
             )
@@ -496,6 +549,149 @@ fun MapJourneyCard() {
             )
         }
     }
+}
+
+ */
+@Composable
+fun MapJourneyCard(
+    currentKm: Double,
+    mapPoints: List<MapPointUI>,
+    onMapInteractionChanged: (Boolean) -> Unit,
+    onBoundsChanged: (Rect) -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .onGloballyPositioned { coordinates ->
+                onBoundsChanged(coordinates.boundsInRoot())
+            }
+    ) {
+        val startPoint = GeoPoint(68.4385, 17.4272)
+
+        // Point A: Narvik
+
+        // Example Point B: Tromsø (Approx 250km from Narvik by road, less as crow flies)
+        // Adjust the 170.0 threshold to whatever your "crow flies" distance logic requires
+        /*val destinations = listOf(
+            MapPoint("Tromsø", GeoPoint(69.6492, 18.9553), 170.0),
+            MapPoint("Harstad", GeoPoint(68.7986, 16.5415), 170.0),
+            MapPoint("Berlin", GeoPoint(52.5200, 13.4050), 170.0)
+        )*/
+
+        OSMMapView(
+            startPoint = startPoint,
+            destinations = mapPoints,
+            currentKm = currentKm,
+            onMapInteractionChanged = onMapInteractionChanged
+        )
+    }
+}
+
+data class MapPoint(val name: String, val location: GeoPoint, val threshold: Double)
+
+@Composable
+fun OSMMapView(
+    startPoint: GeoPoint,
+    destinations: List<MapPointUI>,
+    currentKm: Double,
+    onMapInteractionChanged: (Boolean) -> Unit
+) {
+    val context = LocalContext.current
+
+    val mapView = remember {
+        MapView(context).apply {
+            setTileSource(TileSourceFactory.MAPNIK)
+            setMultiTouchControls(true)
+            zoomController.setVisibility(CustomZoomButtonsController.Visibility.ALWAYS)
+        }
+    }
+
+    val lifecycleObserver = remember {
+        LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> mapView.onResume()
+                Lifecycle.Event.ON_PAUSE -> mapView.onPause()
+                else -> {}
+            }
+        }
+    }
+
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    DisposableEffect(lifecycle) {
+        lifecycle.addObserver(lifecycleObserver)
+        onDispose { lifecycle.removeObserver(lifecycleObserver) }
+    }
+
+    AndroidView(
+        factory = { mapView },
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInteropFilter { event ->
+                when (event.actionMasked) {
+                    android.view.MotionEvent.ACTION_DOWN,
+                    android.view.MotionEvent.ACTION_POINTER_DOWN,
+                    android.view.MotionEvent.ACTION_MOVE -> {
+                        onMapInteractionChanged(true)
+                    }
+
+                    android.view.MotionEvent.ACTION_UP,
+                    android.view.MotionEvent.ACTION_POINTER_UP,
+                    android.view.MotionEvent.ACTION_CANCEL -> {
+                        onMapInteractionChanged(false)
+                    }
+                }
+                false
+            },
+        update = { view ->
+            view.overlays.clear()
+
+            val startMarker = Marker(view)
+            startMarker.position = startPoint
+            startMarker.title = "Narvik (Start)"
+            view.overlays.add(startMarker)
+
+            val pointsToFit = mutableListOf<GeoPoint>()
+            pointsToFit.add(startPoint)
+
+            destinations.forEach { dest ->
+                val marker = Marker(view)
+                marker.position = dest.location
+                marker.title = dest.name
+
+                val iconRes = if (dest.isVisited) {
+                    R.drawable.ic_marker_green
+                } else {
+                    R.drawable.ic_marker_red
+                }
+
+                marker.icon = ContextCompat.getDrawable(context, iconRes)
+
+                view.overlays.add(marker)
+                pointsToFit.add(dest.location)
+            }
+
+            view.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+                override fun onLayoutChange(
+                    v: View?, left: Int, top: Int, right: Int, bottom: Int,
+                    oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
+                ) {
+                    if (pointsToFit.size > 1) {
+                        val boundingBox = BoundingBox.fromGeoPoints(pointsToFit)
+                        view.zoomToBoundingBox(boundingBox, true, 300)
+                    } else {
+                        view.controller.setCenter(startPoint)
+                        view.controller.setZoom(8.5)
+                    }
+
+                    view.removeOnLayoutChangeListener(this)
+                }
+            })
+
+            view.invalidate()
+        }
+    )
 }
 
 private fun imageUrlToDrawableName(imageUrl: String?): String? {
