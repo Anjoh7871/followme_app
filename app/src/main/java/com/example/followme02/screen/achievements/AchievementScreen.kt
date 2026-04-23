@@ -59,6 +59,21 @@ import com.example.followme02.ui.theme.achievementUnlockedIconLight
 import com.example.followme02.ui.theme.achievementUnlockedTitleDark
 import com.example.followme02.ui.theme.achievementUnlockedTitleLight
 import com.example.followme02.ui.theme.backgroundDark
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.runtime.remember
+
+
+private fun imageUrlToDrawableName(imageUrl: String?): String? {
+    if (imageUrl.isNullOrBlank()) return null
+
+    return imageUrl
+        .substringAfterLast("/")
+        .substringBeforeLast(".")
+        .lowercase()
+}
 
 @Composable
 fun AchievementScreen(navController: NavController) {
@@ -284,8 +299,8 @@ private fun ProgressOverviewCard(
 @Composable
 fun AchievementItem(item: AchievementUiState) {
     val colorScheme = MaterialTheme.colorScheme
-
     val isDark = colorScheme.background == backgroundDark
+    val context = LocalContext.current
 
     val unlockedCard = if (isDark) {
         Color(0xFF6A5310)
@@ -306,19 +321,19 @@ fun AchievementItem(item: AchievementUiState) {
     }
 
     val unlockedTitle = if (isDark) {
-        Color(0xFFFFF4CC)   // nesten hvit med gul tone
+        Color(0xFFFFF4CC)
     } else {
         Color(0xFF92400E)
     }
 
     val unlockedDesc = if (isDark) {
-        Color(0xFFFFE7A3)   // lys gul
+        Color(0xFFFFE7A3)
     } else {
         Color(0xFFB45309)
     }
 
     val unlockedBottom = if (isDark) {
-        Color(0xFFFFD166)   // tydelig highlight
+        Color(0xFFFFD166)
     } else {
         Color(0xFFD97706)
     }
@@ -327,6 +342,17 @@ fun AchievementItem(item: AchievementUiState) {
         colorScheme.surfaceContainerHigh
     } else {
         colorScheme.surfaceContainerLow
+    }
+
+
+    val drawableName = remember(item.iconUrl) {
+        imageUrlToDrawableName(item.iconUrl)
+    }
+
+    val imageResId = remember(drawableName) {
+        drawableName?.let {
+            context.resources.getIdentifier(it, "drawable", context.packageName)
+        } ?: 0
     }
 
     Card(
@@ -357,12 +383,22 @@ fun AchievementItem(item: AchievementUiState) {
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = if (item.isUnlocked) Icons.Default.Star else Icons.Default.Lock,
-                        contentDescription = null,
-                        tint = if (item.isUnlocked) Color(0xFF4A3600) else colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(22.dp)
-                    )
+                    if (imageResId != 0) {
+                        Image(
+                            painter = painterResource(id = imageResId),
+                            contentDescription = item.title,
+                            modifier = Modifier.size(24.dp),
+                            contentScale = ContentScale.Fit,
+                            alpha = if (item.isUnlocked) 1f else 0.45f
+                        )
+                    } else {
+                        Icon(
+                            imageVector = if (item.isUnlocked) Icons.Default.Star else Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = if (item.isUnlocked) Color(0xFF4A3600) else colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(10.dp))

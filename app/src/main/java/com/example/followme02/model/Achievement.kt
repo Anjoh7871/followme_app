@@ -22,5 +22,8 @@ data class Achievement(
     val reqUnitId: Long,
 
     @SerialName("req_value")
-    val reqValue: Long?
+    val reqValue: Long?,
+
+    @SerialName("icon_url")
+    val iconUrl: String? = null
 )

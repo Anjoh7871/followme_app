@@ -79,7 +79,8 @@ class AchievementViewModel(
                     isUnlocked = isUnlockedNow,
                     progress = (currentValue / target).toFloat().coerceIn(0f, 1f),
                     progressLabel = "${currentValue.toInt()} / ${def.reqValue ?: 0}",
-                    unlockedDate = earned?.earnedAt?.split("T")?.get(0)
+                    unlockedDate = earned?.earnedAt?.split("T")?.get(0),
+                    iconUrl = def.iconUrl
                 )
             }
 
