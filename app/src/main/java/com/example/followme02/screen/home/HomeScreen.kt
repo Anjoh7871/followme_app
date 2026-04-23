@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -67,6 +68,13 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.input.pointer.pointerInput
 
 @Composable
 fun HomeScreen(
@@ -86,6 +94,8 @@ fun HomeScreen(
     var showDestinationDialog by remember { mutableStateOf(false) }
     var showChangeDestinationWarning by remember { mutableStateOf(false) }
     var pendingDestination by remember { mutableStateOf<Destinations?>(null) }
+    var mapBounds by remember { mutableStateOf<Rect?>(null) }
+    var isInteractingWithMap by remember { mutableStateOf(false) }
 
     val destinations = destinationViewModel.allDestinations.value
     val visited = destinationViewModel.visitedDestinationIds.value
@@ -141,10 +151,24 @@ fun HomeScreen(
             }
         }
     ) { padding ->
+        val scrollState = rememberScrollState()
+        var isInteractingWithMap by remember { mutableStateOf(false) }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .pointerInput(mapBounds, isInteractingWithMap) {
+                    detectTapGestures { tapOffset: Offset ->
+                        val bounds = mapBounds
+                        if (isInteractingWithMap && bounds != null && !bounds.contains(tapOffset)) {
+                            isInteractingWithMap = false
+                        }
+                    }
+                }
+                .verticalScroll(
+                    state = scrollState,
+                    enabled = !isInteractingWithMap
+                )
                 .padding(padding)
                 .padding(16.dp)
         ) {
@@ -163,7 +187,12 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            MapJourneyCard(700.00, mapPoints = mapPoints)
+            MapJourneyCard(
+                currentKm = 700.00,
+                mapPoints = mapPoints,
+                onMapInteractionChanged = { isInteractingWithMap = it },
+                onBoundsChanged = { mapBounds = it }
+            )
 
             Spacer(modifier = Modifier.height(120.dp))
         }
@@ -526,16 +555,22 @@ fun MapJourneyCard() {
 @Composable
 fun MapJourneyCard(
     currentKm: Double,
-    mapPoints: List<MapPointUI>
+    mapPoints: List<MapPointUI>,
+    onMapInteractionChanged: (Boolean) -> Unit,
+    onBoundsChanged: (Rect) -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp)
+            .onGloballyPositioned { coordinates ->
+                onBoundsChanged(coordinates.boundsInRoot())
+            }
     ) {
-        // Point A: Narvik
         val startPoint = GeoPoint(68.4385, 17.4272)
+
+        // Point A: Narvik
 
         // Example Point B: Tromsø (Approx 250km from Narvik by road, less as crow flies)
         // Adjust the 170.0 threshold to whatever your "crow flies" distance logic requires
@@ -548,9 +583,9 @@ fun MapJourneyCard(
         OSMMapView(
             startPoint = startPoint,
             destinations = mapPoints,
-            currentKm = currentKm
+            currentKm = currentKm,
+            onMapInteractionChanged = onMapInteractionChanged
         )
-
     }
 }
 
@@ -560,21 +595,19 @@ data class MapPoint(val name: String, val location: GeoPoint, val threshold: Dou
 fun OSMMapView(
     startPoint: GeoPoint,
     destinations: List<MapPointUI>,
-    currentKm: Double
+    currentKm: Double,
+    onMapInteractionChanged: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
 
-    // 1. Initialize the MapView
     val mapView = remember {
         MapView(context).apply {
             setTileSource(TileSourceFactory.MAPNIK)
             setMultiTouchControls(true)
-            //zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
             zoomController.setVisibility(CustomZoomButtonsController.Visibility.ALWAYS)
         }
     }
 
-    // 2. Lifecycle management (Required for OSMdroid)
     val lifecycleObserver = remember {
         LifecycleEventObserver { _, event ->
             when (event) {
@@ -584,20 +617,36 @@ fun OSMMapView(
             }
         }
     }
+
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     DisposableEffect(lifecycle) {
         lifecycle.addObserver(lifecycleObserver)
         onDispose { lifecycle.removeObserver(lifecycleObserver) }
     }
 
-    // 3. Render the Map
     AndroidView(
         factory = { mapView },
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInteropFilter { event ->
+                when (event.actionMasked) {
+                    android.view.MotionEvent.ACTION_DOWN,
+                    android.view.MotionEvent.ACTION_POINTER_DOWN,
+                    android.view.MotionEvent.ACTION_MOVE -> {
+                        onMapInteractionChanged(true)
+                    }
+
+                    android.view.MotionEvent.ACTION_UP,
+                    android.view.MotionEvent.ACTION_POINTER_UP,
+                    android.view.MotionEvent.ACTION_CANCEL -> {
+                        onMapInteractionChanged(false)
+                    }
+                }
+                false
+            },
         update = { view ->
             view.overlays.clear()
 
-            // Add Point A (Narvik)
             val startMarker = Marker(view)
             startMarker.position = startPoint
             startMarker.title = "Narvik (Start)"
@@ -606,21 +655,7 @@ fun OSMMapView(
             val pointsToFit = mutableListOf<GeoPoint>()
             pointsToFit.add(startPoint)
 
-            // Add Point B if reached
-            /*
             destinations.forEach { dest ->
-                if (currentKm >= dest.threshold) {
-                    val endMarker = Marker(view)
-                    endMarker.position = dest.location
-                    endMarker.title = "${dest.name} reached!"
-                    view.overlays.add(endMarker)
-                    pointsToFit.add(dest.location)
-                }
-            }
-
-             */
-            destinations.forEach { dest ->
-
                 val marker = Marker(view)
                 marker.position = dest.location
                 marker.title = dest.name
@@ -637,7 +672,6 @@ fun OSMMapView(
                 pointsToFit.add(dest.location)
             }
 
-            // FIX: Use a Post-Layout listener to ensure the map has a width/height
             view.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
                 override fun onLayoutChange(
                     v: View?, left: Int, top: Int, right: Int, bottom: Int,
@@ -645,14 +679,12 @@ fun OSMMapView(
                 ) {
                     if (pointsToFit.size > 1) {
                         val boundingBox = BoundingBox.fromGeoPoints(pointsToFit)
-                        // Increase padding to 250 to ensure the pins aren't cut off by the card edges
                         view.zoomToBoundingBox(boundingBox, true, 300)
                     } else {
                         view.controller.setCenter(startPoint)
-                        //view.controller.setZoom(10.0) // Zoomed in on Narvik
                         view.controller.setZoom(8.5)
                     }
-                    // Remove listener so it doesn't keep snapping back when the user moves the map
+
                     view.removeOnLayoutChangeListener(this)
                 }
             })
