@@ -92,4 +92,26 @@ class AuthRepository @Inject constructor() {
     fun getCurrentUserId(): String? {
         return supabase.auth.currentUserOrNull()?.id
     }
+
+    suspend fun deleteAuthUser(): Boolean {
+
+        return try {
+
+            supabase.auth.admin.deleteUser(
+
+                supabase.auth.currentUserOrNull()?.id ?: return false
+
+            )
+
+            true
+
+        } catch (e: Exception) {
+
+            Log.e("AUTH", "Error deleting auth user", e)
+
+            false
+
+        }
+
+    }
 }

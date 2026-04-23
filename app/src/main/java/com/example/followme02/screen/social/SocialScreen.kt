@@ -60,6 +60,22 @@ fun SocialScreen(
 
     val filteredTeams = viewModel.getFilteredTeams()
 
+    val previewFriends = if (state.friends.isEmpty()) {
+        listOf(
+            SocialFriendUi(
+                userId = 1,
+                username = "CocoChou",
+                email = "coco@email.com",
+                avatarUrl = null,
+                totalKm = 24.5,
+                totalPoints = 180,
+                level = 3
+            )
+        )
+    } else {
+        state.friends
+    }
+
     LaunchedEffect(Unit) {
         viewModel.loadSocialData()
     }
@@ -157,27 +173,18 @@ fun SocialScreen(
                                 item {
                                     SectionHeader(
                                         title = "Your Friends",
-                                        trailing = "${state.friends.size} friends"
+                                        trailing = "${previewFriends.size} friends"
                                     )
                                 }
 
-                                if (state.friends.isEmpty()) {
-                                    item {
-                                        EmptyStateCard(
-                                            title = "No friends yet",
-                                            description = "Search for users by email and start building your friend list."
-                                        )
-                                    }
-                                } else {
-                                    items(state.friends) { friend ->
-                                        FriendRow(
-                                            friend = friend,
-                                            onClick = {
-                                                selectedFriend = friend
-                                                currentSheet = SocialSheetType.FRIEND_PROFILE
-                                            }
-                                        )
-                                    }
+                                items(previewFriends) { friend ->
+                                    FriendRow(
+                                        friend = friend,
+                                        onClick = {
+                                            selectedFriend = friend
+                                            currentSheet = SocialSheetType.FRIEND_PROFILE
+                                        }
+                                    )
                                 }
 
                                 item {
@@ -216,6 +223,30 @@ fun SocialScreen(
                                     }
                                 }
 
+
+                                item {
+                                    SectionHeader(
+                                        title = "Recent Activity",
+                                        trailing = "${state.recentTeamActivity.size} updates"
+                                    )
+                                }
+
+                                if (state.recentTeamActivity.isEmpty()) {
+                                    item {
+                                        EmptyStateCard(
+                                            title = "No recent team activity yet",
+                                            description = "When someone joins your team, it will show up here."
+                                        )
+                                    }
+                                } else {
+                                    items(state.recentTeamActivity) { activity ->
+                                        RecentActivityRow(
+                                            title = activity.title,
+                                            description = formatActivityDescription(activity)
+                                        )
+                                    }
+                                }
+
                                 item {
                                     SocialSearchCard(
                                         title = "Create a team",
@@ -225,17 +256,6 @@ fun SocialScreen(
                                         buttonText = "Create team",
                                         onButtonClick = viewModel::createTeam,
                                         leadingIcon = Icons.Default.Groups
-                                    )
-                                }
-
-                                item {
-                                    SectionHeader(title = "Recent Activity")
-                                }
-
-                                item {
-                                    EmptyStateCard(
-                                        title = "No recent team activity yet",
-                                        description = "This section is ready in the UI, but we need to connect it to real team activity data next."
                                     )
                                 }
 
@@ -424,5 +444,15 @@ private fun SocialHeader(
                 )
             }
         }
+    }
+}
+
+private fun formatActivityDescription(activity: SocialActivityUi): String {
+    val date = activity.createdAt?.take(10)
+
+    return if (date.isNullOrBlank()) {
+        activity.description
+    } else {
+        "${activity.description}\n$date"
     }
 }

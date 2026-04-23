@@ -81,6 +81,12 @@ data class SearchableTeamUi(
     val isCurrentTeam: Boolean = false
 )
 
+data class SocialActivityUi(
+    val title: String,
+    val description: String,
+    val createdAt: String? = null
+)
+
 data class SocialUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
@@ -100,5 +106,6 @@ data class SocialUiState(
 
     val currentTeam: SocialTeamUi? = null,
     val teamMembers: List<TeamMemberUi> = emptyList(),
-    val availableTeams: List<SearchableTeamUi> = emptyList()
+    val availableTeams: List<SearchableTeamUi> = emptyList(),
+    val recentTeamActivity: List<SocialActivityUi> = emptyList()
 )

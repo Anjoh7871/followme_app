@@ -9,6 +9,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,19 +29,27 @@ import com.example.followme02.screen.home.HomeScreen
 import com.example.followme02.screen.journey.JourneyLogScreen
 import com.example.followme02.screen.leaderboard.LeaderboardScreen
 import com.example.followme02.screen.profile.ProfileScreen
+import com.example.followme02.screen.settings.SettingsScreen
 import com.example.followme02.screen.social.SocialScreen
 import com.example.followme02.screen.social.TeamScreen
 import com.example.followme02.screen.workout.WorkoutScreen2
 import com.example.followme02.viewmodel.ProfileViewModel
+import com.example.followme02.viewmodel.SettingsViewModel
 import com.example.followme02.viewmodel.SocialViewModel
+import com.example.followme02.viewmodel.ThemeViewModel
 import com.example.followme02.viewmodel.WorkoutViewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.followme02.screen.profile.FriendProfileScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FollowMeApp(
     isDarkMode: Boolean,
-    onToggleDarkMode: () -> Unit
+    onToggleDarkMode: () -> Unit,
+    onLoadDarkMode: () -> Unit,
+    onResetDarkMode: () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -49,9 +58,19 @@ fun FollowMeApp(
     val achievementViewModel: AchievementViewModel = viewModel()
     val workoutViewModel: WorkoutViewModel = viewModel()
     val socialViewModel: SocialViewModel = viewModel()
+    val settingsViewModel: SettingsViewModel = viewModel()
+    val themeViewModel: ThemeViewModel = viewModel()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    LaunchedEffect(currentRoute) {
+        when (currentRoute) {
+            "login", "register" -> onResetDarkMode()
+            null -> Unit
+            else -> onLoadDarkMode()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -72,7 +91,6 @@ fun FollowMeApp(
             startDestination = "login",
             modifier = Modifier.padding(padding)
         ) {
-
             composable("login") {
                 LoginScreen(navController, authViewModel)
             }
@@ -128,9 +146,30 @@ fun FollowMeApp(
             composable("profile") {
                 ProfileScreen(
                     navController = navController,
-                    authViewModel = authViewModel,
                     isDarkMode = isDarkMode,
-                    onToggleDarkMode = onToggleDarkMode
+                )
+            }
+
+            composable(
+                route = "friend_profile/{userId}",
+                arguments = listOf(
+                    navArgument("userId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getInt("userId") ?: return@composable
+
+                FriendProfileScreen(
+                    navController = navController,
+                    friendUserId = userId
+                )
+            }
+
+            composable("settings") {
+                SettingsScreen(
+                    navController = navController,
+                    isDarkMode = isDarkMode,
+                    onToggleDarkMode = onToggleDarkMode,
+                    themeViewModel = themeViewModel
                 )
             }
 

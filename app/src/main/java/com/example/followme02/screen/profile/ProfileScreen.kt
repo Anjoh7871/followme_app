@@ -30,40 +30,31 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.followme02.R
-import com.example.followme02.data.remote.SupabaseProvider
-import com.example.followme02.screen.auth.AuthViewModel
 import com.example.followme02.viewmodel.ProfileViewModel
-import io.github.jan.supabase.auth.auth
-import kotlinx.coroutines.launch
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
 
 @Composable
 fun ProfileScreen(
     navController: NavController,
-    authViewModel: AuthViewModel,
     isDarkMode: Boolean,
-    onToggleDarkMode: () -> Unit,
     viewModel: ProfileViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
     val profile = viewModel.uiState.value
     val isLoading = viewModel.isLoading.value
     val error = viewModel.errorMessage.value
-    val scope = rememberCoroutineScope()
     val colorScheme = MaterialTheme.colorScheme
 
     LaunchedEffect(Unit) {
@@ -76,11 +67,7 @@ fun ProfileScreen(
         "${profile.totalAccumulatedKm} km"
     }
 
-    val screenBackground = if (isDarkMode) {
-        colorScheme.background
-    } else {
-        colorScheme.background
-    }
+    val screenBackground = colorScheme.background
 
     val mainCardColor = if (isDarkMode) {
         colorScheme.surfaceContainer
@@ -100,28 +87,10 @@ fun ProfileScreen(
         colorScheme.surface
     }
 
-    val featuredJourneyColor = if (isDarkMode) {
-        colorScheme.primaryContainer.copy(alpha = 0.78f)
-    } else {
-        colorScheme.primaryContainer
-    }
-
     val featuredJourneyTitleColor = if (isDarkMode) {
         colorScheme.onPrimaryContainer
     } else {
         colorScheme.onPrimaryContainer.copy(alpha = 0.82f)
-    }
-
-    val logoutContainerColor = if (isDarkMode) {
-        colorScheme.errorContainer
-    } else {
-        colorScheme.error
-    }
-
-    val logoutContentColor = if (isDarkMode) {
-        colorScheme.onErrorContainer
-    } else {
-        colorScheme.onError
     }
 
     Surface(
@@ -295,7 +264,7 @@ fun ProfileScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Button(
-                                        onClick = { },
+                                        onClick = { navController.navigate("settings") },
                                         modifier = Modifier.weight(1f),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = if (isDarkMode) {
@@ -306,7 +275,12 @@ fun ProfileScreen(
                                             contentColor = colorScheme.onPrimary
                                         )
                                     ) {
-                                        Text("Edit Profile")
+                                        Icon(
+                                            imageVector = Icons.Default.Settings,
+                                            contentDescription = "Settings",
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("Settings")
                                     }
 
                                     Button(
@@ -327,6 +301,7 @@ fun ProfileScreen(
                                             }
                                         )
                                     ) {
+                                        Spacer(modifier = Modifier.width(8.dp))
                                         Text("Achievements")
                                     }
                                 }
@@ -484,80 +459,6 @@ fun ProfileScreen(
                                     iconTint = colorScheme.primary
                                 )
                             }
-                        }
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(28.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = secondaryCardColor
-                            ),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = if (isDarkMode) 2.dp else 5.dp
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(20.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = "Dark mode",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = colorScheme.onSurface
-                                    )
-
-                                    Spacer(modifier = Modifier.height(4.dp))
-
-                                    Text(
-                                        text = "Switch between light and dark theme.",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = colorScheme.onSurfaceVariant
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.width(12.dp))
-
-                                Switch(
-                                    checked = isDarkMode,
-                                    onCheckedChange = { onToggleDarkMode() },
-                                    colors = SwitchDefaults.colors(
-                                        checkedThumbColor = colorScheme.primary,
-                                        checkedTrackColor = colorScheme.primary.copy(alpha = 0.45f),
-                                        uncheckedThumbColor = colorScheme.surfaceBright,
-                                        uncheckedTrackColor = colorScheme.surfaceVariant
-                                    )
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Button(
-                            onClick = {
-                                scope.launch {
-                                    SupabaseProvider.client.auth.signOut()
-                                    authViewModel.clearAuthState()
-
-                                    navController.navigate("login") {
-                                        popUpTo(0) { inclusive = true }
-                                        launchSingleTop = true
-                                    }
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = logoutContainerColor,
-                                contentColor = logoutContentColor
-                            )
-                        ) {
-                            Text("Log out")
                         }
 
                         Spacer(modifier = Modifier.height(36.dp))

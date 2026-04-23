@@ -1,6 +1,7 @@
 package com.example.followme02.screen.leaderboard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -127,7 +128,10 @@ fun LeaderboardScreen(
                                 LeaderboardItem(
                                     rank = index + 1,
                                     user = user,
-                                    isCurrentUser = index == 0
+                                    isCurrentUser = false,
+                                    onClick = {
+                                        navController.navigate("friend_profile/${user.userId}")
+                                    }
                                 )
                             }
                         }
@@ -135,7 +139,6 @@ fun LeaderboardScreen(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(120.dp))
     }
 }
 
@@ -191,7 +194,8 @@ private fun LeaderboardTabs(
 fun LeaderboardItem(
     rank: Int,
     user: LeaderboardUser,
-    isCurrentUser: Boolean = false
+    isCurrentUser: Boolean = false,
+    onClick: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
 
@@ -227,7 +231,9 @@ fun LeaderboardItem(
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = containerColor
@@ -272,6 +278,14 @@ fun LeaderboardItem(
                 Text(
                     text = "Level ${user.currentLevel} • ${formatKm(user.totalAccumulatedKm)} km",
                     style = MaterialTheme.typography.bodyLarge,
+                    color = subtextColor
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "Tap to view profile",
+                    style = MaterialTheme.typography.bodySmall,
                     color = subtextColor
                 )
             }
@@ -327,6 +341,6 @@ private fun formatKm(km: Double): String {
     return if (km % 1.0 == 0.0) {
         km.toInt().toString()
     } else {
-        String.format("%.1f", km)
+        "%.1f".format(km)
     }
 }
