@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -22,6 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.followme02.model.Destinations
 import com.example.followme02.viewmodel.DestinationViewModel
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
 
 @Composable
 fun DestinationPickerDialog(
@@ -71,7 +78,7 @@ fun DestinationPickerDialog(
 
                     else -> {
                         LazyColumn(
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
                             modifier = Modifier.height(300.dp)
                         ) {
                             items(filteredDestinations) { destination ->
@@ -100,20 +107,61 @@ fun DestinationRow(
     destination: Destinations,
     onClick: () -> Unit
 ) {
-    Column(
+    val colorScheme = MaterialTheme.colorScheme
+    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable { onClick() },
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isDark) colorScheme.surfaceContainer else colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isDark) 2.dp else 4.dp
+        )
     ) {
-        Text(
-            text = destination.name,
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Text(
-            text = "${destination.kmThreshold.toInt()} km from Narvik",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-        HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            // 🌍 ICON
+            Text(
+                text = "🌍",
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+
+                Text(
+                    text = destination.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "${destination.kmThreshold.toInt()} km from Narvik",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "Select this destination",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
 }
