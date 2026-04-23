@@ -1,5 +1,7 @@
 package com.example.followme02.screen.home
 
+import android.util.Log
+import android.view.View
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,35 +49,58 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.followme02.R
 import com.example.followme02.model.Destinations
 import com.example.followme02.viewmodel.DestinationViewModel
 import com.example.followme02.viewmodel.ProfileViewModel
+import com.example.followme02.screen.home.MapViewModel
+import com.example.followme02.screen.home.MapPointUI
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 
 @Composable
 fun HomeScreen(
     navController: NavController,
     viewModel: ProfileViewModel = viewModel(),
-    destinationViewModel: DestinationViewModel = viewModel()
+    destinationViewModel: DestinationViewModel = viewModel(),
+    mapViewModel: MapViewModel = viewModel()
 ) {
     val profile = viewModel.uiState.value
     val selectedDestination = destinationViewModel.selectedDestination.value
     val currentJourneyKm = destinationViewModel.currentJourneyKm.value
     val recentlyCompletedDestination = destinationViewModel.recentlyCompletedDestination.value
     val colorScheme = MaterialTheme.colorScheme
+    val mapPoints = mapViewModel.mapPoints
+    Log.d("MAP_DEBUG", "mapPoints size = ${mapPoints.size}")
 
     var showDestinationDialog by remember { mutableStateOf(false) }
     var showChangeDestinationWarning by remember { mutableStateOf(false) }
     var pendingDestination by remember { mutableStateOf<Destinations?>(null) }
+
+    val destinations = destinationViewModel.allDestinations.value
+    val visited = destinationViewModel.visitedDestinationIds.value
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(Unit) {
         viewModel.loadUser()
         destinationViewModel.loadDestinations()
+    }
+
+    LaunchedEffect(destinations, visited) {
+        if (destinations.isNotEmpty()) {
+            mapViewModel.loadMapData(destinations, visited)
+        }
     }
 
     DisposableEffect(lifecycleOwner) {
@@ -138,7 +163,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            MapJourneyCard()
+            MapJourneyCard(700.00, mapPoints = mapPoints)
 
             Spacer(modifier = Modifier.height(120.dp))
         }
@@ -463,7 +488,7 @@ fun JourneyCard(
     }
 }
 
-@Composable
+/*@Composable
 fun MapJourneyCard() {
     val colorScheme = MaterialTheme.colorScheme
 
@@ -495,6 +520,146 @@ fun MapJourneyCard() {
             )
         }
     }
+}
+
+ */
+@Composable
+fun MapJourneyCard(
+    currentKm: Double,
+    mapPoints: List<MapPointUI>
+) {
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+    ) {
+        // Point A: Narvik
+        val startPoint = GeoPoint(68.4385, 17.4272)
+
+        // Example Point B: Tromsø (Approx 250km from Narvik by road, less as crow flies)
+        // Adjust the 170.0 threshold to whatever your "crow flies" distance logic requires
+        /*val destinations = listOf(
+            MapPoint("Tromsø", GeoPoint(69.6492, 18.9553), 170.0),
+            MapPoint("Harstad", GeoPoint(68.7986, 16.5415), 170.0),
+            MapPoint("Berlin", GeoPoint(52.5200, 13.4050), 170.0)
+        )*/
+
+        OSMMapView(
+            startPoint = startPoint,
+            destinations = mapPoints,
+            currentKm = currentKm
+        )
+
+    }
+}
+
+data class MapPoint(val name: String, val location: GeoPoint, val threshold: Double)
+
+@Composable
+fun OSMMapView(
+    startPoint: GeoPoint,
+    destinations: List<MapPointUI>,
+    currentKm: Double
+) {
+    val context = LocalContext.current
+
+    // 1. Initialize the MapView
+    val mapView = remember {
+        MapView(context).apply {
+            setTileSource(TileSourceFactory.MAPNIK)
+            setMultiTouchControls(true)
+            //zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+            zoomController.setVisibility(CustomZoomButtonsController.Visibility.ALWAYS)
+        }
+    }
+
+    // 2. Lifecycle management (Required for OSMdroid)
+    val lifecycleObserver = remember {
+        LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> mapView.onResume()
+                Lifecycle.Event.ON_PAUSE -> mapView.onPause()
+                else -> {}
+            }
+        }
+    }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    DisposableEffect(lifecycle) {
+        lifecycle.addObserver(lifecycleObserver)
+        onDispose { lifecycle.removeObserver(lifecycleObserver) }
+    }
+
+    // 3. Render the Map
+    AndroidView(
+        factory = { mapView },
+        modifier = Modifier.fillMaxSize(),
+        update = { view ->
+            view.overlays.clear()
+
+            // Add Point A (Narvik)
+            val startMarker = Marker(view)
+            startMarker.position = startPoint
+            startMarker.title = "Narvik (Start)"
+            view.overlays.add(startMarker)
+
+            val pointsToFit = mutableListOf<GeoPoint>()
+            pointsToFit.add(startPoint)
+
+            // Add Point B if reached
+            /*
+            destinations.forEach { dest ->
+                if (currentKm >= dest.threshold) {
+                    val endMarker = Marker(view)
+                    endMarker.position = dest.location
+                    endMarker.title = "${dest.name} reached!"
+                    view.overlays.add(endMarker)
+                    pointsToFit.add(dest.location)
+                }
+            }
+
+             */
+            destinations.forEach { dest ->
+
+                val marker = Marker(view)
+                marker.position = dest.location
+                marker.title = dest.name
+
+                val iconRes = if (dest.isVisited) {
+                    R.drawable.ic_marker_green
+                } else {
+                    R.drawable.ic_marker_red
+                }
+
+                marker.icon = ContextCompat.getDrawable(context, iconRes)
+
+                view.overlays.add(marker)
+                pointsToFit.add(dest.location)
+            }
+
+            // FIX: Use a Post-Layout listener to ensure the map has a width/height
+            view.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+                override fun onLayoutChange(
+                    v: View?, left: Int, top: Int, right: Int, bottom: Int,
+                    oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
+                ) {
+                    if (pointsToFit.size > 1) {
+                        val boundingBox = BoundingBox.fromGeoPoints(pointsToFit)
+                        // Increase padding to 250 to ensure the pins aren't cut off by the card edges
+                        view.zoomToBoundingBox(boundingBox, true, 300)
+                    } else {
+                        view.controller.setCenter(startPoint)
+                        //view.controller.setZoom(10.0) // Zoomed in on Narvik
+                        view.controller.setZoom(8.5)
+                    }
+                    // Remove listener so it doesn't keep snapping back when the user moves the map
+                    view.removeOnLayoutChangeListener(this)
+                }
+            })
+
+            view.invalidate()
+        }
+    )
 }
 
 private fun imageUrlToDrawableName(imageUrl: String?): String? {
