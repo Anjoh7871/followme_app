@@ -283,7 +283,7 @@ fun FriendRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ProfileAvatar(
@@ -302,12 +302,29 @@ fun FriendRow(
                     color = colorScheme.onSurface
                 )
 
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
                     text = "Lv ${friend.level} · ${friend.totalPoints} pts · ${formatKm(friend.totalKm)} km",
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = friend.email,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "Tap to view profile",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colorScheme.primary,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
@@ -989,68 +1006,81 @@ fun FriendProfileContent(
     val colorScheme = MaterialTheme.colorScheme
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
 
-    Column(
+    Card(
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isDark) colorScheme.surfaceContainer else colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isDark) 2.dp else 4.dp
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            ProfileAvatar(
-                username = friend.username,
-                avatarUrl = friend.avatarUrl,
-                modifier = Modifier.size(74.dp)
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = friend.username,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = colorScheme.onSurface
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(18.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                ProfileAvatar(
+                    username = friend.username,
+                    avatarUrl = friend.avatarUrl,
+                    modifier = Modifier.size(74.dp)
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.width(16.dp))
 
-                Text(
-                    text = friend.email,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = colorScheme.onSurfaceVariant
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = friend.username,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = colorScheme.onSurface
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = friend.email,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = colorScheme.onSurfaceVariant
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = "Level ${friend.level}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = colorScheme.primary
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                MiniStatCard(
+                    title = "Points",
+                    value = friend.totalPoints.toString(),
+                    modifier = Modifier.weight(1f)
                 )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "Level ${friend.level}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colorScheme.primary
+                MiniStatCard(
+                    title = "Total km",
+                    value = formatKm(friend.totalKm),
+                    modifier = Modifier.weight(1f)
+                )
+                MiniStatCard(
+                    title = "Level",
+                    value = friend.level.toString(),
+                    modifier = Modifier.weight(1f)
                 )
             }
-        }
-
-        Spacer(modifier = Modifier.height(18.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            MiniStatCard(
-                title = "Points",
-                value = friend.totalPoints.toString(),
-                modifier = Modifier.weight(1f)
-            )
-            MiniStatCard(
-                title = "Total km",
-                value = formatKm(friend.totalKm),
-                modifier = Modifier.weight(1f)
-            )
-            MiniStatCard(
-                title = "Level",
-                value = friend.level.toString(),
-                modifier = Modifier.weight(1f)
-            )
         }
     }
 }

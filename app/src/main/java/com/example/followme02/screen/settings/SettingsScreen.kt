@@ -20,13 +20,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.followme02.viewmodel.SettingsViewModel
+import com.example.followme02.viewmodel.ThemeViewModel
 
 @Composable
 fun SettingsScreen(
     navController: NavController,
-    viewModel: SettingsViewModel = viewModel()
+    settingsviewModel: SettingsViewModel = viewModel(),
+    themeViewModel: ThemeViewModel = viewModel()
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by settingsviewModel.uiState.collectAsState()
+    val isDarkMode by themeViewModel.isDarkMode
     var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var newUsername by remember { mutableStateOf("") }
@@ -57,8 +60,8 @@ fun SettingsScreen(
         item {
             SettingsToggle(
                 "Dark mode",
-                state.isDarkMode,
-                { viewModel.toggleDarkMode() }
+                isDarkMode,
+                { themeViewModel.toggleDarkMode() }
             )
         }
 
@@ -69,7 +72,7 @@ fun SettingsScreen(
 
         item {
             SettingsItem("${state.language}") {
-                viewModel.setLanguage(
+                settingsviewModel.setLanguage(
                     if (state.language == "NO") "EN" else "NO"
                 )
             }
@@ -99,7 +102,7 @@ fun SettingsScreen(
 
         item {
             SettingsItem("Log out", destructive = true) {
-                viewModel.logout()
+                settingsviewModel.logout()
                 navController.navigate("login") {
                     popUpTo(0)
                 }
@@ -126,7 +129,7 @@ fun SettingsScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.updateUsername(newUsername)
+                        settingsviewModel.updateUsername(newUsername)
                         showEditDialog = false
                     }
                 ) {
@@ -162,7 +165,7 @@ fun SettingsScreen(
 
                         showDeleteDialog = false
 
-                        viewModel.deleteUser()
+                        settingsviewModel.deleteUser()
 
                         navController.navigate("login") {
 

@@ -36,6 +36,7 @@ import com.example.followme02.screen.workout.WorkoutScreen2
 import com.example.followme02.viewmodel.ProfileViewModel
 import com.example.followme02.viewmodel.SettingsViewModel
 import com.example.followme02.viewmodel.SocialViewModel
+import com.example.followme02.viewmodel.ThemeViewModel
 import com.example.followme02.viewmodel.WorkoutViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,6 +56,7 @@ fun FollowMeApp(
     val workoutViewModel: WorkoutViewModel = viewModel()
     val socialViewModel: SocialViewModel = viewModel()
     val settingsViewModel: SettingsViewModel = viewModel()
+    val themeViewModel: ThemeViewModel = viewModel()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -150,7 +152,8 @@ fun FollowMeApp(
             composable("settings") {
                 SettingsScreen(
                     navController = navController,
-                    viewModel = settingsViewModel
+                    settingsviewModel = settingsViewModel,
+                    themeViewModel = themeViewModel
                 )
             }
 

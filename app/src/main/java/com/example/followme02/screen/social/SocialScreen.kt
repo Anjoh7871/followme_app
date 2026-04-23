@@ -60,6 +60,22 @@ fun SocialScreen(
 
     val filteredTeams = viewModel.getFilteredTeams()
 
+    val previewFriends = if (state.friends.isEmpty()) {
+        listOf(
+            SocialFriendUi(
+                userId = 1,
+                username = "CocoChou",
+                email = "coco@email.com",
+                avatarUrl = null,
+                totalKm = 24.5,
+                totalPoints = 180,
+                level = 3
+            )
+        )
+    } else {
+        state.friends
+    }
+
     LaunchedEffect(Unit) {
         viewModel.loadSocialData()
     }
@@ -157,27 +173,18 @@ fun SocialScreen(
                                 item {
                                     SectionHeader(
                                         title = "Your Friends",
-                                        trailing = "${state.friends.size} friends"
+                                        trailing = "${previewFriends.size} friends"
                                     )
                                 }
 
-                                if (state.friends.isEmpty()) {
-                                    item {
-                                        EmptyStateCard(
-                                            title = "No friends yet",
-                                            description = "Search for users by email and start building your friend list."
-                                        )
-                                    }
-                                } else {
-                                    items(state.friends) { friend ->
-                                        FriendRow(
-                                            friend = friend,
-                                            onClick = {
-                                                selectedFriend = friend
-                                                currentSheet = SocialSheetType.FRIEND_PROFILE
-                                            }
-                                        )
-                                    }
+                                items(previewFriends) { friend ->
+                                    FriendRow(
+                                        friend = friend,
+                                        onClick = {
+                                            selectedFriend = friend
+                                            currentSheet = SocialSheetType.FRIEND_PROFILE
+                                        }
+                                    )
                                 }
 
                                 item {
