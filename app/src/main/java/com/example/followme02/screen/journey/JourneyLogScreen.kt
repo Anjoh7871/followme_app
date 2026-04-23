@@ -51,10 +51,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.followme02.R
 import com.example.followme02.model.JourneyUiModel
 import com.example.followme02.viewmodel.DestinationViewModel
 import com.example.followme02.viewmodel.JourneyViewModel
@@ -131,7 +133,7 @@ fun JourneyLogScreen(
                     item {
                         Column {
                             Text(
-                                text = "Journey Log",
+                                text = stringResource(R.string.journey_log),
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = colorScheme.onBackground
@@ -140,7 +142,7 @@ fun JourneyLogScreen(
                             Spacer(modifier = Modifier.height(6.dp))
 
                             Text(
-                                text = "Track your active route and review completed virtual journeys.",
+                                text = stringResource(R.string.track_your_active_route_and_review_completed_virtual_journeys),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = colorScheme.onSurfaceVariant
                             )
@@ -157,7 +159,7 @@ fun JourneyLogScreen(
 
                     item {
                         Text(
-                            text = "Completed journeys",
+                            text = stringResource(R.string.completed_journeys),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = colorScheme.onBackground
@@ -255,7 +257,7 @@ fun CurrentJourneyCard(
                 .padding(22.dp)
         ) {
             Text(
-                text = "Current journey",
+                text = stringResource(R.string.current_journey),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.onPrimaryContainer
@@ -265,7 +267,7 @@ fun CurrentJourneyCard(
 
             if (destinationName == null || safeTargetKm <= 0.0) {
                 Text(
-                    text = "No destination selected yet.",
+                    text =stringResource(R.string.no_destination),
                     style = MaterialTheme.typography.bodyLarge,
                     color = colorScheme.onPrimaryContainer.copy(alpha = 0.88f)
                 )
@@ -273,7 +275,7 @@ fun CurrentJourneyCard(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = "Go to Home and choose a destination in Virtual Journey.",
+                    text = stringResource(R.string.go_to_home_and_choose_a_destination_in_virtual_journey),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onPrimaryContainer.copy(alpha = 0.74f)
                 )
@@ -309,7 +311,11 @@ fun CurrentJourneyCard(
                 Spacer(modifier = Modifier.height(14.dp))
 
                 Text(
-                    text = "$remainingKmText km left to reach $destinationName",
+                    text = stringResource(
+                        R.string.km_left_to_reach,
+                        remainingKmText,
+                        destinationName
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onPrimaryContainer.copy(alpha = 0.82f)
                 )
@@ -339,7 +345,7 @@ fun SortSection(
                 .padding(20.dp)
         ) {
             Text(
-                text = "Sort completed journeys",
+                text = stringResource(R.string.sort_completed_journeys),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.onSurface
@@ -352,21 +358,21 @@ fun SortSection(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 SortChip(
-                    label = "Date",
+                    label = stringResource(R.string.date),
                     icon = Icons.Default.CalendarToday,
                     selected = selectedSort == SortType.DATE,
                     onClick = { onSortSelected(SortType.DATE) }
                 )
 
                 SortChip(
-                    label = "Distance",
+                    label = stringResource(R.string.distance),
                     icon = Icons.Default.Route,
                     selected = selectedSort == SortType.KM,
                     onClick = { onSortSelected(SortType.KM) }
                 )
 
                 SortChip(
-                    label = "Name",
+                    label = stringResource(R.string.name),
                     icon = Icons.Default.SortByAlpha,
                     selected = selectedSort == SortType.NAME,
                     onClick = { onSortSelected(SortType.NAME) }
@@ -489,7 +495,7 @@ fun JourneyHistoryCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Completed: ${formatJourneyDate(journey.completedAt)}",
+                text = stringResource(R.string.completed, formatJourneyDate(journey.completedAt)),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colorScheme.onSurfaceVariant
             )
@@ -516,7 +522,7 @@ fun CompletedJourneyDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
         title = {
@@ -548,7 +554,7 @@ fun CompletedJourneyDialog(
                 }
 
                 Text(
-                    text = journey.factText ?: "No fun fact available.",
+                    text = journey.factText ?: stringResource(R.string.no_fun_fact),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onSurface
                 )
@@ -578,7 +584,7 @@ fun EmptyJourneyHistoryCard() {
                 .padding(20.dp)
         ) {
             Text(
-                text = "No completed journeys yet",
+                text = stringResource(R.string.no_completed_journeys),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.onSurface
@@ -587,7 +593,7 @@ fun EmptyJourneyHistoryCard() {
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Finish your first virtual route and it will show up here.",
+                text = stringResource(R.string.finish_your_first_virtual_route_and_it_will_show_up_here),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colorScheme.onSurfaceVariant
             )

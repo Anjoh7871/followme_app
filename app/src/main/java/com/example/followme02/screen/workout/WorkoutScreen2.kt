@@ -49,8 +49,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.followme02.R
 import com.example.followme02.model.ExerciseType
 import com.example.followme02.model.Workout
 import com.example.followme02.viewmodel.WorkoutViewModel
@@ -154,16 +156,16 @@ fun WorkoutScreen2(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Training Sessions", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.training_sessions), style = MaterialTheme.typography.headlineMedium)
 
         Text(
-            "Her kan brukeren registrere treningsøkter og se tidligere økter.",
+            stringResource(R.string.registrer_trenings),
             style = MaterialTheme.typography.bodyMedium
         )
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(12.dp)) {
-                Text("Existing sessions", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.existing_sessions), style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.width(8.dp))
 
                 when {
@@ -172,7 +174,7 @@ fun WorkoutScreen2(
                     }
 
                     workoutList.isEmpty() -> {
-                        Text("No sessions registered yet.")
+                        Text(stringResource(R.string.no_sessions_registered_yet))
                     }
 
                     else -> {
@@ -211,7 +213,7 @@ fun WorkoutScreen2(
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth(),
-                label = { Text("Choose activity") }
+                label = { Text(stringResource(R.string.choose_activity)) }
             )
 
             ExposedDropdownMenu(
@@ -219,28 +221,28 @@ fun WorkoutScreen2(
                 onDismissRequest = { typeExpanded = false }
             ) {
                 DropdownMenuItem(
-                    text = { Text("Walk") },
+                    text = { Text(stringResource(R.string.walk)) },
                     onClick = {
                         selectedType = ExerciseType.WALK
                         typeExpanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Run") },
+                    text = { Text(stringResource(R.string.run)) },
                     onClick = {
                         selectedType = ExerciseType.RUN
                         typeExpanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Cycle") },
+                    text = { Text(stringResource(R.string.cycle)) },
                     onClick = {
                         selectedType = ExerciseType.CYCLE
                         typeExpanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Ski") },
+                    text = { Text(stringResource(R.string.ski)) },
                     onClick = {
                         selectedType = ExerciseType.SKI
                         typeExpanded = false
@@ -249,7 +251,7 @@ fun WorkoutScreen2(
             }
         }
 
-        Text("Distance (km)", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.distance_km), style = MaterialTheme.typography.titleMedium)
 
         DistanceStepper(
             value = distanceKm,
@@ -282,7 +284,7 @@ fun WorkoutScreen2(
                     Icon(Icons.Default.DateRange, contentDescription = null)
                 },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Choose date") }
+                label = { Text(stringResource(R.string.choose_date)) }
             )
         }
 
@@ -319,12 +321,12 @@ fun WorkoutScreen2(
                             showDateDialog = false
                         }
                     ) {
-                        Text("OK")
+                        Text(stringResource(R.string.ok))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showDateDialog = false }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             ) {
@@ -340,14 +342,14 @@ fun WorkoutScreen2(
                 onClick = { addWorkout() },
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Add")
+                Text(stringResource(R.string.add))
             }
 
             Button(
                 onClick = { updateWorkout() },
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Update")
+                Text(stringResource(R.string.update))
             }
         }
 
@@ -359,14 +361,14 @@ fun WorkoutScreen2(
                 onClick = { deleteWorkout() },
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Delete")
+                Text(stringResource(R.string.delete))
             }
 
             OutlinedButton(
                 onClick = { clearForm() },
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Clear")
+                Text(stringResource(R.string.clear))
             }
         }
 
@@ -377,7 +379,7 @@ fun WorkoutScreen2(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Back to Home")
+            Text(stringResource(R.string.back_to_home))
         }
 
         if (vmMessage != null) {
@@ -419,10 +421,10 @@ private fun SessionItem(
         }
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-            Text("Type: ${workout.exerciseType}")
-            Text("Distance: ${workout.distanceKm} km")
-            Text("Duration: ${workout.durationMinutes} min")
-            Text("Date: ${workout.date}")
+            Text(stringResource(R.string.type, workout.exerciseType))
+            Text(stringResource(R.string.distance_km, workout.distanceKm))
+            Text(stringResource(R.string.duration_min, workout.durationMinutes))
+            Text(stringResource(R.string.date_parameter, workout.date))
         }
     }
 }
@@ -462,10 +464,10 @@ private fun DistanceStepper(
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(onClick = { onValueChange(value + step) }) {
-                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Increase")
+                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.increase))
                 }
                 IconButton(onClick = { onValueChange(max(minValue, value - step)) }) {
-                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Decrease")
+                    Icon(Icons.Default.KeyboardArrowDown, contentDescription =stringResource(R.string.decrease))
                 }
             }
         }
@@ -497,7 +499,7 @@ private fun DurationStepper(
                         onValueChange(max(minValue, parsed))
                     }
                 },
-                label = { Text("minutes") },
+                label = { Text(stringResource(R.string.minutes)) },
                 singleLine = true,
                 modifier = Modifier.weight(1f)
             )
@@ -506,10 +508,10 @@ private fun DurationStepper(
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(onClick = { onValueChange(value + step) }) {
-                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Increase")
+                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.increase))
                 }
                 IconButton(onClick = { onValueChange(max(minValue, value - step)) }) {
-                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Decrease")
+                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = stringResource(R.string.decrease))
                 }
             }
         }

@@ -46,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.res.stringResource
+import com.example.followme02.R
 import com.example.followme02.ui.theme.achievementUnlockedBottomTextDark
 import com.example.followme02.ui.theme.achievementUnlockedBottomTextLight
 import com.example.followme02.ui.theme.achievementUnlockedBorderDark
@@ -91,7 +93,7 @@ fun AchievementScreen(navController: NavController) {
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Gamification Hub 🎮",
+                    text = stringResource(R.string.gamification_hub),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.ExtraBold,
                     color = colorScheme.onBackground
@@ -100,7 +102,7 @@ fun AchievementScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Track your achievements and compete with others!",
+                    text = stringResource(R.string.track_achievements),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onSurfaceVariant
                 )
@@ -172,7 +174,7 @@ private fun AchievementTabs(
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
             ) {
                 Text(
-                    text = "Achievements",
+                    text = stringResource(R.string.achievements),
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -182,7 +184,7 @@ private fun AchievementTabs(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "Leaderboard",
+                    text = stringResource(R.string.leaderboard),
                     color = colorScheme.onSurfaceVariant
                 )
             }
@@ -251,14 +253,14 @@ private fun ProgressOverviewCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Your Progress",
+                    text = stringResource(R.string.your_progress),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = titleColor
                 )
 
                 Text(
-                    text = "$totalUnlocked / $totalAchievements Unlocked",
+                    text = stringResource(R.string.part_unlocked, totalUnlocked,totalAchievements),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = subtitleColor
@@ -391,7 +393,7 @@ fun AchievementItem(item: AchievementUiState) {
 
             if (item.isUnlocked) {
                 Text(
-                    text = "Unlocked ${item.unlockedDate}",
+                    text = stringResource(R.string.unlocked, item.unlockedDate?: "-"),
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.SemiBold,
                     color = unlockedBottom

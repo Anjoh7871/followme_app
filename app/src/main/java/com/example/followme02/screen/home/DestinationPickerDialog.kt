@@ -29,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
+import androidx.compose.ui.res.stringResource
+import com.example.followme02.R
 
 @Composable
 fun DestinationPickerDialog(
@@ -58,7 +60,7 @@ fun DestinationPickerDialog(
                     value = searchText,
                     onValueChange = { viewModel.onSearchTextChanged(it) },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Search destination") },
+                    label = { Text(stringResource(R.string.search_destination)) },
                     singleLine = true
                 )
 
@@ -96,7 +98,7 @@ fun DestinationPickerDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         }
     )
@@ -149,7 +151,7 @@ fun DestinationRow(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "${destination.kmThreshold.toInt()} km from Narvik",
+                    text = stringResource(R.string.km_from_narvik, destination.kmThreshold.toInt()),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.primary
                 )
@@ -157,7 +159,7 @@ fun DestinationRow(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Select this destination",
+                    text = stringResource(R.string.select_destination),
                     style = MaterialTheme.typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
                 )

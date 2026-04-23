@@ -29,10 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.followme02.R
 import com.example.followme02.data.repository.LeaderboardUser
 import com.example.followme02.viewmodel.LeaderboardViewModel
 
@@ -69,7 +71,7 @@ fun LeaderboardScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Gamification Hub 🎮",
+                    text = stringResource(R.string.gamification_hub),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.ExtraBold,
                     color = colorScheme.onBackground
@@ -78,7 +80,7 @@ fun LeaderboardScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Compete with your friends on total points!",
+                    text = stringResource(R.string.compete_with_your_friends_on_total_points),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onSurfaceVariant
                 )
@@ -107,7 +109,7 @@ fun LeaderboardScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "Error: $errorMessage",
+                                text = stringResource(R.string.error, errorMessage),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = colorScheme.error
                             )
@@ -163,7 +165,7 @@ private fun LeaderboardTabs(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "Achievements",
+                    text = stringResource(R.string.achievements),
                     color = colorScheme.onSurfaceVariant
                 )
             }
@@ -179,7 +181,7 @@ private fun LeaderboardTabs(
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
             ) {
                 Text(
-                    text = "Leaderboard",
+                    text = stringResource(R.string.leaderboard),
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -270,7 +272,11 @@ fun LeaderboardItem(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Level ${user.currentLevel} • ${formatKm(user.totalAccumulatedKm)} km",
+                    text = stringResource(
+                        R.string.level_km,
+                        user.currentLevel,
+                        formatKm(user.totalAccumulatedKm)
+                    ),
                     style = MaterialTheme.typography.bodyLarge,
                     color = subtextColor
                 )
@@ -306,7 +312,7 @@ private fun EmptyLeaderboardCard() {
                 .padding(20.dp)
         ) {
             Text(
-                text = "No users found on the leaderboard yet.",
+                text = stringResource(R.string.no_users_found_on_the_leaderboard_yet),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.onSurface
@@ -315,7 +321,7 @@ private fun EmptyLeaderboardCard() {
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "When users start earning points, they will appear here.",
+                text = stringResource(R.string.when_users_start_earning_points_they_will_appear_here),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colorScheme.onSurfaceVariant
             )

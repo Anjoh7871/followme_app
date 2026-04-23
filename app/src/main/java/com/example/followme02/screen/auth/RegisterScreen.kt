@@ -15,11 +15,13 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
+import com.example.followme02.R
 
 // Passordkrav
 fun isValidPassword(password: String): Boolean {
@@ -59,7 +61,7 @@ fun RegisterScreen(
     ) {
 
         Text(
-            text = "Register",
+            text = stringResource(R.string.register),
             style = MaterialTheme.typography.headlineLarge
         )
 
@@ -69,7 +71,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Username") },
+            label = { Text(stringResource(R.string.username)) },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
@@ -87,7 +89,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.email))},
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
@@ -105,7 +107,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text(stringResource(R.string.password))},
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             ),
@@ -185,7 +187,7 @@ fun RegisterScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Register")
+            Text(stringResource(R.string.register))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -199,7 +201,7 @@ fun RegisterScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Har du allerede en konto? Logg inn")
+            Text(stringResource(R.string.already_have_account))
         }
     }
 }

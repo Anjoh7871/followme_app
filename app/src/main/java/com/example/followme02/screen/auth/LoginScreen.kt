@@ -10,9 +10,11 @@ import androidx.navigation.NavController
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.input.KeyboardType
+import com.example.followme02.R
 
 @Composable
 fun LoginScreen(
@@ -42,7 +44,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Login",
+            text = stringResource(R.string.login),
             style = MaterialTheme.typography.headlineLarge
         )
 
@@ -51,7 +53,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.email)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email
             ),
@@ -63,7 +65,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text(stringResource(R.string.password))},
             visualTransformation =
                 if (passwordVisible) VisualTransformation.None
                 else PasswordVisualTransformation(),
@@ -79,7 +81,7 @@ fun LoginScreen(
                 ) {
                     Icon(
                         imageVector = image,
-                        contentDescription = "Toggle password visibility"
+                        contentDescription = stringResource(R.string.toggle_password_visibility)
                     )
                 }
             },
@@ -114,7 +116,7 @@ fun LoginScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Don't have an account? Register")
+            Text(stringResource(R.string.no_account_register))
         }
     }
 }

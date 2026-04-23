@@ -2,42 +2,69 @@
 
     <!-- App -->
     <string name="app_name">FollowMe02</string>
+    <!-- - LOGIN - -->
+    <string name="login">Login</string>
+    <string name="login_success">Login successful</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="toggle_password_visibility">Toggle password visibility</string>
+    <string name="no_account_register">Don not have an account? Register</string>
 
-    <!-- ================= WORKOUT DRAFT DEMO ================= -->
+    <!-- - REGISTER - -->
+    <string name="register">Register</string>
+    <string name="register_success">User registered</string>
+    <string name="username">Username</string>
+    <string name="username_empty">Username cannot be empty</string>
+    <string name="email_empty">Email cannot be empty</string>
+    <string name="password_invalid">Password must be at least 8 characters, include uppercase and number</string>
+    <string name="already_have_account">Already have an account? Login</string>
 
-    <!-- Screen -->
-    <string name="workout_draft_demo_title">Workout draft demo</string>
+    <!-- - HOME - -->
+    <string name="add_workout">Add Workout</string>
+    <string name="choose_destination">Choose destination</string>
+    <string name="close">Close</string>
+    <string name="congratulations">Congratulations! 🎉</string>
+    <string name="completed_journey">"You completed your journey to %1$s !</string>
+    <string name="no_fun_fact">No fun fact available.</string>
+    <string name="change_destination">Change destination?</string>
+    <string name="change_destination_question">You have already started this journey. If you choose a new destination now, you will lose your current progress.</string>
+    <string name="ok">ok</string>
+    <string name="welcome_back">Welcome back, %1$s! 👋</string>
+    <string name="keep_moving_toward_your_destination">Keep moving toward your destination!</string>
+    <string name="level">Level</string>
+    <string name="points">Points</string>
+    <string name="virtual_journey">Your Virtual Journey</string>
+    <string name="destination">Destination: %1$s</string>
+    <string name="map_route_placeholder">Map Route Placeholder</string>
+    <string name="search_destination">Search destination</string>
+    <string name="select_destination">Select this destination</string>
+    <string name="km_from_narvik">%1$d km from Narvik</string>
 
-    <!-- Distance -->
-    <string name="label_distance_km">Distance (km)</string>
-    <string name="placeholder_distance">e.g. 3.5 or 3,5</string>
+    <!-- - ACHIEVEMENT - -->
+    <string name="gamification_hub">Gamification Hub 🎮</string>
+    <string name="track_achievements">Track your achievements and compete with others!</string>
+    <string name="achievements">Achievements</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="your_progress">Your Progress</string>
+    <string name="unlocked">Unlocked %1$s</string>
+    <string name="part_unlocked">%1$s / %2$s Unlocked</string>
 
-    <!-- Date -->
-    <string name="label_date_temp">Date (midlertidig)</string>
-    <string name="placeholder_date_millis">f.eks. 1700000000000 (millis)</string>
+    <!-- - JOURNEY LOG - -->
+    <string name="journey_log">Journey Log</string>
+    <string name="completed_journeys">Completed journeys</string>
+    <string name="current_journey">Current journey</string>
+    <string name="no_destination">No destination selected yet.</string>
+    <string name="no_completed_journeys">No completed journeys yet</string>
+    <string name="track_your_active_route_and_review_completed_virtual_journeys">Track your active route and review completed virtual journeys.</string>
+    <string name="go_to_home_and_choose_a_destination_in_virtual_journey">Go to Home and choose a destination in Virtual Journey.</string>
+    <string name="km_left_to_reach">%1$s km left to reach %2$s</string>
+    <string name="sort_completed_journeys">Sort completed journeys</string>
+    <string name="name">Name</string>
+    <string name="completed">Completed: %1$s</string>
+    <string name="finish_your_first_virtual_route_and_it_will_show_up_here">Finish your first virtual route and it will show up here.</string>
 
-    <!-- Type -->
-    <string name="label_activity_type">Activity type</string>
-    <string name="placeholder_activity_type">f.eks. Run / Walk / Strength</string>
 
-    <!-- Button -->
-    <string name="btn_save_to_draft">Save to draft</string>
-
-    <!-- Errors -->
-    <string name="error_invalid_date_millis">Dato er ugyldig akkurat nå. Bruk millis midlertidig.</string>
-    <string name="error_activity_type_required">Treningstype må fylles ut.</string>
-    <string name="error_distance_required">Distance is required.</string>
-    <string name="error_distance_invalid_number">Invalid number. Use e.g. 3.5</string>
-    <string name="error_distance_must_be_gt_zero">Distance must be greater than 0.</string>
-
-    <!-- Draft output -->
-    <string name="draft_distance_prefix">Draft distance:</string>
-    <string name="draft_date_prefix">Draft dateTimeMillis:</string>
-    <string name="draft_type_prefix">Draft activityType:</string>
-    <string name="dash">-</string>
-    <string name="km_suffix">km</string>
-
-    <!-- ================= PROFILE SCREEN ================= -->
+    <!-- - PROFILE - -->
 
     <!-- Header -->
     <string name="profile_title">Your Profile 👤</string>
@@ -80,5 +107,144 @@
     <string name="profile_points_icon_content_description">Points</string>
     <string name="profile_edit_icon_content_description">Edit profile</string>
     <string name="profile_achievements_icon_content_description">Achievements</string>
+
+    <!-- extra -->
+    <string name="edit_profile">Edit Profile</string>
+    <string name="training_stats">Training Stats</string>
+    <string name="total_km">Total km</string>
+    <string name="workouts">Workouts</string>
+    <string name="current_streak">Current streak</string>
+    <string name="longest_streak">Longest streak</string>
+    <string name="team">Team</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="logout">Log out</string>
+    <string name="view_your_current_journey_and_completed_routes">View your current journey and completed routes.</string>
+
+
+    <!-- - SETTINGS - -->
+    <string name="edit_username">Edit username</string>
+    <string name="appearance">Appearance</string>
+    <string name="language">Language</string>
+    <string name="blocked_users">Blocked users</string>
+    <string name="delete_user">Delete user</string>
+    <string name="delete_question">Are you sure you want to delete your account? This action cannot be undone.</string>
+    <string name="save">Save</string>
+    <string name="new_username">New username</string>
+    <string name="log_out">Log out</string>
+    <string name="account">Account</string>
+    <string name="view_blocked_users">View blocked users</string>
+
+    <!-- - SOCIAL - -->
+    <string name="search">Search</string>
+    <string name="your_friends">Your Friends</string>
+    <string name="your_team">Your Team</string>
+    <string name="no_team">You are not in a team</string>
+    <string name="create_team">Create a team</string>
+    <string name="notifications">Notifications</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="find_user_by_email">Find user by email</string>
+    <string name="example_email_com">example@email.com</string>
+    <string name="search_result">Search result</string>
+    <string name="friends">%1$d friends</string>
+    <string name="create_a_team_below_or_join_an_existing_one">Create a team below or join an existing one.</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="updates">%1$d updates</string>
+    <string name="no_recent_team_activity_yet">No recent team activity yet</string>
+    <string name="when_someone_joins_your_team_it_will_show_up_here">When someone joins your team, it will show up here.</string>
+    <string name="team_name">Team name...</string>
+    <string name="find_a_team">Find a team</string>
+    <string name="search_teams">Search teams...</string>
+    <string name="filter">Filter</string>
+    <string name="available_teams">Available Teams</string>
+    <string name="teams">%1$d teams</string>
+    <string name="no_teams_found">No teams found</string>
+    <string name="try_another_team_name">Try another team name.</string>
+    <string name="no_notifications">No notifications</string>
+    <string name="right_now_notifications_are_based_on_real_friend_requests_from_the_database">Right now notifications are based on real friend requests from the database.</string>
+    <string name="friend_request">Friend request</string>
+    <string name="wants_to_be_your_friend">%1$s wants to be your friend</string>
+    <string name="friend_requests">Friend Requests</string>
+    <string name="no_friend_requests">No friend requests</string>
+    <string name="you_are_all_caught_up">You are all caught up.</string>
+    <string name="friend_profile">Friend Profile</string>
+    <string name="social">Social</string>
+    <string name="see_friends_search_for_users_manage_teams_and_track_social_activity">See friends, search for users, manage teams, and track social activity.</string>
+
+
+    <!-- - TEAM - -->
+    <string name="go_back">Go back</string>
+    <string name="leave_team">Leave team</string>
+    <string name="cancel">Cancel</string>
+    <string name="team_journey">Team Journey</string>
+
+    <!-- - WORKOUT - -->
+    <string name="training_sessions">Training Sessions</string>
+    <string name="distance">Distance (km)</string>
+    <string name="duration">Duration (minutes)</string>
+    <string name="date">Date</string>
+    <string name="add">Add</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="clear">Clear</string>
+    <string name="minutes">minutes</string>
+    <string name="increase">Increase</string>
+    <string name="decrease">Decrease</string>
+    <string name="type">Type: %1$s</string>
+    <string name="distance_km">Distance: %1$s km</string>
+    <string name="duration_min">Duration: %1$d min</string>
+    <string name="date_parameter">Date: %1$s</string>
+    <string name="back_to_home">Back to Home</string>
+    <string name="home">home</string>
+    <string name="choose_date">Choose date</string>
+    <string name="ski">Ski</string>
+    <string name="cycle">Cycle</string>
+    <string name="run">Run</string>
+    <string name="walk">Walk</string>
+    <string name="choose_activity">Choose activity</string>
+    <string name="no_sessions_registered_yet">No sessions registered yet.</string>
+    <string name="existing_sessions">Existing sessions</string>
+    <string name="registrer_trenings">Her kan brukeren registrere treningsøkter og se tidligere økter.</string>
+
+
+    <!-- ================= WORKOUT DRAFT DEMO ================= -->
+
+    <!-- Screen -->
+    <string name="workout_draft_demo_title">Workout draft demo</string>
+
+    <!-- Distance -->
+    <string name="label_distance_km">Distance (km)</string>
+    <string name="placeholder_distance">e.g. 3.5 or 3,5</string>
+
+    <!-- Date -->
+    <string name="label_date_temp">Date (midlertidig)</string>
+    <string name="placeholder_date_millis">f.eks. 1700000000000 (millis)</string>
+
+    <!-- Type -->
+    <string name="label_activity_type">Activity type</string>
+    <string name="placeholder_activity_type">f.eks. Run / Walk / Strength</string>
+
+    <!-- Button -->
+    <string name="btn_save_to_draft">Save to draft</string>
+
+    <!-- Errors -->
+    <string name="error_invalid_date_millis">Dato er ugyldig akkurat nå. Bruk millis midlertidig.</string>
+    <string name="error_activity_type_required">Treningstype må fylles ut.</string>
+    <string name="error_distance_required">Distance is required.</string>
+    <string name="error_distance_invalid_number">Invalid number. Use e.g. 3.5</string>
+    <string name="error_distance_must_be_gt_zero">Distance must be greater than 0.</string>
+
+    <!-- Draft output -->
+    <string name="draft_distance_prefix">Draft distance:</string>
+    <string name="draft_date_prefix">Draft dateTimeMillis:</string>
+    <string name="draft_type_prefix">Draft activityType:</string>
+    <string name="dash">-</string>
+    <string name="km_suffix">km</string>
+
+    <!-- - Leaderboard - -->
+    <string name="compete_with_your_friends_on_total_points">Compete with your friends on total points!</string>
+    <string name="error">Error: %1$s</string>
+    <string name="level_km">Level %1$d • %2$s km</string>
+    <string name="no_users_found_on_the_leaderboard_yet">No users found on the leaderboard yet.</string>
+    <string name="when_users_start_earning_points_they_will_appear_here">When users start earning points, they will appear here.</string>
 
 </resources>

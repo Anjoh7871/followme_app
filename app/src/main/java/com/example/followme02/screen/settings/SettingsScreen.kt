@@ -16,9 +16,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.followme02.R
 import com.example.followme02.viewmodel.SettingsViewModel
 import com.example.followme02.viewmodel.ThemeViewModel
 
@@ -43,23 +45,23 @@ fun SettingsScreen(
 
         // ---------------- EDIT PROFILE ----------------
         item {
-            SectionTitle("Edit profile")
+            SectionTitle(stringResource(R.string.edit_profile))
         }
 
         item {
-            SettingsItem("Edit username") {
+            SettingsItem(stringResource(R.string.edit_username)) {
                 showEditDialog = true
             }
         }
 
         // ---------------- APPEARANCE ----------------
         item {
-            SectionTitle("Appearance")
+            SectionTitle(stringResource(R.string.appearance))
         }
 
         item {
             SettingsToggle(
-                "Dark mode",
+                stringResource(R.string.dark_mode),
                 isDarkMode,
                 { themeViewModel.toggleDarkMode() }
             )
@@ -67,7 +69,7 @@ fun SettingsScreen(
 
         // ---------------- LANGUAGE ----------------
         item {
-            SectionTitle("Language")
+            SectionTitle(stringResource(R.string.language))
         }
 
         item {
@@ -80,28 +82,29 @@ fun SettingsScreen(
 
         // ---------------- BLOCKED USERS ----------------
         item {
-            SectionTitle("Blocked users")
+            SectionTitle(stringResource(R.string.blocked_users))
         }
 
         item {
-            SettingsItem("View blocked users") {
+            SettingsItem(stringResource(R.string.view_blocked_users)) {
                 navController.navigate("blockedUsers")
             }
         }
 
         // ---------------- ACCOUNT ----------------
         item {
-            SectionTitle("Account")
+            SectionTitle(stringResource(R.string.account))
         }
 
         item {
-            SettingsItem("Delete user", destructive = true) {
+            SettingsItem(stringResource(R.string.delete_user), destructive = true) {
+
                 showDeleteDialog = true
             }
         }
 
         item {
-            SettingsItem("Log out", destructive = true) {
+            SettingsItem(stringResource(R.string.log_out), destructive = true) {
                 settingsviewModel.logout()
                 navController.navigate("login") {
                     popUpTo(0)
@@ -122,7 +125,7 @@ fun SettingsScreen(
                 OutlinedTextField(
                     value = newUsername,
                     onValueChange = { newUsername = it },
-                    label = { Text("New username") }
+                    label = { Text(stringResource(R.string.new_username)) }
                 )
             },
 
@@ -133,7 +136,7 @@ fun SettingsScreen(
                         showEditDialog = false
                     }
                 ) {
-                    Text("Save")
+                    Text(stringResource(R.string.save))
                 }
             },
 
@@ -141,7 +144,7 @@ fun SettingsScreen(
                 TextButton(
                     onClick = { showEditDialog = false }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -152,11 +155,11 @@ fun SettingsScreen(
             onDismissRequest = { showDeleteDialog = false },
 
             title = {
-                Text("Delete account")
+                Text(stringResource(R.string.delete_user))
             },
 
             text = {
-                Text("Are you sure you want to delete your account? This action cannot be undone.")
+                Text(stringResource(R.string.delete_question))
             },
 
             confirmButton = {
@@ -176,7 +179,7 @@ fun SettingsScreen(
                     }
                 ) {
                     Text(
-                        "Delete",
+                        stringResource(R.string.delete),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -186,7 +189,7 @@ fun SettingsScreen(
                 TextButton(
                     onClick = { showDeleteDialog = false }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )

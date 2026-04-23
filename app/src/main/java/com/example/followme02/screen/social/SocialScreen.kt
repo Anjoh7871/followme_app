@@ -33,10 +33,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.followme02.R
 import com.example.followme02.viewmodel.SocialViewModel
 
 private enum class SocialSheetType {
@@ -118,7 +120,7 @@ fun SocialScreen(
 
                     if (state.errorMessage != null) {
                         EmptyStateCard(
-                            title = "Something went wrong",
+                            title = stringResource(R.string.something_went_wrong),
                             description = state.errorMessage
                         )
 
@@ -141,11 +143,11 @@ fun SocialScreen(
 
                                 item {
                                     SocialSearchCard(
-                                        title = "Find user by email",
+                                        title = stringResource(R.string.find_user_by_email),
                                         value = state.friendSearchQuery,
                                         onValueChange = viewModel::onFriendSearchQueryChange,
-                                        placeholder = "example@email.com",
-                                        buttonText = "Search",
+                                        placeholder = stringResource(R.string.example_email_com),
+                                        buttonText = stringResource(R.string.search),
                                         onButtonClick = viewModel::searchUserByEmail
                                     )
                                 }
@@ -164,7 +166,7 @@ fun SocialScreen(
                                 if (state.friendSearchMessage != null) {
                                     item {
                                         EmptyStateCard(
-                                            title = "Search result",
+                                            title = stringResource(R.string.search_result),
                                             description = state.friendSearchMessage
                                         )
                                     }
@@ -172,8 +174,11 @@ fun SocialScreen(
 
                                 item {
                                     SectionHeader(
-                                        title = "Your Friends",
-                                        trailing = "${previewFriends.size} friends"
+                                        title = stringResource(R.string.your_friends),
+                                        trailing = stringResource(
+                                            R.string.friends,
+                                            previewFriends.size
+                                        )
                                     )
                                 }
 
@@ -198,7 +203,7 @@ fun SocialScreen(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 item {
-                                    SectionHeader(title = "Your Team")
+                                    SectionHeader(title = stringResource(R.string.your_team))
                                 }
 
                                 item {
@@ -217,8 +222,8 @@ fun SocialScreen(
                                         }
                                     } else {
                                         EmptyStateCard(
-                                            title = "You are not in a team",
-                                            description = "Create a team below or join an existing one."
+                                            title = stringResource(R.string.no_team),
+                                            description = stringResource(R.string.create_a_team_below_or_join_an_existing_one)
                                         )
                                     }
                                 }
@@ -226,16 +231,19 @@ fun SocialScreen(
 
                                 item {
                                     SectionHeader(
-                                        title = "Recent Activity",
-                                        trailing = "${state.recentTeamActivity.size} updates"
+                                        title = stringResource(R.string.recent_activity),
+                                        trailing = stringResource(
+                                            R.string.updates,
+                                            state.recentTeamActivity.size
+                                        )
                                     )
                                 }
 
                                 if (state.recentTeamActivity.isEmpty()) {
                                     item {
                                         EmptyStateCard(
-                                            title = "No recent team activity yet",
-                                            description = "When someone joins your team, it will show up here."
+                                            title = stringResource(R.string.no_recent_team_activity_yet),
+                                            description = stringResource(R.string.when_someone_joins_your_team_it_will_show_up_here)
                                         )
                                     }
                                 } else {
@@ -249,11 +257,11 @@ fun SocialScreen(
 
                                 item {
                                     SocialSearchCard(
-                                        title = "Create a team",
+                                        title = stringResource(R.string.create_team),
                                         value = state.createTeamName,
                                         onValueChange = viewModel::onCreateTeamNameChange,
-                                        placeholder = "Team name...",
-                                        buttonText = "Create team",
+                                        placeholder = stringResource(R.string.team_name),
+                                        buttonText = stringResource(R.string.create_team),
                                         onButtonClick = viewModel::createTeam,
                                         leadingIcon = Icons.Default.Groups
                                     )
@@ -261,27 +269,30 @@ fun SocialScreen(
 
                                 item {
                                     SocialSearchCard(
-                                        title = "Find a team",
+                                        title = stringResource(R.string.find_a_team),
                                         value = state.teamSearchQuery,
                                         onValueChange = viewModel::onTeamSearchQueryChange,
-                                        placeholder = "Search teams...",
-                                        buttonText = "Filter",
+                                        placeholder = stringResource(R.string.search_teams),
+                                        buttonText = stringResource(R.string.filter),
                                         onButtonClick = { }
                                     )
                                 }
 
                                 item {
                                     SectionHeader(
-                                        title = "Available Teams",
-                                        trailing = "${filteredTeams.size} teams"
+                                        title = stringResource(R.string.available_teams),
+                                        trailing = stringResource(
+                                            R.string.teams,
+                                            filteredTeams.size
+                                        )
                                     )
                                 }
 
                                 if (filteredTeams.isEmpty()) {
                                     item {
                                         EmptyStateCard(
-                                            title = "No teams found",
-                                            description = "Try another team name."
+                                            title = stringResource(R.string.no_teams_found),
+                                            description = stringResource(R.string.try_another_team_name)
                                         )
                                     }
                                 } else {
@@ -310,7 +321,7 @@ fun SocialScreen(
             containerColor = colorScheme.surface
         ) {
             BottomSheetHeader(
-                title = "Notifications",
+                title = stringResource(R.string.notifications),
                 onClose = { currentSheet = SocialSheetType.NONE }
             )
 
@@ -321,14 +332,17 @@ fun SocialScreen(
             ) {
                 if (state.friendRequests.isEmpty()) {
                     EmptyStateCard(
-                        title = "No notifications",
-                        description = "Right now notifications are based on real friend requests from the database."
+                        title = stringResource(R.string.no_notifications),
+                        description = stringResource(R.string.right_now_notifications_are_based_on_real_friend_requests_from_the_database)
                     )
                 } else {
                     state.friendRequests.forEach { request ->
                         NotificationRow(
-                            title = "Friend request",
-                            description = "${request.username} wants to be your friend"
+                            title = stringResource(R.string.friend_request),
+                            description = stringResource(
+                                R.string.wants_to_be_your_friend,
+                                request.username
+                            )
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                     }
@@ -345,7 +359,7 @@ fun SocialScreen(
             containerColor = colorScheme.surface
         ) {
             BottomSheetHeader(
-                title = "Friend Requests",
+                title = stringResource(R.string.friend_requests),
                 onClose = { currentSheet = SocialSheetType.NONE }
             )
 
@@ -356,8 +370,8 @@ fun SocialScreen(
             ) {
                 if (state.friendRequests.isEmpty()) {
                     EmptyStateCard(
-                        title = "No friend requests",
-                        description = "You are all caught up."
+                        title = stringResource(R.string.no_friend_requests),
+                        description = stringResource(R.string.you_are_all_caught_up)
                     )
                 } else {
                     state.friendRequests.forEach { request ->
@@ -384,7 +398,7 @@ fun SocialScreen(
             containerColor = colorScheme.surface
         ) {
             BottomSheetHeader(
-                title = "Friend Profile",
+                title = stringResource(R.string.friend_profile),
                 onClose = {
                     currentSheet = SocialSheetType.NONE
                     selectedFriend = null
@@ -412,7 +426,7 @@ private fun SocialHeader(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Social",
+                text = stringResource(R.string.social),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
                 color = colorScheme.onBackground
@@ -421,7 +435,7 @@ private fun SocialHeader(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "See friends, search for users, manage teams, and track social activity.",
+                text = stringResource(R.string.see_friends_search_for_users_manage_teams_and_track_social_activity),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colorScheme.onSurfaceVariant
             )
@@ -439,7 +453,7 @@ private fun SocialHeader(
             IconButton(onClick = onNotificationsClick) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notifications",
+                    contentDescription = stringResource(R.string.notifications),
                     tint = colorScheme.onBackground
                 )
             }
