@@ -51,6 +51,8 @@ import com.example.followme02.screen.profile.ProfileAvatar
 import com.example.followme02.viewmodel.SocialViewModel
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.stringResource
+import com.example.followme02.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,13 +103,13 @@ fun TeamScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Go back",
+                                contentDescription = stringResource(R.string.cd_go_back),
                                 tint = colorScheme.onBackground
                             )
                         }
 
                         Text(
-                            text = "Team",
+                            text = stringResource(R.string.team),
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.ExtraBold,
                             color = colorScheme.onBackground
@@ -117,7 +119,7 @@ fun TeamScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "See your team leaderboard and shared goal.",
+                        text = stringResource(R.string.team_leaderboard_description),
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.onSurfaceVariant
                     )
@@ -126,7 +128,7 @@ fun TeamScreen(
                 if (state.errorMessage != null) {
                     item {
                         EmptyStateCard(
-                            title = "Something went wrong",
+                            title = stringResource(R.string.error_generic_title),
                             description = state.errorMessage
                         )
                     }
@@ -153,20 +155,20 @@ fun TeamScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     shape = RoundedCornerShape(16.dp)
                                 ) {
-                                    Text("Leave team")
+                                    Text(stringResource(R.string.leave_team))
                                 }
                             }
                         }
                     } else {
                         EmptyStateCard(
-                            title = "You are not in a team",
-                            description = "Join a team from the Teams tab inside Social."
+                            title = stringResource(R.string.not_in_team_title),
+                            description = stringResource(R.string.not_in_team_description)
                         )
                     }
                 }
 
                 item {
-                    SectionHeader(title = "Leaderboard")
+                    SectionHeader(title = stringResource(R.string.leaderboard))
                 }
 
                 item {
@@ -179,8 +181,8 @@ fun TeamScreen(
                 if (leaderboardMembers.isEmpty()) {
                     item {
                         EmptyStateCard(
-                            title = "No leaderboard yet",
-                            description = "Join a team first."
+                            title = stringResource(R.string.no_leaderboard_title),
+                            description = stringResource(R.string.no_leaderboard_description)
                         )
                     }
                 } else {
@@ -214,14 +216,14 @@ fun TeamScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 BottomSheetHeader(
-                    title = "Choose team journey",
+                    title = stringResource(R.string.choose_team_journey),
                     onClose = { showJourneyPicker = false }
                 )
 
                 if (destinations.isEmpty()) {
                     EmptyStateCard(
-                        title = "No destinations found",
-                        description = "There are no destinations available right now."
+                        title = stringResource(R.string.no_destinations_title),
+                        description = stringResource(R.string.no_destinations_description)
                     )
                 } else {
                     destinations.forEach { destination ->
@@ -236,7 +238,7 @@ fun TeamScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(16.dp)
                             ) {
-                                Text("Selected: ${destination.second}")
+                                Text(stringResource(R.string.selected)+" ${destination.second}")
                             }
                         } else {
                             OutlinedButton(
@@ -266,7 +268,7 @@ fun TeamScreen(
             containerColor = colorScheme.surface
         ) {
             BottomSheetHeader(
-                title = "Member Profile",
+                title = stringResource(R.string.member_profile),
                 onClose = { selectedMember = null }
             )
 
@@ -279,10 +281,10 @@ fun TeamScreen(
         AlertDialog(
             onDismissRequest = { showLeaveTeamDialog = false },
             title = {
-                Text("Leave team")
+                Text(stringResource(R.string.leave_team_title))
             },
             text = {
-                Text("Are you sure you want to leave this team?")
+                Text(stringResource(R.string.leave_team_confirm))
             },
             confirmButton = {
                 TextButton(
@@ -291,14 +293,14 @@ fun TeamScreen(
                        // TODO: connect real leave-team logic later
                     }
                 ) {
-                    Text("Leave")
+                    Text(stringResource(R.string.leave))
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showLeaveTeamDialog = false }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -354,7 +356,7 @@ private fun TeamJourneyCard(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Team Journey",
+                        text = stringResource(R.string.team_journey),
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
                     )
@@ -362,7 +364,7 @@ private fun TeamJourneyCard(
                     if (isLeader) {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Tap card to change destination",
+                            text = stringResource(R.string.tap_to_change_destination),
                             style = MaterialTheme.typography.bodySmall,
                             color = colorScheme.primary
                         )
@@ -427,14 +429,14 @@ private fun TeamJourneyCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${(team.progressFraction * 100).toInt()}% complete",
+                    text = "${(team.progressFraction * 100).toInt()}% "+ stringResource(R.string.complete),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = colorScheme.primary
                 )
 
                 Text(
-                    text = "${formatKm(team.progressKm)} / ${formatKm(team.targetKm)} km",
+                    text = "${formatKm(team.progressKm)} / ${formatKm(team.targetKm)} "+ stringResource(R.string.km),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
                 )
@@ -454,8 +456,8 @@ private fun TeamLeaderboardRow(
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
 
     val valueText = when (selectedType) {
-        LeaderboardType.POINTS -> "${member.totalPoints} pts"
-        LeaderboardType.KM -> "${formatKm(member.totalKm)} km"
+        LeaderboardType.POINTS -> "${member.totalPoints} "+ stringResource(R.string.pts)
+        LeaderboardType.KM -> "${formatKm(member.totalKm)} "+ stringResource(R.string.km)
     }
 
     Card(
@@ -505,7 +507,7 @@ private fun TeamLeaderboardRow(
                     if (member.isCurrentUser) {
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "You",
+                            text = stringResource(R.string.you),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = colorScheme.primary
@@ -516,7 +518,7 @@ private fun TeamLeaderboardRow(
                 Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
-                    text = "Tap to view profile",
+                    text = stringResource(R.string.tap_to_view_profile),
                     style = MaterialTheme.typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
                 )
@@ -573,7 +575,7 @@ private fun TeamMemberProfileContent(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Level ${member.level}",
+                    text = stringResource(R.string.level) +" ${member.level}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = colorScheme.primary
@@ -588,17 +590,19 @@ private fun TeamMemberProfileContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             TeamMiniStatCard(
-                title = "Points",
+                title = stringResource(R.string.points),
                 value = member.totalPoints.toString(),
                 modifier = Modifier.weight(1f)
             )
+
             TeamMiniStatCard(
-                title = "Total km",
+                title = stringResource(R.string.total_km),
                 value = formatKm(member.totalKm),
                 modifier = Modifier.weight(1f)
             )
+
             TeamMiniStatCard(
-                title = "Level",
+                title = stringResource(R.string.level),
                 value = member.level.toString(),
                 modifier = Modifier.weight(1f)
             )

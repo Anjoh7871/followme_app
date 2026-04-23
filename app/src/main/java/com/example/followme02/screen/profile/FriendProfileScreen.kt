@@ -42,10 +42,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.followme02.R
 import com.example.followme02.model.JourneyUiModel
 import com.example.followme02.viewmodel.FriendProfileViewModel
 
@@ -101,7 +103,7 @@ fun FriendProfileScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Friend not found")
+                    Text(stringResource(R.string.friend_not_found))
                 }
             }
 
@@ -126,12 +128,12 @@ fun FriendProfileScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Go back"
+                                    contentDescription = stringResource(R.string.cd_go_back)
                                 )
                             }
 
                             Text(
-                                text = "Friend Profile",
+                                text = stringResource(R.string.friend_profile),
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = colorScheme.onBackground
@@ -181,7 +183,7 @@ fun FriendProfileScreen(
                                     Spacer(modifier = Modifier.height(6.dp))
 
                                     Text(
-                                        text = "Level ${friend.level}",
+                                        text = stringResource(R.string.profile_level)+ " ${friend.level}",
                                         style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = FontWeight.SemiBold,
                                         color = colorScheme.primary
@@ -197,21 +199,21 @@ fun FriendProfileScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             FriendMiniStatCard(
-                                title = "Level",
+                                title = stringResource(R.string.level),
                                 value = friend.level.toString(),
                                 icon = Icons.Default.Flag,
                                 modifier = Modifier.weight(1f)
                             )
 
                             FriendMiniStatCard(
-                                title = "Achievements",
+                                title = stringResource(R.string.achievements),
                                 value = state.achievementsCount.toString(),
                                 icon = Icons.Default.EmojiEvents,
                                 modifier = Modifier.weight(1f)
                             )
 
                             FriendMiniStatCard(
-                                title = "Total km",
+                                title = stringResource(R.string.total_km),
                                 value = formatKm(friend.totalKm),
                                 icon = Icons.Default.Straighten,
                                 modifier = Modifier.weight(1f)
@@ -227,7 +229,7 @@ fun FriendProfileScreen(
 
                     item {
                         Text(
-                            text = "Completed journeys",
+                            text = stringResource(R.string.completed_journeys),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = colorScheme.onBackground
@@ -244,7 +246,7 @@ fun FriendProfileScreen(
                                 )
                             ) {
                                 Text(
-                                    text = "No completed journeys yet.",
+                                    text = stringResource(R.string.no_completed_journeys),
                                     modifier = Modifier.padding(18.dp),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = colorScheme.onSurfaceVariant
@@ -269,7 +271,7 @@ fun FriendProfileScreen(
                             ),
                             shape = RoundedCornerShape(18.dp)
                         ) {
-                            Text("Remove friend")
+                            Text(stringResource(R.string.remove_friend))
                         }
                     }
 
@@ -282,10 +284,14 @@ fun FriendProfileScreen(
                     AlertDialog(
                         onDismissRequest = { showRemoveDialog = false },
                         title = {
-                            Text("Remove friend")
+                            Text(stringResource(R.string.remove_friend))
                         },
                         text = {
-                            Text("Are you sure you want to remove ${friend.username} from your friends?")
+                            Text(stringResource(
+                                R.string.remove_friend_confirm,
+                                friend.username
+                                )
+                            )
                         },
                         confirmButton = {
                             TextButton(
@@ -295,7 +301,7 @@ fun FriendProfileScreen(
                                 }
                             ) {
                                 Text(
-                                    text = "Remove",
+                                    text = stringResource(R.string.remove),
                                     color = colorScheme.error
                                 )
                             }
@@ -304,7 +310,7 @@ fun FriendProfileScreen(
                             TextButton(
                                 onClick = { showRemoveDialog = false }
                             ) {
-                                Text("Cancel")
+                                Text(stringResource(R.string.cancel))
                             }
                         }
                     )
@@ -389,7 +395,7 @@ private fun CurrentJourneyCard(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "Current journey",
+                    text = stringResource(R.string.current_journey),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = colorScheme.onPrimaryContainer
@@ -424,21 +430,26 @@ private fun CurrentJourneyCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "${(journey.progressFraction * 100).toInt()}% complete",
+                        text = stringResource(
+                                R.string.journey_progress,(journey.progressFraction * 100).toInt()),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = colorScheme.primary
                     )
 
                     Text(
-                        text = "${formatKm(journey.progressKm)} / ${formatKm(journey.targetKm)} km",
+                        text = stringResource(
+                            R.string.journey_km_progress,
+                            formatKm(journey.progressKm),
+                            formatKm(journey.targetKm)
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.onPrimaryContainer.copy(alpha = 0.82f)
                     )
                 }
             } else {
                 Text(
-                    text = "This user does not have an active journey right now.",
+                    text = stringResource(R.string.no_active_journey),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onPrimaryContainer.copy(alpha = 0.82f)
                 )
@@ -485,7 +496,7 @@ private fun CompletedJourneyCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "${formatKm(journey.km)} km",
+                    text = "${formatKm(journey.km)} "+ stringResource(R.string.km),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onSurfaceVariant
                 )
@@ -494,7 +505,7 @@ private fun CompletedJourneyCard(
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                text = "Done",
+                text = stringResource(R.string.done),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.primary

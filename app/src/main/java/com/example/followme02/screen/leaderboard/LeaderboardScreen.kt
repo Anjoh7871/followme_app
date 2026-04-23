@@ -290,7 +290,7 @@ fun LeaderboardItem(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Tap to view profile",
+                    text = stringResource(R.string.view_profile),
                     style = MaterialTheme.typography.bodySmall,
                     color = subtextColor
                 )

@@ -62,7 +62,9 @@
     <string name="name">Name</string>
     <string name="completed">Completed: %1$s</string>
     <string name="finish_your_first_virtual_route_and_it_will_show_up_here">Finish your first virtual route and it will show up here.</string>
-
+    <string name="journey_progress">%1$d%% complete</string>
+    <string name="journey_km_progress">%1$s / %2$s km</string>
+    <string name="no_active_journey">This user does not have an active journey right now.</string>
 
     <!-- - PROFILE - -->
 
@@ -116,10 +118,15 @@
     <string name="current_streak">Current streak</string>
     <string name="longest_streak">Longest streak</string>
     <string name="team">Team</string>
+    <string name="selected">Selected:</string>
     <string name="dark_mode">Dark mode</string>
     <string name="logout">Log out</string>
     <string name="view_your_current_journey_and_completed_routes">View your current journey and completed routes.</string>
-
+    <string name="cd_go_back">Go back</string>
+    <string name="you">You</string>
+    <string name="pts">pts</string>
+    <string name="complete">complete</string>
+    <string name="leave">Leave</string>
 
     <!-- - SETTINGS - -->
     <string name="edit_username">Edit username</string>
@@ -133,6 +140,7 @@
     <string name="log_out">Log out</string>
     <string name="account">Account</string>
     <string name="view_blocked_users">View blocked users</string>
+    <string name="done">Done</string>
 
     <!-- - SOCIAL - -->
     <string name="search">Search</string>
@@ -169,13 +177,29 @@
     <string name="friend_profile">Friend Profile</string>
     <string name="social">Social</string>
     <string name="see_friends_search_for_users_manage_teams_and_track_social_activity">See friends, search for users, manage teams, and track social activity.</string>
-
+    <string name="remove">Remove</string>
+    <string name="remove_friend">Remove Friend</string>
+    <string name="remove_friend_confirm">Are you sure you want to remove %1$s from your friends?</string>
+    <string name="friend_not_found">Friend not found</string>
 
     <!-- - TEAM - -->
     <string name="go_back">Go back</string>
     <string name="leave_team">Leave team</string>
     <string name="cancel">Cancel</string>
     <string name="team_journey">Team Journey</string>
+    <string name="member_profile">Member Profile</string>
+    <string name="no_leaderboard_title">No leaderboard yet</string>
+    <string name="no_leaderboard_description">Join a team first.</string>
+    <string name="no_destinations_title">No destinations found</string>
+    <string name="no_destinations_description">There are no destinations available right now.</string>
+    <string name="choose_team_journey">Choose team journey</string>
+    <string name="tap_to_change_destination">Tap card to change destination</string>
+    <string name="not_in_team_title">You are not in a team</string>
+    <string name="not_in_team_description">Join a team from the Teams tab inside Social.</string>
+    <string name="team_leaderboard_description">See your team leaderboard and shared goal.</string>
+    <string name="tap_to_view_profile">Tap to view profile</string>
+    <string name="leave_team_title">Leave team</string>
+    <string name="leave_team_confirm">Are you sure you want to leave this team?</string>
 
     <!-- - WORKOUT - -->
     <string name="training_sessions">Training Sessions</string>
@@ -213,6 +237,7 @@
 
     <!-- Distance -->
     <string name="label_distance_km">Distance (km)</string>
+    <string name="km">km</string>
     <string name="placeholder_distance">e.g. 3.5 or 3,5</string>
 
     <!-- Date -->
@@ -232,6 +257,7 @@
     <string name="error_distance_required">Distance is required.</string>
     <string name="error_distance_invalid_number">Invalid number. Use e.g. 3.5</string>
     <string name="error_distance_must_be_gt_zero">Distance must be greater than 0.</string>
+    <string name="error_generic_title">Something went wrong</string>
 
     <!-- Draft output -->
     <string name="draft_distance_prefix">Draft distance:</string>
@@ -246,5 +272,7 @@
     <string name="level_km">Level %1$d • %2$s km</string>
     <string name="no_users_found_on_the_leaderboard_yet">No users found on the leaderboard yet.</string>
     <string name="when_users_start_earning_points_they_will_appear_here">When users start earning points, they will appear here.</string>
+    <string name="view_profile">Tap to view profile</string>
+
 
 </resources>
