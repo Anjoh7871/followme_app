@@ -1,5 +1,6 @@
 package com.example.followme02.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,6 +40,7 @@ class SocialViewModel : ViewModel() {
                 }
                 val availableTeams = repository.getAllTeams()
                 val destinations = repository.getAvailableDestinations()
+                val friendActivities = repository.getFriendActivities()
 
                 availableDestinations.value = destinations
 
@@ -49,7 +51,8 @@ class SocialViewModel : ViewModel() {
                     currentTeam = currentTeam,
                     teamMembers = teamMembers,
                     recentTeamActivity = recentTeamActivity,
-                    availableTeams = availableTeams
+                    availableTeams = availableTeams,
+                    friendActivities = friendActivities
                 )
             } catch (e: Exception) {
                 uiState.value = uiState.value.copy(
@@ -226,6 +229,40 @@ class SocialViewModel : ViewModel() {
             SearchRelationshipStatus.NONE -> sendFriendRequest(result.userId)
             SearchRelationshipStatus.PENDING_RECEIVED -> acceptFriendRequest(result.userId)
             else -> Unit
+        }
+    }
+
+    var joinRequests = mutableStateOf<List<SocialRepository.JoinRequestRow>>(emptyList())
+
+    fun requestToJoinTeam(teamId: Int) {
+        viewModelScope.launch {
+            try {
+                repository.requestToJoinTeam(teamId)
+                loadSocialData()
+            } catch (e: Exception) {
+                Log.e("JOIN_ERROR", e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun loadJoinRequests(teamId: Int) {
+        viewModelScope.launch {
+            joinRequests.value = repository.getJoinRequests(teamId)
+        }
+    }
+    fun approveJoinRequest(req: SocialRepository.JoinRequestRow) {
+        viewModelScope.launch {
+            repository.approveJoinRequest(req)
+            loadSocialData() // refresher UI
+        }
+    }
+    fun kickUser(teamId: Int, userId: Int) {
+        viewModelScope.launch {
+            Log.d("KICK_TEST", "Kick pressed: $userId from $teamId")
+
+            repository.kickUser(teamId, userId)
+
+            loadSocialData()
         }
     }
 }

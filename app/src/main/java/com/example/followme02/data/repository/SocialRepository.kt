@@ -791,4 +791,106 @@ class SocialRepository {
             totalKm = totalAccumulatedKm
         )
     }
+
+    suspend fun getFriendIds(): List<Int> {
+        val friendships = getFriends() // dere har denne allerede
+        return friendships.map { it.userId }
+    }
+
+    suspend fun getFriendActivities(): List<SocialActivityUi> {
+        return try {
+            val friendIds = getFriendIds()
+
+            val activities = supabase
+                .from("training_sessions")
+                .select(columns = Columns.list("user_id", "distance_km", "created_at")) {
+                    filter {
+                        isIn("user_id", friendIds)
+                    }
+                }
+                .decodeList<SocialDbTrainingSessionActivityRow>()
+
+            activities.mapNotNull { session ->
+                val user = getUserRow(session.userId) ?: return@mapNotNull null
+
+                SocialActivityUi(
+                    title = "${user.username} trained",
+                    description = "${formatKmForActivity(session.distanceKm ?: 0.0)} km",
+                    createdAt = session.createdAt
+                )
+            }
+
+        } catch (e: Exception) {
+            Log.e("SOCIAL_REPOSITORY", "Error fetching friend activities", e)
+            emptyList()
+        }
+    }
+
+    @Serializable
+    data class JoinRequestRow(
+        val request_id: String,
+        val team_id: Int,
+        val user_id: Int,
+        val status: String
+    )
+
+    // Sender Team Join Request
+    suspend fun requestToJoinTeam(teamId: Int) {
+        val userId = getCurrentDbUserId() ?: return
+
+        supabase.from("join_requests").insert(
+            mapOf(
+                "team_id" to teamId,
+                "user_id" to userId
+            )
+        )
+    }
+
+    // Henter team join requests
+    suspend fun getJoinRequests(teamId: Int): List<JoinRequestRow> {
+        return supabase
+            .from("join_requests")
+            .select {
+                filter {
+                    eq("team_id", teamId)
+                    eq("status", "PENDING")
+                }
+            }
+            .decodeList<JoinRequestRow>()
+    }
+
+    // Godkjenning av request
+    suspend fun approveJoinRequest(req: JoinRequestRow) {
+
+        // legg til bruker i team
+        supabase.from("team_memberships").insert(
+            SocialDbTeamMembershipInsertRow(
+                teamId = req.team_id,
+                userId = req.user_id
+            )
+        )
+
+        // oppdater request status
+        supabase.from("join_requests")
+            .update(
+                value = mapOf("status" to "APPROVED")
+            ) {
+                filter {
+                    eq("request_id", req.request_id)
+                }
+            }
+    }
+
+    // Kicker bruker
+    suspend fun kickUser(teamId: Int, userId: Int) {
+        supabase
+            .from("team_memberships")
+            .delete {
+                filter {
+                    eq("team_id", teamId)
+                    eq("user_id", userId)
+                }
+            }
+    }
 }
+

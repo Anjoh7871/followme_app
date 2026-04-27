@@ -200,7 +200,14 @@
     <string name="tap_to_view_profile">Tap to view profile</string>
     <string name="leave_team_title">Leave team</string>
     <string name="leave_team_confirm">Are you sure you want to leave this team?</string>
-
+    <string name="no_recent_activity_yet">No recent activity yet</string>
+    <string name="activity_feed_description">Activity from your team and friends will show up here</string>
+    <string name="join_requests">Join requests</string>
+    <string name="no_pending_requests">No pending requests</string>
+    <string name="no_pending_requests_desc">Users who request to join your team will appear here</string>
+    <string name="user_label">User %1$d</string>
+    <string name="approve">Approve</string>
+    <string name="kick">Kick</string>
     <!-- - WORKOUT - -->
     <string name="training_sessions">Training Sessions</string>
     <string name="distance">Distance (km)</string>

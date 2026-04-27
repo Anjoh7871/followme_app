@@ -54,6 +54,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.stringResource
 import com.example.followme02.R
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamScreen(
@@ -187,123 +188,148 @@ fun TeamScreen(
                     }
                 } else {
                     items(leaderboardMembers) { member ->
-                        TeamLeaderboardRow(
-                            member = member,
-                            rank = leaderboardMembers.indexOf(member) + 1,
-                            selectedType = state.leaderboardType,
-                            onClick = {
-                                selectedMember = member
-                            }
-                        )
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(24.dp))
-                }
-            }
-        }
-    }
-
-    if (showJourneyPicker && state.currentTeam != null) {
-        ModalBottomSheet(
-            onDismissRequest = { showJourneyPicker = false },
-            containerColor = colorScheme.surface
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                BottomSheetHeader(
-                    title = stringResource(R.string.choose_team_journey),
-                    onClose = { showJourneyPicker = false }
-                )
-
-                if (destinations.isEmpty()) {
-                    EmptyStateCard(
-                        title = stringResource(R.string.no_destinations_title),
-                        description = stringResource(R.string.no_destinations_description)
-                    )
-                } else {
-                    destinations.forEach { destination ->
-                        val isSelected = state.currentTeam.destinationId == destination.first
-
-                        if (isSelected) {
-                            ElevatedButton(
+                        Column {
+                            TeamLeaderboardRow(
+                                member = member,
+                                rank = leaderboardMembers.indexOf(member) + 1,
+                                selectedType = state.leaderboardType,
                                 onClick = {
-                                    viewModel.setTeamJourney(destination.first)
-                                    showJourneyPicker = false
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(16.dp)
+                                    selectedMember = member
+                                }
+                            )
+
+                            // Kick knapp (kun leader og ikke seg selv)
+                            if (state.currentTeam?.isCurrentUserLeader == true &&
+                                !member.isCurrentUser
                             ) {
-                                Text(stringResource(R.string.selected)+" ${destination.second}")
-                            }
-                        } else {
-                            OutlinedButton(
-                                onClick = {
-                                    viewModel.setTeamJourney(destination.first)
-                                    showJourneyPicker = false
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(16.dp)
-                            ) {
-                                Text(destination.second)
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    TextButton(
+                                        onClick = {
+                                            viewModel.kickUser(
+                                                teamId = state.currentTeam!!.teamId,
+                                                userId = member.userId
+                                            )
+                                        }
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.kick),
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
                             }
                         }
-
-                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
-    }
 
-    if (selectedMember != null) {
-        ModalBottomSheet(
-            onDismissRequest = { selectedMember = null },
-            containerColor = colorScheme.surface
-        ) {
-            BottomSheetHeader(
-                title = stringResource(R.string.member_profile),
-                onClose = { selectedMember = null }
+        if (showJourneyPicker && state.currentTeam != null) {
+            ModalBottomSheet(
+                onDismissRequest = { showJourneyPicker = false },
+                containerColor = colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    BottomSheetHeader(
+                        title = stringResource(R.string.choose_team_journey),
+                        onClose = { showJourneyPicker = false }
+                    )
+
+                    if (destinations.isEmpty()) {
+                        EmptyStateCard(
+                            title = stringResource(R.string.no_destinations_title),
+                            description = stringResource(R.string.no_destinations_description)
+                        )
+                    } else {
+                        destinations.forEach { destination ->
+                            val isSelected = state.currentTeam.destinationId == destination.first
+
+                            if (isSelected) {
+                                ElevatedButton(
+                                    onClick = {
+                                        viewModel.setTeamJourney(destination.first)
+                                        showJourneyPicker = false
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(16.dp)
+                                ) {
+                                    Text(stringResource(R.string.selected) + " ${destination.second}")
+                                }
+                            } else {
+                                OutlinedButton(
+                                    onClick = {
+                                        viewModel.setTeamJourney(destination.first)
+                                        showJourneyPicker = false
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(16.dp)
+                                ) {
+                                    Text(destination.second)
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+        }
+
+        if (selectedMember != null) {
+            ModalBottomSheet(
+                onDismissRequest = { selectedMember = null },
+                containerColor = colorScheme.surface
+            ) {
+                BottomSheetHeader(
+                    title = stringResource(R.string.member_profile),
+                    onClose = { selectedMember = null }
+                )
+
+                TeamMemberProfileContent(member = selectedMember!!)
+
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+        }
+
+        if (showLeaveTeamDialog) {
+            AlertDialog(
+                onDismissRequest = { showLeaveTeamDialog = false },
+                title = {
+                    Text(stringResource(R.string.leave_team_title))
+                },
+                text = {
+                    Text(stringResource(R.string.leave_team_confirm))
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showLeaveTeamDialog = false
+                            // TODO: connect real leave-team logic later
+                        }
+                    ) {
+                        Text(stringResource(R.string.leave))
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showLeaveTeamDialog = false }
+                    ) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
             )
-
-            TeamMemberProfileContent(member = selectedMember!!)
-
-            Spacer(modifier = Modifier.height(20.dp))
         }
-    }
-    if (showLeaveTeamDialog) {
-        AlertDialog(
-            onDismissRequest = { showLeaveTeamDialog = false },
-            title = {
-                Text(stringResource(R.string.leave_team_title))
-            },
-            text = {
-                Text(stringResource(R.string.leave_team_confirm))
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showLeaveTeamDialog = false
-                       // TODO: connect real leave-team logic later
-                    }
-                ) {
-                    Text(stringResource(R.string.leave))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showLeaveTeamDialog = false }
-                ) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-        )
     }
 }
 
@@ -429,14 +455,14 @@ private fun TeamJourneyCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${(team.progressFraction * 100).toInt()}% "+ stringResource(R.string.complete),
+                    text = "${(team.progressFraction * 100).toInt()}% " + stringResource(R.string.complete),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = colorScheme.primary
                 )
 
                 Text(
-                    text = "${formatKm(team.progressKm)} / ${formatKm(team.targetKm)} "+ stringResource(R.string.km),
+                    text = "${formatKm(team.progressKm)} / ${formatKm(team.targetKm)} " + stringResource(R.string.km),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
                 )
@@ -446,7 +472,7 @@ private fun TeamJourneyCard(
 }
 
 @Composable
-private fun TeamLeaderboardRow(
+fun TeamLeaderboardRow(
     member: TeamMemberUi,
     rank: Int,
     selectedType: LeaderboardType,
@@ -456,8 +482,8 @@ private fun TeamLeaderboardRow(
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
 
     val valueText = when (selectedType) {
-        LeaderboardType.POINTS -> "${member.totalPoints} "+ stringResource(R.string.pts)
-        LeaderboardType.KM -> "${formatKm(member.totalKm)} "+ stringResource(R.string.km)
+        LeaderboardType.POINTS -> "${member.totalPoints} " + stringResource(R.string.pts)
+        LeaderboardType.KM -> "${formatKm(member.totalKm)} " + stringResource(R.string.km)
     }
 
     Card(
@@ -575,7 +601,7 @@ private fun TeamMemberProfileContent(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = stringResource(R.string.level) +" ${member.level}",
+                    text = stringResource(R.string.level) + " ${member.level}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = colorScheme.primary

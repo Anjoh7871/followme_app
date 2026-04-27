@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -202,6 +204,8 @@ fun SocialScreen(
                             LazyColumn(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
+
+                                // 🔹 YOUR TEAM
                                 item {
                                     SectionHeader(title = stringResource(R.string.your_team))
                                 }
@@ -228,26 +232,74 @@ fun SocialScreen(
                                     }
                                 }
 
+                                // Join request for leader
+                                if (state.currentTeam?.isCurrentUserLeader == true) {
+
+                                    item {
+                                        SectionHeader(
+                                            title = stringResource(R.string.join_requests),
+                                            trailing = "${state.joinRequests.size}"
+                                        )
+                                    }
+
+                                    if (state.joinRequests.isEmpty()) {
+                                        item {
+                                            EmptyStateCard(
+                                                title = stringResource(R.string.no_pending_requests),
+                                                description = stringResource(R.string.no_pending_requests_desc)
+                                            )
+                                        }
+                                    } else {
+                                        items(state.joinRequests) { req ->   // 🔥 FIX HER
+
+                                            Card {
+                                                Row(
+                                                    modifier = Modifier.padding(12.dp),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text(
+                                                        text = stringResource(
+                                                            R.string.user_label,
+                                                            req.user_id
+                                                        )
+                                                    )
+
+                                                    Button(
+                                                        onClick = {
+                                                            viewModel.approveJoinRequest(req)
+                                                        }
+                                                    ) {
+                                                        Text(stringResource(R.string.approve))
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                                val allActivity = (state.recentTeamActivity + state.friendActivities)
+                                    .sortedByDescending { it.createdAt ?: "" }
 
                                 item {
                                     SectionHeader(
                                         title = stringResource(R.string.recent_activity),
                                         trailing = stringResource(
                                             R.string.updates,
-                                            state.recentTeamActivity.size
+                                            allActivity.size
                                         )
                                     )
                                 }
 
-                                if (state.recentTeamActivity.isEmpty()) {
+                                if (allActivity.isEmpty()) {
                                     item {
                                         EmptyStateCard(
-                                            title = stringResource(R.string.no_recent_team_activity_yet),
-                                            description = stringResource(R.string.when_someone_joins_your_team_it_will_show_up_here)
+                                            title = stringResource(R.string.no_recent_activity_yet),
+                                            description = stringResource(R.string.activity_feed_description)
                                         )
                                     }
                                 } else {
-                                    items(state.recentTeamActivity) { activity ->
+                                    items(allActivity) { activity ->
                                         RecentActivityRow(
                                             title = activity.title,
                                             description = formatActivityDescription(activity)
@@ -299,7 +351,7 @@ fun SocialScreen(
                                     items(filteredTeams) { team ->
                                         TeamSearchRow(
                                             team = team,
-                                            onJoinClick = { viewModel.joinTeam(team.teamId) }
+                                            onJoinClick = { viewModel.requestToJoinTeam(team.teamId) }
                                         )
                                     }
                                 }
