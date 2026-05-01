@@ -11,10 +11,12 @@ import com.example.followme02.screen.social.SocialUserSearchResultUi
 import com.example.followme02.screen.social.TeamMemberUi
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import com.example.followme02.screen.social.SocialActivityUi
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import io.github.jan.supabase.postgrest.query.Columns
 
 @Serializable
 private data class SocialDbUserIdRow(
@@ -160,7 +162,15 @@ class SocialRepository {
 
             val acceptedAsUser1 = supabase
                 .from("friendships")
-                .select(columns = Columns.list("user_id_1", "user_id_2", "status_id", "action_user_id", "created_at")) {
+                .select(
+                    columns = Columns.list(
+                        "user_id_1",
+                        "user_id_2",
+                        "status_id",
+                        "action_user_id",
+                        "created_at"
+                    )
+                ) {
                     filter {
                         eq("user_id_1", currentUserId)
                         eq("status_id", STATUS_ACCEPTED)
@@ -170,7 +180,15 @@ class SocialRepository {
 
             val acceptedAsUser2 = supabase
                 .from("friendships")
-                .select(columns = Columns.list("user_id_1", "user_id_2", "status_id", "action_user_id", "created_at")) {
+                .select(
+                    columns = Columns.list(
+                        "user_id_1",
+                        "user_id_2",
+                        "status_id",
+                        "action_user_id",
+                        "created_at"
+                    )
+                ) {
                     filter {
                         eq("user_id_2", currentUserId)
                         eq("status_id", STATUS_ACCEPTED)
@@ -195,7 +213,15 @@ class SocialRepository {
 
             val pendingAsUser1 = supabase
                 .from("friendships")
-                .select(columns = Columns.list("user_id_1", "user_id_2", "status_id", "action_user_id", "created_at")) {
+                .select(
+                    columns = Columns.list(
+                        "user_id_1",
+                        "user_id_2",
+                        "status_id",
+                        "action_user_id",
+                        "created_at"
+                    )
+                ) {
                     filter {
                         eq("user_id_1", currentUserId)
                         eq("status_id", STATUS_PENDING)
@@ -205,7 +231,15 @@ class SocialRepository {
 
             val pendingAsUser2 = supabase
                 .from("friendships")
-                .select(columns = Columns.list("user_id_1", "user_id_2", "status_id", "action_user_id", "created_at")) {
+                .select(
+                    columns = Columns.list(
+                        "user_id_1",
+                        "user_id_2",
+                        "status_id",
+                        "action_user_id",
+                        "created_at"
+                    )
+                ) {
                     filter {
                         eq("user_id_2", currentUserId)
                         eq("status_id", STATUS_PENDING)
@@ -244,7 +278,17 @@ class SocialRepository {
 
             val users = supabase
                 .from("users")
-                .select(columns = Columns.list("user_id", "username", "email", "avatar_url", "level_id", "total_points", "total_accumulated_km")) {
+                .select(
+                    columns = Columns.list(
+                        "user_id",
+                        "username",
+                        "email",
+                        "avatar_url",
+                        "level_id",
+                        "total_points",
+                        "total_accumulated_km"
+                    )
+                ) {
                     filter {
                         or {
                             ilike("email", "%$query%")
@@ -386,7 +430,10 @@ class SocialRepository {
                     )
                 )
 
-            Log.d("SOCIAL_REPOSITORY", "Created team ${createdTeam.teamName} with leader $currentUserId")
+            Log.d(
+                "SOCIAL_REPOSITORY",
+                "Created team ${createdTeam.teamName} with leader $currentUserId"
+            )
         } catch (e: Exception) {
             Log.e("SOCIAL_REPOSITORY", "Error creating team", e)
         }
@@ -412,7 +459,10 @@ class SocialRepository {
             val team = getCurrentTeamDbRow(currentUserId) ?: return
 
             if (team.leaderUserId != currentUserId) {
-                Log.d("SOCIAL_REPOSITORY", "Current user is not team leader, cannot set team journey")
+                Log.d(
+                    "SOCIAL_REPOSITORY",
+                    "Current user is not team leader, cannot set team journey"
+                )
                 return
             }
 
@@ -442,7 +492,10 @@ class SocialRepository {
                     }
                 }
 
-            Log.d("SOCIAL_REPOSITORY", "Set team journey for team ${team.teamId} to destination $destinationId")
+            Log.d(
+                "SOCIAL_REPOSITORY",
+                "Set team journey for team ${team.teamId} to destination $destinationId"
+            )
         } catch (e: Exception) {
             Log.e("SOCIAL_REPOSITORY", "Error setting team journey", e)
         }
@@ -640,7 +693,16 @@ class SocialRepository {
 
         return supabase
             .from("teams")
-            .select(columns = Columns.list("team_id", "team_name", "created_at", "leader_user_id", "selected_destination_id", "journey_start_km")) {
+            .select(
+                columns = Columns.list(
+                    "team_id",
+                    "team_name",
+                    "created_at",
+                    "leader_user_id",
+                    "selected_destination_id",
+                    "journey_start_km"
+                )
+            ) {
                 filter {
                     eq("team_id", membership.teamId)
                 }
@@ -731,6 +793,7 @@ class SocialRepository {
                     else -> SearchRelationshipStatus.NONE
                 }
             }
+
             else -> SearchRelationshipStatus.NONE
         }
     }
@@ -743,7 +806,15 @@ class SocialRepository {
 
         return supabase
             .from("friendships")
-            .select(columns = Columns.list("user_id_1", "user_id_2", "status_id", "action_user_id", "created_at")) {
+            .select(
+                columns = Columns.list(
+                    "user_id_1",
+                    "user_id_2",
+                    "status_id",
+                    "action_user_id",
+                    "created_at"
+                )
+            ) {
                 filter {
                     eq("user_id_1", lowId)
                     eq("user_id_2", highId)
@@ -756,7 +827,17 @@ class SocialRepository {
         return try {
             supabase
                 .from("users")
-                .select(columns = Columns.list("user_id", "username", "email", "avatar_url", "level_id", "total_points", "total_accumulated_km")) {
+                .select(
+                    columns = Columns.list(
+                        "user_id",
+                        "username",
+                        "email",
+                        "avatar_url",
+                        "level_id",
+                        "total_points",
+                        "total_accumulated_km"
+                    )
+                ) {
                     filter {
                         eq("user_id", userId)
                     }
@@ -776,6 +857,7 @@ class SocialRepository {
             "%.1f".format(km)
         }
     }
+
     private fun normalizeFriendshipPair(userA: Int, userB: Int): Pair<Int, Int> {
         return if (userA < userB) userA to userB else userB to userA
     }
@@ -831,49 +913,136 @@ class SocialRepository {
         val request_id: String,
         val team_id: Int,
         val user_id: Int,
-        val status: String
+        val status: String,
+        val username: String = ""
+    )
+
+    @Serializable
+    data class JoinRequestInsert(
+        val team_id: Int,
+        val user_id: Int,
+        val status: String = "PENDING"
+    )
+
+    @Serializable
+    data class TeamInviteInsert(
+        val team_id: Int,
+        val invited_user_id: Int,
+        val invited_by: Int,
+        val status: String = "PENDING"
+    )
+
+    @Serializable
+    data class TeamInviteRow(
+        val id: Int,
+        val team_id: Int,
+        val invited_user_id: Int,
+        val invited_by: Int,
+        val status: String,
+        val teams: TeamNameWrapper? = null
+    )
+
+    @Serializable
+    data class TeamNameWrapper(
+        val team_name: String
     )
 
     // Sender Team Join Request
     suspend fun requestToJoinTeam(teamId: Int) {
-        val userId = getCurrentDbUserId() ?: return
+        val userId = getCurrentDbUserId()
 
-        supabase.from("join_requests").insert(
-            mapOf(
-                "team_id" to teamId,
-                "user_id" to userId
+        // Debug user
+        Log.d("JOIN_DEBUG", "userId = $userId")
+
+        if (userId == null) {
+            Log.e("JOIN_ERROR", "userId is NULL")
+            return
+        }
+
+        try {
+            supabase.from("join_requests").insert(
+                JoinRequestInsert(
+                    team_id = teamId,
+                    user_id = userId
+                )
             )
-        )
+
+            Log.d("JOIN_DEBUG", "INSERT SUCCESS")
+
+        } catch (e: Exception) {
+            Log.e("JOIN_ERROR", "Insert failed: ${e.message}")
+        }
     }
 
-    // Henter team join requests
+    // Henter join requests + legger til username manuelt
     suspend fun getJoinRequests(teamId: Int): List<JoinRequestRow> {
-        return supabase
+
+        // 1. hent requests
+        val requests = supabase
             .from("join_requests")
-            .select {
+            .select(columns = Columns.list("request_id", "team_id", "user_id", "status")) {
                 filter {
                     eq("team_id", teamId)
-                    eq("status", "PENDING")
+                    eq("status", "pending")
                 }
             }
             .decodeList<JoinRequestRow>()
+
+        // 2. hent username for hver request
+        return requests.map { req ->
+            val user = getUserRow(req.user_id)
+
+            req.copy(
+                username = user?.username ?: "Unknown"
+            )
+        }
     }
 
     // Godkjenning av request
     suspend fun approveJoinRequest(req: JoinRequestRow) {
 
-        // legg til bruker i team
-        supabase.from("team_memberships").insert(
-            SocialDbTeamMembershipInsertRow(
-                teamId = req.team_id,
-                userId = req.user_id
-            )
-        )
+        try {
+            Log.d("APPROVE_DEBUG", "Start approve: user=${req.user_id}, team=${req.team_id}")
 
-        // oppdater request status
+            // 🔹 fjern bruker fra alle teams først
+            supabase.from("team_memberships")
+                .delete {
+                    filter {
+                        eq("user_id", req.user_id)
+                    }
+                }
+
+            Log.d("APPROVE_DEBUG", "Deleted old memberships")
+
+            // 🔹 legg til i nytt team
+            supabase.from("team_memberships").insert(
+                SocialDbTeamMembershipInsertRow(
+                    teamId = req.team_id,
+                    userId = req.user_id
+                )
+            )
+
+            Log.d("APPROVE_DEBUG", "Inserted new membership")
+
+            // 🔹 oppdater request
+            supabase.from("join_requests")
+                .update(mapOf("status" to "APPROVED")) {
+                    filter {
+                        eq("request_id", req.request_id)
+                    }
+                }
+
+            Log.d("APPROVE_DEBUG", "Updated request")
+
+        } catch (e: Exception) {
+            Log.e("APPROVE_ERROR", "CRASH: ${e.message}", e)
+        }
+    }
+
+    suspend fun denyJoinRequest(req: JoinRequestRow) {
         supabase.from("join_requests")
             .update(
-                value = mapOf("status" to "APPROVED")
+                mapOf("status" to "DENIED")
             ) {
                 filter {
                     eq("request_id", req.request_id)
@@ -892,5 +1061,160 @@ class SocialRepository {
                 }
             }
     }
+
+    suspend fun getMyJoinRequests(): List<JoinRequestRow> {
+        val userId = getCurrentDbUserId() ?: return emptyList()
+
+        return try {
+            supabase
+                .from("join_requests")
+                .select {
+                    filter {
+                        eq("user_id", userId)
+                        eq("status", "PENDING")
+                    }
+                }
+                .decodeList<JoinRequestRow>()
+        } catch (e: Exception) {
+            Log.e("JOIN_ERROR", "Failed to fetch my join requests: ${e.message}")
+            emptyList()
+        }
+    }
+
+    suspend fun inviteUserToTeam(teamId: Int, userId: Int) {
+        val currentUserId = getCurrentDbUserId() ?: return
+
+        try {
+            val data = buildJsonObject {
+                put("team_id", teamId)
+                put("invited_user_id", userId)
+                put("invited_by", currentUserId)
+                put("status", "pending")
+            }
+
+            supabase.from("team_invites").insert(data)
+
+            Log.d("INVITE_DEBUG", "Invite success")
+        } catch (e: Exception) {
+            Log.e("INVITE_ERROR", "Invite failed: ${e.message}")
+        }
+    }
+
+    suspend fun getInvitesForUser(): List<TeamInviteRow> {
+        val userId = getCurrentDbUserId() ?: return emptyList()
+
+        val invites = supabase
+            .from("team_invites")
+            .select {
+                filter {
+                    eq("invited_user_id", userId)
+                    eq("status", "pending")
+                }
+            }
+            .decodeList<TeamInviteRow>()
+
+        // MANUELL HENTING AV TEAM NAVN
+        return invites.map { invite ->
+            val team = supabase
+                .from("teams")
+                .select {
+                    filter {
+                        eq("team_id", invite.team_id)
+                    }
+                }
+                .decodeList<TeamNameWrapper>()
+                .firstOrNull()
+
+            invite.copy(
+                teams = team
+            )
+        }
+    }
+
+    suspend fun acceptInvite(req: TeamInviteRow) {
+        val userId = getCurrentDbUserId() ?: return
+
+        try {
+            // fjern fra team
+            supabase.from("team_memberships")
+                .delete {
+                    filter { eq("user_id", userId) }
+                }
+
+            // join nytt team
+            supabase.from("team_memberships")
+                .insert(
+                    SocialDbTeamMembershipInsertRow(
+                        teamId = req.team_id,
+                        userId = userId
+                    )
+                )
+
+            //  SLETT invite direkte (ingen update først)
+            supabase.from("team_invites")
+                .delete {
+                    filter {
+                        eq("invited_user_id", userId)
+                        eq("team_id", req.team_id)
+                    }
+                }
+
+            Log.d("INVITE_DEBUG", "Accept success")
+
+        } catch (e: Exception) {
+            Log.e("INVITE_ERROR", "Accept failed: ${e.message}")
+        }
+    }
+
+    suspend fun declineInvite(req: TeamInviteRow) {
+        val userId = getCurrentDbUserId() ?: return
+
+        try {
+            Log.d("INVITE_DEBUG", "Declining invite for user=$userId team=${req.team_id}")
+
+            supabase.from("team_invites")
+                .delete {
+                    filter {
+                        eq("invited_user_id", userId)
+                        eq("team_id", req.team_id)
+                    }
+                }
+
+            Log.d("INVITE_DEBUG", "Decline DELETE success")
+
+        } catch (e: Exception) {
+            Log.e("INVITE_ERROR", "Decline failed: ${e.message}")
+        }
+    }
+
+    suspend fun leaveTeam() {
+        val userId = getCurrentDbUserId() ?: return
+
+        try {
+            // Fjern fra team
+            supabase.from("team_memberships")
+                .delete {
+                    filter {
+                        eq("user_id", userId)
+                    }
+                }
+
+            //  Fjern gamle invites (optional cleanup)
+            supabase.from("team_invites")
+                .delete {
+                    filter {
+                        eq("invited_user_id", userId)
+                    }
+                }
+
+            Log.d("TEAM_DEBUG", "Left team")
+
+        } catch (e: Exception) {
+            Log.e("TEAM_ERROR", "Leave failed: ${e.message}")
+        }
+    }
 }
+
+
+
 

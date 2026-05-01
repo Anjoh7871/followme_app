@@ -50,6 +50,8 @@ import androidx.navigation.NavController
 import com.example.followme02.screen.profile.ProfileAvatar
 import com.example.followme02.viewmodel.SocialViewModel
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.stringResource
 import com.example.followme02.R
@@ -65,6 +67,9 @@ fun TeamScreen(
     val colorScheme = MaterialTheme.colorScheme
     val destinations = viewModel.availableDestinations.value
     val leaderboardMembers = viewModel.getSortedLeaderboard()
+    var showInviteSheet by remember { mutableStateOf(false) }
+    var inviteQuery by remember { mutableStateOf("") }
+    var inviteResult by remember { mutableStateOf<SocialUserSearchResultUi?>(null) }
 
     var showJourneyPicker by remember { mutableStateOf(false) }
     var selectedMember by remember { mutableStateOf<TeamMemberUi?>(null) }
@@ -149,6 +154,18 @@ fun TeamScreen(
                                     }
                                 }
                             )
+                            // INVITE BUTTON (leader only)
+                            if (state.currentTeam.isCurrentUserLeader) {
+                                Button(
+                                    onClick = {
+                                        showInviteSheet = true
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(16.dp)
+                                ) {
+                                    Text("Invite new member")
+                                }
+                            }
 
                             if (!state.currentTeam.isCurrentUserLeader) {
                                 OutlinedButton(
@@ -167,7 +184,58 @@ fun TeamScreen(
                         )
                     }
                 }
+                if (state.invites.isNotEmpty()) {
 
+                    item {
+                        Text(
+                            text = "Team Invites",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    items(state.invites) { invite ->
+
+                        val teamName = invite.teams?.team_name ?: "Team ${invite.team_id}"
+
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+
+                                Text(
+                                    text = "You are invited to $teamName",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+
+                                    Button(
+                                        onClick = {
+                                            viewModel.acceptInvite(invite)
+                                        }
+                                    ) {
+                                        Text("Accept")
+                                    }
+
+                                    OutlinedButton(
+                                        onClick = {
+                                            viewModel.declineInvite(invite)
+                                        }
+                                    ) {
+                                        Text("Decline")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 item {
                     SectionHeader(title = stringResource(R.string.leaderboard))
                 }
@@ -189,6 +257,7 @@ fun TeamScreen(
                 } else {
                     items(leaderboardMembers) { member ->
                         Column {
+
                             TeamLeaderboardRow(
                                 member = member,
                                 rank = leaderboardMembers.indexOf(member) + 1,
@@ -198,7 +267,7 @@ fun TeamScreen(
                                 }
                             )
 
-                            // Kick knapp (kun leader og ikke seg selv)
+                            // 🔹 ACTION BUTTONS (LEADER ONLY)
                             if (state.currentTeam?.isCurrentUserLeader == true &&
                                 !member.isCurrentUser
                             ) {
@@ -208,6 +277,10 @@ fun TeamScreen(
                                         .padding(horizontal = 16.dp),
                                     horizontalArrangement = Arrangement.End
                                 ) {
+
+
+                                    Spacer(modifier = Modifier.width(8.dp))
+
                                     TextButton(
                                         onClick = {
                                             viewModel.kickUser(
@@ -224,6 +297,11 @@ fun TeamScreen(
                                 }
                             }
                         }
+                    }
+
+
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
@@ -315,7 +393,7 @@ fun TeamScreen(
                     TextButton(
                         onClick = {
                             showLeaveTeamDialog = false
-                            // TODO: connect real leave-team logic later
+                            viewModel.leaveTeam()
                         }
                     ) {
                         Text(stringResource(R.string.leave))
@@ -329,6 +407,76 @@ fun TeamScreen(
                     }
                 }
             )
+        }
+    }
+    // INVITE SHEET (LEGG HER)
+    if (showInviteSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showInviteSheet = false }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+
+                Text(
+                    text = "Invite user",
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = inviteQuery,
+                    onValueChange = { inviteQuery = it },
+                    label = { Text("Search username or email") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = {
+                        viewModel.onFriendSearchQueryChange(inviteQuery)
+                        viewModel.searchUserByEmail()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Search")
+                }
+
+                val result = viewModel.uiState.value.friendSearchResult
+
+                result?.let { user ->
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = user.username,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+                            val teamId = state.currentTeam?.teamId ?: return@Button
+
+                            viewModel.inviteUserToTeam(
+                                teamId = teamId,
+                                userId = user.userId
+                            )
+                            showInviteSheet = false
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Invite")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
 }

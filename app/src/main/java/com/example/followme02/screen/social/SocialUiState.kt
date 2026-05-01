@@ -2,6 +2,7 @@ package com.example.followme02.screen.social
 
 import com.example.followme02.data.repository.SocialRepository
 
+
 enum class SocialTab {
     FRIENDS,
     TEAMS
@@ -111,5 +112,8 @@ data class SocialUiState(
     val teamMembers: List<TeamMemberUi> = emptyList(),
     val availableTeams: List<SearchableTeamUi> = emptyList(),
     val recentTeamActivity: List<SocialActivityUi> = emptyList(),
-    val joinRequests: List<SocialRepository.JoinRequestRow> = emptyList()
+    val joinRequests: List<SocialRepository.JoinRequestRow> = emptyList(),
+    val myJoinRequests: List<SocialRepository.JoinRequestRow> = emptyList(),
+    val invites: List<SocialRepository.TeamInviteRow> = emptyList()
+
 )

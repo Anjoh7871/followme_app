@@ -208,6 +208,9 @@
     <string name="user_label">User %1$d</string>
     <string name="approve">Approve</string>
     <string name="kick">Kick</string>
+    <string name="join">Join</string>
+    <string name="request_sent">Request sent</string>
+    <string name="members">%1$d members</string>
     <!-- - WORKOUT - -->
     <string name="training_sessions">Training Sessions</string>
     <string name="distance">Distance (km)</string>

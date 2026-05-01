@@ -9,7 +9,9 @@ import com.example.followme02.screen.social.LeaderboardType
 import com.example.followme02.screen.social.SearchRelationshipStatus
 import com.example.followme02.screen.social.SocialTab
 import com.example.followme02.screen.social.SocialUiState
+import com.example.followme02.data.repository.SocialRepository.JoinRequestRow
 import kotlinx.coroutines.launch
+import kotlin.collections.emptyList
 
 class SocialViewModel : ViewModel() {
 
@@ -20,7 +22,7 @@ class SocialViewModel : ViewModel() {
 
     var availableDestinations = mutableStateOf<List<Pair<Int, String>>>(emptyList())
         private set
-
+    var currentUserId = mutableStateOf<Int?>(null)
     fun loadSocialData() {
         viewModelScope.launch {
             uiState.value = uiState.value.copy(
@@ -32,7 +34,17 @@ class SocialViewModel : ViewModel() {
                 val friends = repository.getFriends()
                 val friendRequests = repository.getFriendRequests()
                 val currentTeam = repository.getCurrentTeam()
-                val teamMembers = currentTeam?.let { repository.getTeamMembers(it.teamId) } ?: emptyList()
+                val invites = repository.getInvitesForUser()
+                val userId = repository.getCurrentDbUserId()
+                currentUserId.value = userId
+                val joinRequests = if (currentTeam != null) {
+                    repository.getJoinRequests(currentTeam.teamId)
+                } else {
+                    emptyList()
+                }
+                val myJoinRequests = repository.getMyJoinRequests()
+                val teamMembers =
+                    currentTeam?.let { repository.getTeamMembers(it.teamId) } ?: emptyList()
                 val recentTeamActivity = if (currentTeam != null) {
                     repository.getRecentTeamActivity()
                 } else {
@@ -52,7 +64,10 @@ class SocialViewModel : ViewModel() {
                     teamMembers = teamMembers,
                     recentTeamActivity = recentTeamActivity,
                     availableTeams = availableTeams,
-                    friendActivities = friendActivities
+                    friendActivities = friendActivities,
+                    joinRequests = joinRequests,
+                    myJoinRequests = myJoinRequests,
+                    invites = invites
                 )
             } catch (e: Exception) {
                 uiState.value = uiState.value.copy(
@@ -232,30 +247,30 @@ class SocialViewModel : ViewModel() {
         }
     }
 
-    var joinRequests = mutableStateOf<List<SocialRepository.JoinRequestRow>>(emptyList())
 
     fun requestToJoinTeam(teamId: Int) {
         viewModelScope.launch {
-            try {
-                repository.requestToJoinTeam(teamId)
-                loadSocialData()
-            } catch (e: Exception) {
-                Log.e("JOIN_ERROR", e.message ?: "Unknown error")
-            }
+            repository.requestToJoinTeam(teamId)
+
+
+            loadSocialData()
         }
     }
 
-    fun loadJoinRequests(teamId: Int) {
-        viewModelScope.launch {
-            joinRequests.value = repository.getJoinRequests(teamId)
-        }
-    }
     fun approveJoinRequest(req: SocialRepository.JoinRequestRow) {
         viewModelScope.launch {
             repository.approveJoinRequest(req)
             loadSocialData() // refresher UI
         }
     }
+
+    fun denyJoinRequest(req: SocialRepository.JoinRequestRow) {
+        viewModelScope.launch {
+            repository.denyJoinRequest(req)
+            loadSocialData()
+        }
+    }
+
     fun kickUser(teamId: Int, userId: Int) {
         viewModelScope.launch {
             Log.d("KICK_TEST", "Kick pressed: $userId from $teamId")
@@ -265,4 +280,39 @@ class SocialViewModel : ViewModel() {
             loadSocialData()
         }
     }
+
+    fun acceptInvite(invite: SocialRepository.TeamInviteRow) {
+        viewModelScope.launch {
+            repository.acceptInvite(invite)
+
+
+            loadSocialData()
+        }
+    }
+
+    fun declineInvite(invite: SocialRepository.TeamInviteRow) {
+        viewModelScope.launch {
+            repository.declineInvite(invite)
+
+            //
+            loadSocialData()
+        }
+    }
+
+    fun inviteUserToTeam(teamId: Int, userId: Int) {
+        viewModelScope.launch {
+            repository.inviteUserToTeam(teamId, userId)
+            loadSocialData()
+        }
+    }
+
+    fun leaveTeam() {
+        viewModelScope.launch {
+            repository.leaveTeam()
+
+
+            loadSocialData()
+        }
+    }
+
 }

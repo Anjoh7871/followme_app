@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -57,6 +58,7 @@ fun SocialScreen(
     viewModel: SocialViewModel = viewModel()
 ) {
     val state = viewModel.uiState.value
+    val requestedTeams = remember { mutableStateOf(setOf<Int>()) }
     val colorScheme = MaterialTheme.colorScheme
 
     var currentSheet by remember { mutableStateOf(SocialSheetType.NONE) }
@@ -250,26 +252,34 @@ fun SocialScreen(
                                             )
                                         }
                                     } else {
-                                        items(state.joinRequests) { req ->   // 🔥 FIX HER
+                                        items(state.joinRequests) { req ->   //
 
                                             Card {
                                                 Row(
                                                     modifier = Modifier.padding(12.dp),
                                                     horizontalArrangement = Arrangement.SpaceBetween
                                                 ) {
-                                                    Text(
-                                                        text = stringResource(
-                                                            R.string.user_label,
-                                                            req.user_id
-                                                        )
-                                                    )
+                                                    Text("User ${req.username}")
 
-                                                    Button(
-                                                        onClick = {
-                                                            viewModel.approveJoinRequest(req)
+                                                    Row {
+
+                                                        Button(
+                                                            onClick = {
+                                                                viewModel.approveJoinRequest(req)
+                                                            }
+                                                        ) {
+                                                            Text("Approve")
                                                         }
-                                                    ) {
-                                                        Text(stringResource(R.string.approve))
+
+                                                        Spacer(modifier = Modifier.width(8.dp))
+
+                                                        Button(
+                                                            onClick = {
+                                                                viewModel.denyJoinRequest(req)
+                                                            }
+                                                        ) {
+                                                            Text("Deny")
+                                                        }
                                                     }
                                                 }
                                             }
@@ -329,6 +339,53 @@ fun SocialScreen(
                                         onButtonClick = { }
                                     )
                                 }
+                                // 🔹 TEAM INVITES (for user)
+                                if (state.invites.isNotEmpty()) {
+
+                                    item {
+                                        SectionHeader(
+                                            title = "Invites",
+                                            trailing = "${state.invites.size}"
+                                        )
+                                    }
+
+                                    items(state.invites) { invite ->
+
+                                        Card {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(12.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+
+                                                // TODO: bytt til team name senere
+                                                Text(invite.teams?.team_name ?: "Unknown team")
+
+                                                Row {
+                                                    Button(
+                                                        onClick = {
+                                                            viewModel.acceptInvite(invite)
+                                                        }
+                                                    ) {
+                                                        Text("Accept")
+                                                    }
+
+                                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                                    Button(
+                                                        onClick = {
+                                                            viewModel.declineInvite(invite)
+                                                        }
+                                                    ) {
+                                                        Text("Decline")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
 
                                 item {
                                     SectionHeader(
@@ -349,10 +406,47 @@ fun SocialScreen(
                                     }
                                 } else {
                                     items(filteredTeams) { team ->
-                                        TeamSearchRow(
-                                            team = team,
-                                            onJoinClick = { viewModel.requestToJoinTeam(team.teamId) }
-                                        )
+
+                                        val isPending = state.myJoinRequests.any {
+                                            it.team_id == team.teamId
+                                        }
+
+                                        Card {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(12.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Column {
+                                                    Text(team.teamName)
+
+                                                    Text(
+                                                        text = stringResource(R.string.members, team.memberCount),
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
+                                                }
+
+                                                Button(
+                                                    onClick = {
+                                                        viewModel.requestToJoinTeam(team.teamId)
+
+                                                        // 🔹 UI update med en gang
+                                                        requestedTeams.value =
+                                                            requestedTeams.value + team.teamId
+                                                    },
+                                                    enabled = !isPending
+                                                ) {
+                                                    Text(
+                                                        if (isPending)
+                                                            stringResource(R.string.request_sent)
+                                                        else
+                                                            stringResource(R.string.join)
+                                                    )
+                                                }
+                                            }
+                                        }
                                     }
                                 }
 
@@ -522,3 +616,4 @@ private fun formatActivityDescription(activity: SocialActivityUi): String {
         "${activity.description}\n$date"
     }
 }
+
