@@ -259,7 +259,7 @@ fun SocialScreen(
                                                     modifier = Modifier.padding(12.dp),
                                                     horizontalArrangement = Arrangement.SpaceBetween
                                                 ) {
-                                                    Text("User ${req.username}")
+                                                    Text(stringResource(R.string.user_with_name, req.username))
 
                                                     Row {
 
@@ -268,7 +268,7 @@ fun SocialScreen(
                                                                 viewModel.approveJoinRequest(req)
                                                             }
                                                         ) {
-                                                            Text("Approve")
+                                                            Text(stringResource(R.string.approve))
                                                         }
 
                                                         Spacer(modifier = Modifier.width(8.dp))
@@ -278,7 +278,7 @@ fun SocialScreen(
                                                                 viewModel.denyJoinRequest(req)
                                                             }
                                                         ) {
-                                                            Text("Deny")
+                                                            Text(stringResource(R.string.deny))
                                                         }
                                                     }
                                                 }
@@ -344,7 +344,7 @@ fun SocialScreen(
 
                                     item {
                                         SectionHeader(
-                                            title = "Invites",
+                                            title = stringResource(R.string.Invites),
                                             trailing = "${state.invites.size}"
                                         )
                                     }
@@ -361,7 +361,7 @@ fun SocialScreen(
                                             ) {
 
                                                 // TODO: bytt til team name senere
-                                                Text(invite.teams?.team_name ?: "Unknown team")
+                                                Text(invite.teams?.team_name ?: stringResource(R.string.unknown_team))
 
                                                 Row {
                                                     Button(
@@ -369,7 +369,7 @@ fun SocialScreen(
                                                             viewModel.acceptInvite(invite)
                                                         }
                                                     ) {
-                                                        Text("Accept")
+                                                        Text(stringResource(R.string.accept))
                                                     }
 
                                                     Spacer(modifier = Modifier.width(8.dp))
@@ -379,7 +379,7 @@ fun SocialScreen(
                                                             viewModel.declineInvite(invite)
                                                         }
                                                     ) {
-                                                        Text("Decline")
+                                                        Text(stringResource(R.string.decline))
                                                     }
                                                 }
                                             }

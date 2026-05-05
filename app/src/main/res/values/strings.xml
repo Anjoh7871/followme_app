@@ -80,6 +80,7 @@
     <!-- Buttons -->
     <string name="profile_edit_button">Edit Profile</string>
     <string name="profile_achievements_button">Achievements</string>
+    <string name="settings">Settings</string>
 
     <!-- Stats -->
     <string name="profile_total_km">Total km</string>
@@ -144,6 +145,7 @@
 
     <!-- - SOCIAL - -->
     <string name="search">Search</string>
+    <string name="deny">deny</string>
     <string name="your_friends">Your Friends</string>
     <string name="your_team">Your Team</string>
     <string name="no_team">You are not in a team</string>
@@ -154,6 +156,7 @@
     <string name="example_email_com">example@email.com</string>
     <string name="search_result">Search result</string>
     <string name="friends">%1$d friends</string>
+    <string name="friend">Friends</string>
     <string name="create_a_team_below_or_join_an_existing_one">Create a team below or join an existing one.</string>
     <string name="recent_activity">Recent Activity</string>
     <string name="updates">%1$d updates</string>
@@ -181,6 +184,13 @@
     <string name="remove_friend">Remove Friend</string>
     <string name="remove_friend_confirm">Are you sure you want to remove %1$s from your friends?</string>
     <string name="friend_not_found">Friend not found</string>
+    <string name="Invites">Invites</string>
+    <string name="accept">accept</string>
+    <string name="decline">decline</string>
+    <string name="unknown_team">Unknown team</string>
+    <string name="user_with_name">User %1$s</string>
+    <string name="pending_requests">%d pending requests</string>
+    <string name="team_members">%d members</string>
 
     <!-- - TEAM - -->
     <string name="go_back">Go back</string>
@@ -237,8 +247,9 @@
     <string name="choose_activity">Choose activity</string>
     <string name="no_sessions_registered_yet">No sessions registered yet.</string>
     <string name="existing_sessions">Existing sessions</string>
-    <string name="registrer_trenings">Her kan brukeren registrere treningsøkter og se tidligere økter.</string>
-
+    <string name="registrer_trenings">Here the user can register training sessions and view previous sessions.</string>
+    <string name="activity_type">Activity type</string>
+    <string name="duration_minutes">Duration (minutes)</string>
 
     <!-- ================= WORKOUT DRAFT DEMO ================= -->
 
@@ -262,8 +273,8 @@
     <string name="btn_save_to_draft">Save to draft</string>
 
     <!-- Errors -->
-    <string name="error_invalid_date_millis">Dato er ugyldig akkurat nå. Bruk millis midlertidig.</string>
-    <string name="error_activity_type_required">Treningstype må fylles ut.</string>
+    <string name="error_invalid_date_millis">The date is currently invalid. Please use milliseconds for now.</string>
+    <string name="error_activity_type_required">Training type must be filled in.</string>
     <string name="error_distance_required">Distance is required.</string>
     <string name="error_distance_invalid_number">Invalid number. Use e.g. 3.5</string>
     <string name="error_distance_must_be_gt_zero">Distance must be greater than 0.</string>
@@ -284,5 +295,10 @@
     <string name="when_users_start_earning_points_they_will_appear_here">When users start earning points, they will appear here.</string>
     <string name="view_profile">Tap to view profile</string>
 
+    <!-- - Nav - -->
+    <string name="nav_home">Home</string>
+    <string name="nav_social">Social</string>
+    <string name="nav_achievements">Achievements</string>
+    <string name="nav_profile">Profile</string>
 
 </resources>

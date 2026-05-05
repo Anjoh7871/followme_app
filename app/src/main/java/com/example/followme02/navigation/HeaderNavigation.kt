@@ -10,9 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.followme02.R
 
 @Composable
 fun HeaderNavigation(navController: NavController) {
@@ -24,20 +26,19 @@ fun HeaderNavigation(navController: NavController) {
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-
-        NavButton("Home") {
+        NavButton(stringResource(R.string.nav_home)) {
             navController.navigate("home")
         }
 
-        NavButton("Social") {
+        NavButton(stringResource(R.string.nav_social)) {
             navController.navigate("social")
         }
 
-        NavButton("Achievements") {
+        NavButton(stringResource(R.string.nav_achievements)) {
             navController.navigate("achievements")
         }
 
-        NavButton("Profile") {
+        NavButton(stringResource(R.string.nav_profile)) {
             navController.navigate("profile")
         }
     }

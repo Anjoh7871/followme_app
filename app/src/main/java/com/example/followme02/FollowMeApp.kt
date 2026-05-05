@@ -41,6 +41,7 @@ import com.example.followme02.viewmodel.WorkoutViewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.followme02.screen.profile.FriendProfileScreen
+import androidx.compose.runtime.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -59,7 +60,7 @@ fun FollowMeApp(
     val workoutViewModel: WorkoutViewModel = viewModel()
     val socialViewModel: SocialViewModel = viewModel()
     val settingsViewModel: SettingsViewModel = viewModel()
-    val themeViewModel: ThemeViewModel = viewModel()
+    val settingState = settingsViewModel.uiState.collectAsState().value
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -169,7 +170,25 @@ fun FollowMeApp(
                     navController = navController,
                     isDarkMode = isDarkMode,
                     onToggleDarkMode = onToggleDarkMode,
-                    themeViewModel = themeViewModel
+
+                    language = settingState.language,
+                    onToggleLanguage = { lang ->
+                        settingsViewModel.setLanguage(lang)
+                    },
+
+                    onUpdateUsername = { username ->
+                        settingsViewModel.updateUsername(username)
+                    },
+
+                    onDeleteUser = {
+                        settingsViewModel.deleteUser()
+                        navController.navigate("login") { popUpTo(0) }
+                    },
+
+                    onLogout = {
+                        settingsViewModel.logout()
+                        navController.navigate("login") { popUpTo(0) }
+                    }
                 )
             }
 

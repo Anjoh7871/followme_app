@@ -197,7 +197,7 @@ fun WorkoutScreen2(
             }
         }
 
-        Text("Activity type", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.activity_type), style = MaterialTheme.typography.titleMedium)
 
         ExposedDropdownMenuBox(
             expanded = typeExpanded,
@@ -251,7 +251,7 @@ fun WorkoutScreen2(
             }
         }
 
-        Text(stringResource(R.string.distance_km), style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.distance), style = MaterialTheme.typography.titleMedium)
 
         DistanceStepper(
             value = distanceKm,
@@ -260,7 +260,7 @@ fun WorkoutScreen2(
             onValueChange = { distanceKm = it }
         )
 
-        Text("Duration (minutes)", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.duration_minutes), style = MaterialTheme.typography.titleMedium)
 
         DurationStepper(
             value = durationMinutes,
@@ -269,7 +269,7 @@ fun WorkoutScreen2(
             onValueChange = { durationMinutes = it }
         )
 
-        Text("Date", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.date), style = MaterialTheme.typography.titleMedium)
 
         Box(
             modifier = Modifier

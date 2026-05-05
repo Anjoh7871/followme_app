@@ -1,5 +1,6 @@
 package com.example.followme02.viewmodel
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,20 +24,17 @@ class SettingsViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
-    // ---------------- NOTIFICATIONS ----------------
-    fun setNotificationActivity(enabled: Boolean) {
-        _uiState.update { it.copy(notificationsActivity = enabled) }
-    }
-
-    fun setNotificationFriendRequest(enabled: Boolean) {
-        _uiState.update { it.copy(notificationsFriendRequest = enabled) }
-    }
-
-    fun setNotificationAchievements(enabled: Boolean) {
-        _uiState.update { it.copy(notificationsAchievements = enabled) }
-    }
-
     // ---------------- LANGUAGE ----------------
+
+    fun loadLanguage(context: Context) {
+        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val savedLang = prefs.getString("lang", "EN") ?: "EN"
+        _uiState.update {
+            it.copy(language = savedLang)
+        }
+
+    }
+
     fun setLanguage(lang: String) {
         _uiState.update { it.copy(language = lang) }
     }

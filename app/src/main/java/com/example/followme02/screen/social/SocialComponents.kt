@@ -43,6 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.followme02.screen.profile.ProfileAvatar
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.res.stringResource
+import com.example.followme02.R
 
 @Composable
 fun SocialTabSelector(
@@ -84,7 +86,7 @@ fun SocialTabSelector(
                     }
                 )
             ) {
-                Text("Friends")
+                Text(stringResource(R.string.friend))
             }
 
             Button(
@@ -104,7 +106,7 @@ fun SocialTabSelector(
                     }
                 )
             ) {
-                Text("Teams")
+                Text(stringResource(R.string.team))
             }
         }
     }
@@ -244,14 +246,14 @@ fun FriendRequestsBanner(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Friend Requests",
+                    text = stringResource(R.string.friend_request),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = colorScheme.onSecondaryContainer
                 )
 
                 Text(
-                    text = "$requestCount pending requests",
+                    text = stringResource(R.string.pending_requests, requestCount),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onSecondaryContainer.copy(alpha = 0.82f)
                 )
@@ -321,7 +323,7 @@ fun FriendRow(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Tap to view profile",
+                    text = stringResource(R.string.tap_to_view_profile),
                     style = MaterialTheme.typography.bodySmall,
                     color = colorScheme.primary,
                     fontWeight = FontWeight.Medium
@@ -480,14 +482,14 @@ fun TeamOverviewCard(
                     )
 
                     Text(
-                        text = "${team.memberCount} members",
+                        text = stringResource(R.string.team_members, team.memberCount),
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.onPrimaryContainer.copy(alpha = 0.82f)
                     )
                 }
 
                 TextButton(onClick = onViewMembersClick) {
-                    Text("Members")
+                    Text(stringResource(R.string.members))
                 }
             }
         }
@@ -505,13 +507,13 @@ fun LeaderboardTypeSelector(
         FilterChip(
             selected = selectedType == LeaderboardType.POINTS,
             onClick = { onTypeSelected(LeaderboardType.POINTS) },
-            label = { Text("Points") }
+            label = { Text(stringResource(R.string.points)) }
         )
 
         FilterChip(
             selected = selectedType == LeaderboardType.KM,
             onClick = { onTypeSelected(LeaderboardType.KM) },
-            label = { Text("Distance") }
+            label = { stringResource(R.string.distance) }
         )
     }
 }
@@ -617,7 +619,7 @@ private fun LeaderboardRow(
                 if (member.isCurrentUser) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "You",
+                        text = stringResource(R.string.you),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = colorScheme.primary
@@ -785,7 +787,7 @@ fun FriendRequestRow(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(14.dp)
                 ) {
-                    Text("Accept")
+                    Text(stringResource(R.string.accept))
                 }
 
                 Button(
@@ -797,7 +799,7 @@ fun FriendRequestRow(
                         contentColor = colorScheme.onSurfaceVariant
                     )
                 ) {
-                    Text("Decline")
+                    Text(stringResource(R.string.decline))
                 }
             }
         }
@@ -1051,7 +1053,7 @@ fun FriendProfileContent(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Level ${friend.level}",
+                        text = stringResource(R.string.level, friend.level),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = colorScheme.primary
@@ -1066,17 +1068,17 @@ fun FriendProfileContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 MiniStatCard(
-                    title = "Points",
+                    title = stringResource(R.string.points),
                     value = friend.totalPoints.toString(),
                     modifier = Modifier.weight(1f)
                 )
                 MiniStatCard(
-                    title = "Total km",
+                    title = stringResource(R.string.total_km),
                     value = formatKm(friend.totalKm),
                     modifier = Modifier.weight(1f)
                 )
                 MiniStatCard(
-                    title = "Level",
+                    title = stringResource(R.string.level),
                     value = friend.level.toString(),
                     modifier = Modifier.weight(1f)
                 )
@@ -1149,7 +1151,7 @@ fun BottomSheetHeader(
         IconButton(onClick = onClose) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Close"
+                contentDescription = stringResource(R.string.close)
             )
         }
     }

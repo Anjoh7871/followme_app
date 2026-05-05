@@ -75,6 +75,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun HomeScreen(
@@ -145,7 +146,7 @@ fun HomeScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Workout",
+                    contentDescription = stringResource(R.string.add_workout),
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -179,7 +180,7 @@ fun HomeScreen(
             JourneyCard(
                 currentKm = currentJourneyKm,
                 targetKm = selectedDestination?.kmThreshold ?: 0.0,
-                destinationName = selectedDestination?.name ?: "Choose destination",
+                destinationName = selectedDestination?.name ?: stringResource(R.string.choose_destination),
                 onClick = {
                     showDestinationDialog = true
                 }
@@ -252,12 +253,12 @@ fun HomeScreen(
                         destinationViewModel.clearRecentlyCompletedDestination()
                     }
                 ) {
-                    Text("Close")
+                    Text(stringResource(R.string.close))
                 }
             },
             title = {
                 Column {
-                    Text("Congratulations! 🎉")
+                    Text(stringResource(R.string.congratulations))
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(destination.name)
                 }
@@ -284,13 +285,13 @@ fun HomeScreen(
                     }
 
                     Text(
-                        text = "You completed your journey to ${destination.name}!"
+                        text = stringResource(R.string.completed_journey, destination.name)
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = destination.factText ?: "No fun fact available."
+                        text = destination.factText ?: stringResource(R.string.no_fun_fact)
                     )
                 }
             }
@@ -304,11 +305,11 @@ fun HomeScreen(
                 pendingDestination = null
             },
             title = {
-                Text("Change destination?")
+                Text(stringResource(R.string.change_destination))
             },
             text = {
                 Text(
-                    "You have already started this journey. If you choose a new destination now, you will lose your current progress."
+                    stringResource(R.string.change_destination_question)
                 )
             },
             confirmButton = {
@@ -324,7 +325,7 @@ fun HomeScreen(
                         pendingDestination = null
                     }
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             },
             dismissButton = {
@@ -334,7 +335,7 @@ fun HomeScreen(
                         pendingDestination = null
                     }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -351,7 +352,7 @@ fun HeaderSection(viewModel: ProfileViewModel) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Welcome back, $username! 👋",
+            text = stringResource(R.string.welcome_back, username),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = colorScheme.onBackground
@@ -360,7 +361,7 @@ fun HeaderSection(viewModel: ProfileViewModel) {
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "Keep moving toward your destination!",
+            text = stringResource(R.string.keep_moving_toward_your_destination),
             style = MaterialTheme.typography.bodyLarge,
             color = colorScheme.onSurfaceVariant
         )
@@ -372,7 +373,7 @@ fun HeaderSection(viewModel: ProfileViewModel) {
             modifier = Modifier.fillMaxWidth()
         ) {
             StatCard(
-                title = "Level",
+                title = stringResource(R.string.level),
                 value = profile.currentLevel.toString(),
                 containerColor = colorScheme.secondaryContainer,
                 contentColor = colorScheme.onSecondaryContainer,
@@ -380,7 +381,7 @@ fun HeaderSection(viewModel: ProfileViewModel) {
             )
 
             StatCard(
-                title = "Points",
+                title = stringResource(R.string.points),
                 value = profile.totalPoints.toString(),
                 containerColor = colorScheme.tertiaryContainer,
                 contentColor = colorScheme.onTertiaryContainer,
@@ -477,7 +478,7 @@ fun JourneyCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Your Virtual Journey",
+                        text = stringResource(R.string.virtual_journey),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = colorScheme.onPrimaryContainer
@@ -486,7 +487,7 @@ fun JourneyCard(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Destination: $destinationName",
+                        text = stringResource(R.string.destination, destinationName),
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
                     )

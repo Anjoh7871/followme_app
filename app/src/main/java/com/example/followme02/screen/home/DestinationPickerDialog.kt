@@ -52,7 +52,7 @@ fun DestinationPickerDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("Choose destination")
+            Text(stringResource(R.string.choose_destination))
         },
         text = {
             Column {

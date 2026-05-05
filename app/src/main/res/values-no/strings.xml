@@ -1,0 +1,304 @@
+<resources>
+
+    <!-- App -->
+    <string name="app_name">FollowMe02</string>
+    <!-- - LOGIN - -->
+    <string name="login">Logg inn</string>
+    <string name="login_success">Innlogging vellykket</string>
+    <string name="email">E-post</string>
+    <string name="password">Passord</string>
+    <string name="toggle_password_visibility">Vis/skjul passord</string>
+    <string name="no_account_register">Har du ikke konto? Registrer deg</string>
+
+    <!-- - REGISTER - -->
+    <string name="register">Registrer</string>
+    <string name="register_success">Bruker registrert</string>
+    <string name="username">Brukernavn</string>
+    <string name="username_empty">Brukernavn kan ikke være tomt</string>
+    <string name="email_empty">E-post kan ikke være tomt</string>
+    <string name="password_invalid">Passordet må være minst 8 tegn, inneholde stor bokstav og tall</string>
+    <string name="already_have_account">Har du allerede en konto? Logg inn</string>
+
+    <!-- - HOME - -->
+    <string name="add_workout">Legg til treningsøkt</string>
+    <string name="choose_destination">Velg destinasjon</string>
+    <string name="close">Lukk</string>
+    <string name="congratulations">Gratulerer! 🎉</string>
+    <string name="completed_journey">Du har fullført reisen til %1$s!</string>
+    <string name="no_fun_fact">Ingen morsomme fakta tilgjengelig.</string>
+    <string name="change_destination">Endre destinasjon?</string>
+    <string name="change_destination_question">Du har allerede startet denne reisen. Hvis du velger en ny destinasjon nå, vil du miste din nåværende fremgang.</string>
+    <string name="ok">OK</string>
+    <string name="welcome_back">Velkommen tilbake, %1$s! 👋</string>
+    <string name="keep_moving_toward_your_destination">Fortsett mot målet ditt!</string>
+    <string name="level">Nivå</string>
+    <string name="points">Poeng</string>
+    <string name="virtual_journey">Din virtuelle reise</string>
+    <string name="destination">Destinasjon: %1$s</string>
+    <string name="map_route_placeholder">Kartrute-plassholder</string>
+    <string name="search_destination">Søk etter destinasjon</string>
+    <string name="select_destination">Velg denne destinasjonen</string>
+    <string name="km_from_narvik">%1$d km fra Narvik</string>
+
+    <!-- - ACHIEVEMENT - -->
+    <string name="gamification_hub">Spillhub 🎮</string>
+    <string name="track_achievements">Følg med på prestasjonene dine og konkurrer med andre!</string>
+    <string name="achievements">Prestasjoner</string>
+    <string name="leaderboard">Toppliste</string>
+    <string name="your_progress">Din fremgang</string>
+    <string name="unlocked">Låste opp %1$s</string>
+    <string name="part_unlocked">%1$s / %2$s låst opp</string>
+
+    <!-- - JOURNEY LOG - -->
+    <string name="journey_log">Reiselogg</string>
+    <string name="completed_journeys">Fullførte reiser</string>
+    <string name="current_journey">Gjeldende reise</string>
+    <string name="no_destination">Ingen destinasjon valgt ennå.</string>
+    <string name="no_completed_journeys">Ingen fullførte reiser ennå</string>
+    <string name="track_your_active_route_and_review_completed_virtual_journeys">Følg din aktive rute og se over fullførte virtuelle reiser.</string>
+    <string name="go_to_home_and_choose_a_destination_in_virtual_journey">Gå til Hjem og velg en destinasjon i Virtuell Reise.</string>
+    <string name="km_left_to_reach">%1$s km igjen for å nå %2$s</string>
+    <string name="sort_completed_journeys">Sorter fullførte reiser</string>
+    <string name="name">Navn</string>
+    <string name="completed">Fullført: %1$s</string>
+    <string name="finish_your_first_virtual_route_and_it_will_show_up_here">Fullfør din første virtuelle rute, så vil den dukke opp her.</string>
+    <string name="journey_progress">%1$d%% fullført</string>
+    <string name="journey_km_progress">%1$s / %2$s km</string>
+    <string name="no_active_journey">Denne brukeren har ingen aktiv reise for øyeblikket.</string>
+
+    <!-- - PROFILE - -->
+
+    <!-- Header -->
+    <string name="profile_title">Din profil 👤</string>
+    <string name="profile_subtitle">Følg fremgangen din og vis frem reisen din!</string>
+    <string name="profile_motivation">Fortsett mot ditt neste mål.</string>
+
+    <!-- Badges -->
+    <string name="profile_level">Nivå</string>
+    <string name="profile_points">Poeng</string>
+
+    <!-- Buttons -->
+    <string name="profile_edit_button">Rediger profil</string>
+    <string name="profile_achievements_button">Prestasjoner</string>
+    <string name="settings">Instillinger</string>
+
+    <!-- Stats -->
+    <string name="profile_total_km">Total km</string>
+    <string name="profile_workouts">Treningsøkter</string>
+    <string name="profile_streak">Rekke</string>
+    <string name="profile_team">Lag</string>
+
+    <!-- Stat values -->
+    <string name="profile_total_km_value">%1$s km</string>
+    <string name="profile_streak_days">%1$d dager</string>
+
+    <!-- Journey -->
+    <string name="profile_current_journey_goal">Virtuell reisehistorikk</string>
+    <string name="profile_goal_route">Narvik til Tromsø</string>
+    <string name="profile_goal_progress">%1$d / %2$d km</string>
+    <string name="profile_goal_remaining">%1$d km igjen for å nå Tromsø!</string>
+
+    <!-- Details -->
+    <string name="profile_details_title">Profildetaljer</string>
+    <string name="profile_favorite_activity">Favorittaktivitet</string>
+    <string name="profile_location">Sted</string>
+    <string name="profile_member_since">Medlem siden</string>
+
+    <!-- Content Descriptions (Accessibility) -->
+    <string name="profile_avatar_content_description">Profilbilde</string>
+    <string name="profile_level_icon_content_description">Nivå</string>
+    <string name="profile_points_icon_content_description">Poeng</string>
+    <string name="profile_edit_icon_content_description">Rediger profil</string>
+    <string name="profile_achievements_icon_content_description">Prestasjoner</string>
+
+    <!-- extra -->
+    <string name="edit_profile">Rediger profil</string>
+    <string name="training_stats">Trestatistikk</string>
+    <string name="total_km">Total km</string>
+    <string name="workouts">Treningsøkter</string>
+    <string name="current_streak">Gjeldende rekke</string>
+    <string name="longest_streak">Lengste rekke</string>
+    <string name="team">Lag</string>
+    <string name="selected">Valgt:</string>
+    <string name="dark_mode">Mørk modus</string>
+    <string name="logout">Logg ut</string>
+    <string name="view_your_current_journey_and_completed_routes">Se din nåværende reise og fullførte ruter.</string>
+    <string name="cd_go_back">Gå tilbake</string>
+    <string name="you">Deg</string>
+    <string name="pts">poeng</string>
+    <string name="complete">fullført</string>
+    <string name="leave">Forlat</string>
+
+    <!-- - SETTINGS - -->
+    <string name="edit_username">Rediger brukernavn</string>
+    <string name="appearance">Utseende</string>
+    <string name="language">Språk</string>
+    <string name="blocked_users">Blokkerte brukere</string>
+    <string name="delete_user">Slett bruker</string>
+    <string name="delete_question">Er du sikker på at du vil slette kontoen din? Denne handlingen kan ikke angres.</string>
+    <string name="save">Lagre</string>
+    <string name="new_username">Nytt brukernavn</string>
+    <string name="log_out">Logg ut</string>
+    <string name="account">Konto</string>
+    <string name="view_blocked_users">Se blokkerte brukere</string>
+    <string name="done">Ferdig</string>
+
+    <!-- - SOCIAL - -->
+    <string name="user_with_name">Bruker %1$s</string>
+    <string name="search">Søk</string>
+    <string name="deny">benekte</string>
+    <string name="your_friends">Dine venner</string>
+    <string name="your_team">Ditt lag</string>
+    <string name="no_team">Du er ikke i et lag</string>
+    <string name="create_team">Opprett et lag</string>
+    <string name="notifications">Varslinger</string>
+    <string name="something_went_wrong">Noe gikk galt</string>
+    <string name="find_user_by_email">Finn bruker via e-post</string>
+    <string name="example_email_com">eksempel@epost.no</string>
+    <string name="search_result">Søkeresultat</string>
+    <string name="friends">%1$d venner</string>
+    <string name="friend">Venner</string>
+    <string name="create_a_team_below_or_join_an_existing_one">Opprett et lag nedenfor eller bli med i et eksisterende.</string>
+    <string name="recent_activity">Nylig aktivitet</string>
+    <string name="updates">%1$d oppdateringer</string>
+    <string name="no_recent_team_activity_yet">Ingen nylig lagaktivitet ennå</string>
+    <string name="when_someone_joins_your_team_it_will_show_up_here">Når noen blir med i laget ditt, vil det vises her.</string>
+    <string name="team_name">Lagnavn...</string>
+    <string name="find_a_team">Finn et lag</string>
+    <string name="search_teams">Søk etter lag...</string>
+    <string name="filter">Filter</string>
+    <string name="available_teams">Tilgjengelige lag</string>
+    <string name="teams">%1$d lag</string>
+    <string name="no_teams_found">Ingen lag funnet</string>
+    <string name="try_another_team_name">Prøv et annet lagnavn.</string>
+    <string name="no_notifications">Ingen varslinger</string>
+    <string name="right_now_notifications_are_based_on_real_friend_requests_from_the_database">Akkurat nå er varslinger basert på faktiske venneforespørsler fra databasen.</string>
+    <string name="friend_request">Venneforespørsel</string>
+    <string name="wants_to_be_your_friend">%1$s ønsker å bli din venn</string>
+    <string name="friend_requests">Venneforespørsler</string>
+    <string name="no_friend_requests">Ingen venneforespørsler</string>
+    <string name="you_are_all_caught_up">Du er helt oppdatert.</string>
+    <string name="friend_profile">Venneprofil</string>
+    <string name="social">Sosialt</string>
+    <string name="see_friends_search_for_users_manage_teams_and_track_social_activity">Se venner, søk etter brukere, administrer lag og følg sosial aktivitet.</string>
+    <string name="remove">Fjern</string>
+    <string name="remove_friend">Fjern venn</string>
+    <string name="remove_friend_confirm">Er du sikker på at du vil fjerne %1$s fra vennene dine?</string>
+    <string name="friend_not_found">Venn ble ikke funnet</string>
+    <string name="Invites">Invitasjoner</string>
+    <string name="accept">akseptere</string>
+    <string name="decline">avslå</string>
+    <string name="unknown_team">Ukjent lag</string>
+    <string name="pending_requests">%d ventende forespørsler</string>
+    <string name="team_members">%d medlemmer</string>
+
+    <!-- - TEAM - -->
+    <string name="go_back">Gå tilbake</string>
+    <string name="leave_team">Forlat lag</string>
+    <string name="cancel">Avbryt</string>
+    <string name="team_journey">Lagreise</string>
+    <string name="member_profile">Medlemsprofil</string>
+    <string name="no_leaderboard_title">Ingen toppliste ennå</string>
+    <string name="no_leaderboard_description">Bli med i et lag først.</string>
+    <string name="no_destinations_title">Ingen destinasjoner funnet</string>
+    <string name="no_destinations_description">Det er ingen tilgjengelige destinasjoner akkurat nå.</string>
+    <string name="choose_team_journey">Velg lagreise</string>
+    <string name="tap_to_change_destination">Trykk på kortet for å endre destinasjon</string>
+    <string name="not_in_team_title">Du er ikke i et lag</string>
+    <string name="not_in_team_description">Bli med i et lag fra Lag-fanen under Sosialt.</string>
+    <string name="team_leaderboard_description">Se lagets toppliste og felles mål.</string>
+    <string name="tap_to_view_profile">Trykk for å se profil</string>
+    <string name="leave_team_title">Forlat lag</string>
+    <string name="leave_team_confirm">Er du sikker på at du vil forlate dette laget?</string>
+    <string name="no_recent_activity_yet">Ingen nylig aktivitet ennå</string>
+    <string name="activity_feed_description">Aktivitet fra laget ditt og venner vil dukke opp her</string>
+    <string name="join_requests">Forespørsler om å bli med</string>
+    <string name="no_pending_requests">Ingen ventende forespørsler</string>
+    <string name="no_pending_requests_desc">Brukere som ber om å bli med i laget ditt vil vises her</string>
+    <string name="user_label">Bruker %1$d</string>
+    <string name="approve">Godkjenn</string>
+    <string name="kick">Kast ut</string>
+    <string name="join">Bli med</string>
+    <string name="request_sent">Forespørsel sendt</string>
+    <string name="members">%1$d medlemmer</string>
+
+    <!-- - WORKOUT - -->
+    <string name="training_sessions">Treningsøkter</string>
+    <string name="distance">Distanse (km)</string>
+    <string name="duration">Varighet (minutter)</string>
+    <string name="date">Dato</string>
+    <string name="add">Legg til</string>
+    <string name="update">Oppdater</string>
+    <string name="delete">Slett</string>
+    <string name="clear">Tøm</string>
+    <string name="minutes">minutter</string>
+    <string name="increase">Øk</string>
+    <string name="decrease">Minsk</string>
+    <string name="type">Type: %1$s</string>
+    <string name="distance_km">Distanse: %1$s km</string>
+    <string name="duration_min">Varighet: %1$d min</string>
+    <string name="date_parameter">Dato: %1$s</string>
+    <string name="back_to_home">Tilbake til Hjem</string>
+    <string name="home">hjem</string>
+    <string name="choose_date">Velg dato</string>
+    <string name="ski">Ski</string>
+    <string name="cycle">Sykle</string>
+    <string name="run">Løpe</string>
+    <string name="walk">Gå</string>
+    <string name="choose_activity">Velg aktivitet</string>
+    <string name="no_sessions_registered_yet">Ingen økter registrert ennå.</string>
+    <string name="existing_sessions">Eksisterende økter</string>
+    <string name="registrer_trenings">Her kan brukeren registrere treningsøkter og se tidligere økter.</string>
+    <string name="activity_type">Aktivitetstype</string>
+    <string name="duration_minutes">Varighet (minutter)</string>
+
+    <!-- ================= WORKOUT DRAFT DEMO ================= -->
+
+    <!-- Screen -->
+    <string name="workout_draft_demo_title">Demo av treningsutkast</string>
+
+    <!-- Distance -->
+    <string name="label_distance_km">Distanse (km)</string>
+    <string name="km">km</string>
+    <string name="placeholder_distance">f.eks. 3.5 eller 3,5</string>
+
+    <!-- Date -->
+    <string name="label_date_temp">Dato (midlertidig)</string>
+    <string name="placeholder_date_millis">f.eks. 1700000000000 (millis)</string>
+
+    <!-- Type -->
+    <string name="label_activity_type">Aktivitetstype</string>
+    <string name="placeholder_activity_type">f.eks. Løpe / Gå / Styrke</string>
+
+    <!-- Button -->
+    <string name="btn_save_to_draft">Lagre som utkast</string>
+
+    <!-- Errors -->
+    <string name="error_invalid_date_millis">Dato er ugyldig akkurat nå. Bruk millis midlertidig.</string>
+    <string name="error_activity_type_required">Treningstype må fylles ut.</string>
+    <string name="error_distance_required">Distanse er påkrevd.</string>
+    <string name="error_distance_invalid_number">Ugyldig tall. Bruk f.eks. 3.5</string>
+    <string name="error_distance_must_be_gt_zero">Distanse må være større enn 0.</string>
+    <string name="error_generic_title">Noe gikk galt</string>
+
+    <!-- Draft output -->
+    <string name="draft_distance_prefix">Utkast distanse:</string>
+    <string name="draft_date_prefix">Utkast dato (millis):</string>
+    <string name="draft_type_prefix">Utkast aktivitetstype:</string>
+    <string name="dash">-</string>
+    <string name="km_suffix">km</string>
+
+    <!-- - Leaderboard - -->
+    <string name="compete_with_your_friends_on_total_points">Konkurrer med vennene dine om flest poeng!</string>
+    <string name="error">Feil: %1$s</string>
+    <string name="level_km">Nivå %1$d • %2$s km</string>
+    <string name="no_users_found_on_the_leaderboard_yet">Ingen brukere funnet på topplisten ennå.</string>
+    <string name="when_users_start_earning_points_they_will_appear_here">Når brukere begynner å tjene poeng, vil de dukke opp her.</string>
+    <string name="view_profile">Trykk for å se profil</string>
+
+    <!-- - Nav - -->
+    <string name="nav_home">Hjem</string>
+    <string name="nav_social">Sosialt</string>
+    <string name="nav_achievements">Prestasjoner</string>
+    <string name="nav_profile">Profil</string>
+</resources>

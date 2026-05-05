@@ -1,5 +1,6 @@
 package com.example.followme02.screen.profile
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -142,7 +143,7 @@ fun ProfileScreen(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = "Track your progress and show off your journey!",
+                            text = stringResource(R.string.profile_subtitle),
                             style = MaterialTheme.typography.bodyMedium,
                             color = colorScheme.onSurfaceVariant
                         )
@@ -199,7 +200,7 @@ fun ProfileScreen(
                                         Spacer(modifier = Modifier.height(4.dp))
 
                                         Text(
-                                            text = "Keep moving toward your next goal.",
+                                            text = stringResource(R.string.profile_motivation),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = colorScheme.onSurfaceVariant
                                         )
@@ -213,7 +214,7 @@ fun ProfileScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     StatBadge(
-                                        title = "Level",
+                                        title = stringResource(R.string.level),
                                         value = profile.currentLevel.toString(),
                                         backgroundColor = if (isDarkMode) {
                                             colorScheme.secondaryContainer.copy(alpha = 0.55f)
@@ -235,7 +236,7 @@ fun ProfileScreen(
                                     )
 
                                     StatBadge(
-                                        title = "Points",
+                                        title = stringResource(R.string.points),
                                         value = profile.totalPoints.toString(),
                                         backgroundColor = if (isDarkMode) {
                                             colorScheme.tertiaryContainer.copy(alpha = 0.60f)
@@ -277,10 +278,10 @@ fun ProfileScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Settings,
-                                            contentDescription = "Settings",
+                                            contentDescription = stringResource(R.string.settings),
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text("Settings")
+                                        Text( stringResource(R.string.settings))
                                     }
 
                                     Button(
@@ -302,7 +303,7 @@ fun ProfileScreen(
                                         )
                                     ) {
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text("Achievements")
+                                        Text(stringResource(R.string.achievements))
                                     }
                                 }
                             }
@@ -311,7 +312,7 @@ fun ProfileScreen(
                         Spacer(modifier = Modifier.height(18.dp))
 
                         Text(
-                            text = "Training Stats",
+                            text = stringResource(R.string.training_stats),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = colorScheme.onBackground
@@ -324,7 +325,7 @@ fun ProfileScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             SmallStatCard(
-                                title = "Total km",
+                                title = stringResource(R.string.total_km),
                                 value = totalKmText,
                                 icon = Icons.AutoMirrored.Filled.DirectionsRun,
                                 iconTint = colorScheme.primary,
@@ -332,7 +333,7 @@ fun ProfileScreen(
                             )
 
                             SmallStatCard(
-                                title = "Workouts",
+                                title = stringResource(R.string.workouts),
                                 value = profile.workouts.toString(),
                                 icon = Icons.Default.EmojiEvents,
                                 iconTint = colorScheme.secondary,
@@ -347,16 +348,16 @@ fun ProfileScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             SmallStatCard(
-                                title = "Current streak",
-                                value = "${profile.streakDays} days",
+                                title = stringResource(R.string.current_streak),
+                                value = stringResource(R.string.profile_streak_days, profile.streakDays),
                                 icon = Icons.Default.LocalFireDepartment,
                                 iconTint = colorScheme.error,
                                 modifier = Modifier.weight(1f)
                             )
 
                             SmallStatCard(
-                                title = "Longest streak",
-                                value = "${profile.longestStreak} days",
+                                title = stringResource(R.string.longest_streak),
+                                value = stringResource(R.string.profile_streak_days,profile.longestStreak),
                                 icon = Icons.Default.LocalFireDepartment,
                                 iconTint = colorScheme.tertiary,
                                 modifier = Modifier.weight(1f)
@@ -387,7 +388,7 @@ fun ProfileScreen(
                                     .padding(20.dp)
                             ) {
                                 Text(
-                                    text = "Virtual Journey History",
+                                    text = stringResource(R.string.profile_current_journey_goal),
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = featuredJourneyTitleColor
@@ -396,7 +397,7 @@ fun ProfileScreen(
                                 Spacer(modifier = Modifier.height(6.dp))
 
                                 Text(
-                                    text = "View your current journey and completed routes.",
+                                    text = stringResource(R.string.view_your_current_journey_and_completed_routes),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = colorScheme.onPrimaryContainer.copy(
                                         alpha = if (isDarkMode) 0.88f else 1f
@@ -439,7 +440,7 @@ fun ProfileScreen(
 
                                 ProfileDetailRow(
                                     onClick = { navController.navigate("team") },
-                                    label = "Team",
+                                    label = stringResource(R.string.team),
                                     value = profile.teamName,
                                     icon = Icons.Default.Groups,
                                     iconTint = colorScheme.secondary

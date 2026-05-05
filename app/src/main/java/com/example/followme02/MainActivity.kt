@@ -1,5 +1,6 @@
 package com.example.followme02
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -27,18 +28,26 @@ class MainActivity : ComponentActivity() {
             val themeViewModel: ThemeViewModel = viewModel()
             val isDarkMode by themeViewModel.isDarkMode
 
-            FollowMe02Theme(
-                darkTheme = isDarkMode,
-                dynamicColor = false
-            ) {
-                FollowMeApp(
-                    isDarkMode = isDarkMode,
-                    onToggleDarkMode = themeViewModel::toggleDarkMode,
-                    onLoadDarkMode = themeViewModel::loadDarkMode,
-                    onResetDarkMode = themeViewModel::resetToLightMode
-                )
+                FollowMe02Theme(
+                    darkTheme = isDarkMode,
+                    dynamicColor = false
+                ) {
+                    FollowMeApp(
+                        isDarkMode = isDarkMode,
+                        onToggleDarkMode = themeViewModel::toggleDarkMode,
+                        onLoadDarkMode = themeViewModel::loadDarkMode,
+                        onResetDarkMode = themeViewModel::resetToLightMode
+                    )
             }
         }
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(newBase)
+        val lang = prefs.getString("lang", "EN") ?: "EN"
+
+        val context = LocaleHelper.setLocale(newBase, lang)
+        super.attachBaseContext(context)
     }
 }
 

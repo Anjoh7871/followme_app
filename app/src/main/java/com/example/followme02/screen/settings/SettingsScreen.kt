@@ -1,5 +1,7 @@
 package com.example.followme02.screen.settings
 
+import android.app.Activity
+import android.preference.PreferenceManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,31 +12,33 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.followme02.viewmodel.SettingsViewModel
-import com.example.followme02.viewmodel.ThemeViewModel
+import com.example.followme02.R
 
 @Composable
 fun SettingsScreen(
     navController: NavController,
-    settingsviewModel: SettingsViewModel = viewModel(),
-    themeViewModel: ThemeViewModel = viewModel(),
     isDarkMode: Boolean,
     onToggleDarkMode: () -> Unit,
-    viewModel: SettingsViewModel = viewModel()
+    language: String,
+    onToggleLanguage: (String) -> Unit,
+    onUpdateUsername: (String) -> Unit,
+    onDeleteUser: () -> Unit,
+    onLogout: () -> Unit
 ) {
-    val state by viewModel.uiState.collectAsState()
     var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var newUsername by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val activity = context as Activity
 
     LazyColumn(
         modifier = Modifier
@@ -45,23 +49,23 @@ fun SettingsScreen(
 
         // ---------------- EDIT PROFILE ----------------
         item {
-            SectionTitle("Edit profile")
+            SectionTitle(stringResource(R.string.edit_profile))
         }
 
         item {
-            SettingsItem("Edit username") {
+            SettingsItem(stringResource(R.string.edit_username)) {
                 showEditDialog = true
             }
         }
 
         // ---------------- APPEARANCE ----------------
         item {
-            SectionTitle("Appearance")
+            SectionTitle(stringResource(R.string.appearance))
         }
 
         item {
             SettingsToggle(
-                text = "Dark mode",
+                text = stringResource(R.string.dark_mode),
                 checked = isDarkMode,
                 onCheckedChange = { onToggleDarkMode() }
             )
@@ -69,42 +73,50 @@ fun SettingsScreen(
 
         // ---------------- LANGUAGE ----------------
         item {
-            SectionTitle("Language")
+            SectionTitle(stringResource(R.string.language))
         }
 
         item {
-            SettingsItem("${state.language}") {
-                settingsviewModel.setLanguage(
-                    if (state.language == "NO") "EN" else "NO"
-                )
+            SettingsItem(text = if (language == "NO") "English" else "Norsk") {
+
+                val newLang = if (language == "NO") "EN" else "NO"
+                onToggleLanguage(newLang)
+                PreferenceManager.getDefaultSharedPreferences(context)
+                    .edit()
+                    .putString("lang", newLang)
+                    .apply()
+
+                activity.recreate()
+
+
             }
         }
 
         // ---------------- BLOCKED USERS ----------------
         item {
-            SectionTitle("Blocked users")
+            SectionTitle(stringResource(R.string.blocked_users))
         }
 
         item {
-            SettingsItem("View blocked users") {
+            SettingsItem(stringResource(R.string.view_blocked_users)) {
                 navController.navigate("blockedUsers")
             }
         }
 
         // ---------------- ACCOUNT ----------------
         item {
-            SectionTitle("Account")
+            SectionTitle(stringResource(R.string.account))
         }
 
         item {
-            SettingsItem("Delete user", destructive = true) {
+            SettingsItem(stringResource(R.string.delete_user), destructive = true) {
                 showDeleteDialog = true
             }
         }
 
         item {
-            SettingsItem("Log out", destructive = true) {
-                settingsviewModel.logout()
+            SettingsItem(stringResource(R.string.logout), destructive = true) {
+                onLogout()
                 navController.navigate("login") {
                     popUpTo(0)
                 }
@@ -114,36 +126,35 @@ fun SettingsScreen(
 
     if (showEditDialog) {
         AlertDialog(
-            onDismissRequest = { showEditDialog = false },
+            onDismissRequest = {  },
 
             title = {
-                Text("Edit username")
+                Text(stringResource(R.string.edit_username))
             },
 
             text = {
                 OutlinedTextField(
                     value = newUsername,
                     onValueChange = { newUsername = it },
-                    label = { Text("New username") }
+                    label = { Text(stringResource(R.string.new_username)) }
                 )
             },
 
             confirmButton = {
                 TextButton(
                     onClick = {
-                        settingsviewModel.updateUsername(newUsername)
-                        showEditDialog = false
+                        onUpdateUsername(newUsername)
                     }
                 ) {
-                    Text("Save")
+                    Text(stringResource(R.string.save))
                 }
             },
 
             dismissButton = {
                 TextButton(
-                    onClick = { showEditDialog = false }
+                    onClick = {  }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -151,34 +162,27 @@ fun SettingsScreen(
 
     if (showDeleteDialog) {
         AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
+            onDismissRequest = { },
 
             title = {
-                Text("Delete account")
+                Text(stringResource(R.string.delete))
             },
 
             text = {
-                Text("Are you sure you want to delete your account? This action cannot be undone.")
+                Text(stringResource(R.string.delete_question))
             },
 
             confirmButton = {
                 TextButton(
                     onClick = {
-
-                        showDeleteDialog = false
-
-                        settingsviewModel.deleteUser()
-
+                        onDeleteUser()
                         navController.navigate("login") {
-
                             popUpTo(0)
-
                         }
-
                     }
                 ) {
                     Text(
-                        "Delete",
+                        stringResource(R.string.delete),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -186,9 +190,9 @@ fun SettingsScreen(
 
             dismissButton = {
                 TextButton(
-                    onClick = { showDeleteDialog = false }
+                    onClick = {  }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
