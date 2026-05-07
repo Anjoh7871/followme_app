@@ -36,7 +36,6 @@ import com.example.followme02.screen.workout.WorkoutScreen2
 import com.example.followme02.viewmodel.ProfileViewModel
 import com.example.followme02.viewmodel.SettingsViewModel
 import com.example.followme02.viewmodel.SocialViewModel
-import com.example.followme02.viewmodel.ThemeViewModel
 import com.example.followme02.viewmodel.WorkoutViewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -178,6 +177,31 @@ fun FollowMeApp(
 
                     onUpdateUsername = { username ->
                         settingsViewModel.updateUsername(username)
+                    },
+
+                    blockedUsers =
+                        settingState.blockedUsers,
+
+                    onLoadBlockedUsers = {
+                        settingsViewModel.loadBlockedUsers()
+                    },
+
+                    onBlockUser = { target ->
+                        settingsViewModel.blockUser(target)
+                    },
+
+                    onUnblockUser = { target ->
+                        settingsViewModel.unblockUser(target)
+                    },
+
+                    settingState = settingState,
+
+                    onSearchQueryChange = { query ->
+                        settingsViewModel.onSearchQueryChange(query)
+                    },
+
+                    onSearchClick = {
+                        settingsViewModel.searchUserByEmail()
                     },
 
                     onDeleteUser = {

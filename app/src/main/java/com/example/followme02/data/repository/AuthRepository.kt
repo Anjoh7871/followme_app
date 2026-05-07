@@ -2,6 +2,7 @@ package com.example.followme02.data.repository
 
 import android.util.Log
 import com.example.followme02.data.remote.SupabaseProvider
+import com.example.followme02.model.Users
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from

@@ -9,7 +9,6 @@ import com.example.followme02.screen.social.LeaderboardType
 import com.example.followme02.screen.social.SearchRelationshipStatus
 import com.example.followme02.screen.social.SocialTab
 import com.example.followme02.screen.social.SocialUiState
-import com.example.followme02.data.repository.SocialRepository.JoinRequestRow
 import kotlinx.coroutines.launch
 import kotlin.collections.emptyList
 
@@ -222,6 +221,7 @@ class SocialViewModel : ViewModel() {
             SearchRelationshipStatus.FRIEND -> "Already friends"
             SearchRelationshipStatus.PENDING_SENT -> "Request sent"
             SearchRelationshipStatus.PENDING_RECEIVED -> "Accept request"
+            SearchRelationshipStatus.BLOCKED -> "Blocked"
         }
     }
 
@@ -234,6 +234,7 @@ class SocialViewModel : ViewModel() {
             SearchRelationshipStatus.SELF -> false
             SearchRelationshipStatus.FRIEND -> false
             SearchRelationshipStatus.PENDING_SENT -> false
+            SearchRelationshipStatus.BLOCKED -> false
         }
     }
 

@@ -18,7 +18,8 @@ enum class SearchRelationshipStatus {
     SELF,
     FRIEND,
     PENDING_SENT,
-    PENDING_RECEIVED
+    PENDING_RECEIVED,
+    BLOCKED
 }
 
 data class SocialFriendUi(

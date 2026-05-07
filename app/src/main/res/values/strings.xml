@@ -142,6 +142,9 @@
     <string name="account">Account</string>
     <string name="view_blocked_users">View blocked users</string>
     <string name="done">Done</string>
+    <string name="unblock">Unblock</string>
+    <string name="block">Block</string>
+    <string name="no_blocked_users">No blocked users</string>
 
     <!-- - SOCIAL - -->
     <string name="search">Search</string>

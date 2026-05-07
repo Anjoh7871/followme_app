@@ -142,6 +142,9 @@
     <string name="account">Konto</string>
     <string name="view_blocked_users">Se blokkerte brukere</string>
     <string name="done">Ferdig</string>
+    <string name="unblock">Fjern blokkering</string>
+    <string name="block">Blokker</string>
+    <string name="no_blocked_users">Ingen blokkerte brukere</string> bh
 
     <!-- - SOCIAL - -->
     <string name="user_with_name">Bruker %1$s</string>

@@ -1,6 +1,7 @@
 package com.example.followme02.screen.settings
 
-import com.example.followme02.model.Users
+import com.example.followme02.screen.social.SocialFriendUi
+import com.example.followme02.screen.social.SocialUserSearchResultUi
 
 
 data class SettingsUiState(
@@ -9,7 +10,10 @@ data class SettingsUiState(
     val language: String = "EN",
 
     // Blocked users
-    val blockedUsers: List<Users> = emptyList(),
+    val searchQuery: String = "",
+    val searchResult: SocialUserSearchResultUi? = null,
+    val searchMessage: String? = null,
+    val blockedUsers: List<SocialFriendUi> = emptyList(),
 
     val isLoading: Boolean = false,
     val errorMessage: String? = null

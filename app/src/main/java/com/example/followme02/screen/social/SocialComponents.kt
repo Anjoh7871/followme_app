@@ -263,9 +263,12 @@ fun FriendRequestsBanner(
 }
 
 @Composable
-fun FriendRow(
-    friend: SocialFriendUi,
-    onClick: () -> Unit
+fun UserRow(
+    user: SocialFriendUi,
+    onClick: () -> Unit,
+    showProfil: Boolean = true,
+    clickable: Boolean = true,
+    trailingContent: (@Composable () -> Unit)? = null
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
@@ -273,7 +276,13 @@ fun FriendRow(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
+            .then(
+                if (clickable) {
+                    Modifier.clickable { onClick() }
+                } else {
+                    Modifier
+                }
+            ),
         shape = RoundedCornerShape(22.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isDark) colorScheme.surfaceContainer else colorScheme.surface
@@ -289,8 +298,8 @@ fun FriendRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             ProfileAvatar(
-                username = friend.username,
-                avatarUrl = friend.avatarUrl,
+                username = user.username,
+                avatarUrl = user.avatarUrl,
                 modifier = Modifier.size(58.dp)
             )
 
@@ -298,7 +307,7 @@ fun FriendRow(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = friend.username,
+                    text = user.username,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = colorScheme.onSurface
@@ -307,7 +316,7 @@ fun FriendRow(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Lv ${friend.level} · ${friend.totalPoints} pts · ${formatKm(friend.totalKm)} km",
+                    text = "Lv ${user.level} · ${user.totalPoints} pts · ${formatKm(user.totalKm)} km",
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onSurfaceVariant
                 )
@@ -315,21 +324,24 @@ fun FriendRow(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = friend.email,
+                    text = user.email,
                     style = MaterialTheme.typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Text(
-                    text = stringResource(R.string.tap_to_view_profile),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = colorScheme.primary,
-                    fontWeight = FontWeight.Medium
-                )
+                if (showProfil) {
+                    Text(
+                        text = stringResource(R.string.tap_to_view_profile),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         }
+        trailingContent?.invoke()
     }
 }
 

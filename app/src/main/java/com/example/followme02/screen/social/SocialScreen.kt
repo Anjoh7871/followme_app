@@ -187,8 +187,8 @@ fun SocialScreen(
                                 }
 
                                 items(previewFriends) { friend ->
-                                    FriendRow(
-                                        friend = friend,
+                                    UserRow(
+                                        user = friend,
                                         onClick = {
                                             selectedFriend = friend
                                             currentSheet = SocialSheetType.FRIEND_PROFILE

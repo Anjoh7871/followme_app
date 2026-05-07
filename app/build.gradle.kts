@@ -89,6 +89,7 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation(libs.hilt.android)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.ui)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)

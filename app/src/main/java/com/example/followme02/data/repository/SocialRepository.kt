@@ -25,7 +25,7 @@ private data class SocialDbUserIdRow(
 )
 
 @Serializable
-private data class SocialDbUserRow(
+data class SocialDbUserRow(
     @SerialName("user_id")
     val userId: Int,
     val username: String,
@@ -305,6 +305,7 @@ class SocialRepository {
                 otherUserId = foundUser.userId
             )
 
+            if(relationshipStatus == SearchRelationshipStatus.BLOCKED) return null
             SocialUserSearchResultUi(
                 userId = foundUser.userId,
                 username = foundUser.username,
@@ -785,7 +786,7 @@ class SocialRepository {
 
         return when (row.statusId) {
             STATUS_ACCEPTED -> SearchRelationshipStatus.FRIEND
-            STATUS_BLOCKED -> SearchRelationshipStatus.NONE
+            STATUS_BLOCKED -> SearchRelationshipStatus.BLOCKED
             STATUS_PENDING -> {
                 when (row.actionUserId) {
                     currentUserId -> SearchRelationshipStatus.PENDING_SENT
@@ -1211,6 +1212,118 @@ class SocialRepository {
 
         } catch (e: Exception) {
             Log.e("TEAM_ERROR", "Leave failed: ${e.message}")
+        }
+    }
+
+
+    // ---------------- GET BLOCKED USERS ----------------
+
+    suspend fun getBlockedUsers(): List<SocialFriendUi> {
+        return try {
+
+            val currentUserId = getCurrentDbUserId() ?: return emptyList()
+
+            val relations = supabase
+                .from("friendships")
+                .select(
+                    columns = Columns.list(
+                        "user_id_1",
+                        "user_id_2",
+                        "status_id",
+                        "action_user_id",
+                        "created_at"
+                    )
+                ) {
+                    filter {
+                        eq("action_user_id", currentUserId)
+                        eq("status_id", STATUS_BLOCKED)
+                    }
+                }
+                .decodeList<SocialDbFriendshipRow>()
+
+            relations.mapNotNull { row ->
+
+                val blockedUserId = if (row.userId1 == currentUserId)
+                    row.userId2
+                else
+                    row.userId1
+
+                val user = getUserRow(blockedUserId) ?: return@mapNotNull null
+
+                user.toSocialFriendUi()
+            }
+
+        } catch (e: Exception) {
+            Log.e("SOCIAL_REPOSITORY", "Error fetching blocked users", e)
+            emptyList()
+        }
+    }
+
+    // ---------------- BLOCK USER ----------------
+
+    suspend fun blockUser(targetUserId: Int) {
+
+        try {
+            val currentUserId = getCurrentDbUserId() ?: return
+        val (id1, id2) =
+            if (currentUserId < targetUserId)
+                currentUserId to targetUserId
+            else
+                targetUserId to currentUserId
+
+        supabase.from("friendships").upsert(
+            mapOf(
+                "user_id_1" to id1,
+                "user_id_2" to id2,
+                "status_id" to STATUS_BLOCKED,
+                "action_user_id" to currentUserId
+            )
+
+        )
+        } catch (e: Exception) {
+            Log.e(
+                "BLOCK_DEBUG",
+                "Failed to block user: ${e.message}",
+                e
+            )
+        }
+
+    }
+
+    // ---------------- UNBLOCK USER ----------------
+
+    suspend fun unblockUser(targetUserId: Int) {
+        try {
+
+            val currentUserId = getCurrentDbUserId() ?: return
+            val (id1, id2) =
+
+                if (currentUserId < targetUserId)
+                    currentUserId to targetUserId
+                else
+                    targetUserId to currentUserId
+
+            supabase
+                .from("friendships")
+                .delete {
+                    filter {
+                        eq("user_id_1", id1)
+                        eq("user_id_2", id2)
+                        eq("action_user_id", currentUserId)
+                        eq("status_id", STATUS_BLOCKED)
+                    }
+                }
+
+        } catch (e: Exception) {
+
+            Log.e(
+
+                "UNBLOCK",
+                "Failed to unblock user: ${e.message}",
+                e
+
+            )
+
         }
     }
 }
