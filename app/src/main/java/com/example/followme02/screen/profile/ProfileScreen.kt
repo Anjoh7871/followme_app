@@ -1,5 +1,6 @@
 package com.example.followme02.screen.profile
 
+import androidx.compose.ui.graphics.Brush
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -129,9 +130,16 @@ fun ProfileScreen(
                 else -> {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        mainCardColor,
+                                        colorScheme.primaryContainer.copy(alpha = if (isDarkMode) 0.10f else 0.22f)
+                                    )
+                                )
+                            )
+                            .padding(22.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.profile_title),
@@ -173,7 +181,10 @@ fun ProfileScreen(
                                     .fillMaxWidth()
                                     .padding(22.dp)
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     ProfileAvatar(
                                         username = profile.username,
                                         avatarUrl = profile.avatarUrl
@@ -193,7 +204,7 @@ fun ProfileScreen(
 
                                         Text(
                                             text = profile.email.ifBlank { "Logged in user" },
-                                            style = MaterialTheme.typography.bodyMedium,
+                                            style = MaterialTheme.typography.bodySmall,
                                             color = colorScheme.onSurfaceVariant
                                         )
 
@@ -202,7 +213,7 @@ fun ProfileScreen(
                                         Text(
                                             text = stringResource(R.string.profile_motivation),
                                             style = MaterialTheme.typography.bodySmall,
-                                            color = colorScheme.onSurfaceVariant
+                                            color = colorScheme.onSurfaceVariant.copy(alpha = 0.82f)
                                         )
                                     }
                                 }
@@ -267,6 +278,11 @@ fun ProfileScreen(
                                     Button(
                                         onClick = { navController.navigate("settings") },
                                         modifier = Modifier.weight(1f),
+                                        shape = RoundedCornerShape(18.dp),
+                                        elevation = ButtonDefaults.buttonElevation(
+                                            defaultElevation = if (isDarkMode) 1.dp else 3.dp,
+                                            pressedElevation = if (isDarkMode) 3.dp else 6.dp
+                                        ),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = if (isDarkMode) {
                                                 colorScheme.primary.copy(alpha = 0.88f)
@@ -289,6 +305,11 @@ fun ProfileScreen(
                                             navController.navigate("achievements")
                                         },
                                         modifier = Modifier.weight(1f),
+                                        shape = RoundedCornerShape(18.dp),
+                                        elevation = ButtonDefaults.buttonElevation(
+                                            defaultElevation = if (isDarkMode) 1.dp else 3.dp,
+                                            pressedElevation = if (isDarkMode) 3.dp else 6.dp
+                                        ),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = if (isDarkMode) {
                                                 colorScheme.secondaryContainer.copy(alpha = 0.55f)
