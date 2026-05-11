@@ -2,7 +2,6 @@ package com.example.followme02.screen.social
 
 import com.example.followme02.data.repository.SocialRepository
 
-
 enum class SocialTab {
     FRIENDS,
     TEAMS
@@ -65,6 +64,23 @@ data class SocialTeamUi(
     val targetKm: Double = 0.0,
     val progressKm: Double = 0.0,
     val progressFraction: Float = 0f
+) {
+    val hasActiveJourney: Boolean
+        get() = destinationId != null && targetKm > 0.0
+}
+
+data class CompletedTeamJourneyUi(
+    val completedJourneyId: Long,
+    val teamId: Int,
+    val destinationId: Int?,
+    val destinationName: String,
+    val targetKm: Double,
+    val completedKm: Double,
+    val journeyStartKm: Double,
+    val journeyEndKm: Double,
+    val journeyStartedAt: String? = null,
+    val completedAt: String? = null,
+    val completedByUserId: Int? = null
 )
 
 data class TeamMemberUi(
@@ -113,8 +129,9 @@ data class SocialUiState(
     val teamMembers: List<TeamMemberUi> = emptyList(),
     val availableTeams: List<SearchableTeamUi> = emptyList(),
     val recentTeamActivity: List<SocialActivityUi> = emptyList(),
+    val completedTeamJourneys: List<CompletedTeamJourneyUi> = emptyList(),
+
     val joinRequests: List<SocialRepository.JoinRequestRow> = emptyList(),
     val myJoinRequests: List<SocialRepository.JoinRequestRow> = emptyList(),
     val invites: List<SocialRepository.TeamInviteRow> = emptyList()
-
 )

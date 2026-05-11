@@ -35,20 +35,33 @@ class SocialViewModel : ViewModel() {
                 val currentTeam = repository.getCurrentTeam()
                 val invites = repository.getInvitesForUser()
                 val userId = repository.getCurrentDbUserId()
+
                 currentUserId.value = userId
+
                 val joinRequests = if (currentTeam != null) {
                     repository.getJoinRequests(currentTeam.teamId)
                 } else {
                     emptyList()
                 }
+
                 val myJoinRequests = repository.getMyJoinRequests()
-                val teamMembers =
-                    currentTeam?.let { repository.getTeamMembers(it.teamId) } ?: emptyList()
+
+                val teamMembers = currentTeam?.let {
+                    repository.getTeamMembers(it.teamId)
+                } ?: emptyList()
+
                 val recentTeamActivity = if (currentTeam != null) {
                     repository.getRecentTeamActivity()
                 } else {
                     emptyList()
                 }
+
+                val completedTeamJourneys = if (currentTeam != null) {
+                    repository.getCompletedTeamJourneys(currentTeam.teamId)
+                } else {
+                    emptyList()
+                }
+
                 val availableTeams = repository.getAllTeams()
                 val destinations = repository.getAvailableDestinations()
                 val friendActivities = repository.getFriendActivities()
@@ -62,6 +75,7 @@ class SocialViewModel : ViewModel() {
                     currentTeam = currentTeam,
                     teamMembers = teamMembers,
                     recentTeamActivity = recentTeamActivity,
+                    completedTeamJourneys = completedTeamJourneys,
                     availableTeams = availableTeams,
                     friendActivities = friendActivities,
                     joinRequests = joinRequests,

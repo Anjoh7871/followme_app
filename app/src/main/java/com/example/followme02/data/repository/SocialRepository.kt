@@ -17,6 +17,7 @@ import com.example.followme02.screen.social.SocialActivityUi
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import io.github.jan.supabase.postgrest.query.Columns
+import com.example.followme02.screen.social.CompletedTeamJourneyUi
 
 @Serializable
 private data class SocialDbUserIdRow(
@@ -124,6 +125,41 @@ private data class SocialDbDestinationRow(
     val name: String,
     @SerialName("km_threshold")
     val kmThreshold: Double = 0.0
+)
+@Serializable
+private data class SocialDbCompletedTeamJourneyRow(
+    @SerialName("completed_journey_id")
+    val completedJourneyId: Long,
+
+    @SerialName("team_id")
+    val teamId: Int,
+
+    @SerialName("destination_id")
+    val destinationId: Int? = null,
+
+    @SerialName("destination_name")
+    val destinationName: String,
+
+    @SerialName("target_km")
+    val targetKm: Double,
+
+    @SerialName("completed_km")
+    val completedKm: Double,
+
+    @SerialName("journey_start_km")
+    val journeyStartKm: Double,
+
+    @SerialName("journey_end_km")
+    val journeyEndKm: Double,
+
+    @SerialName("journey_started_at")
+    val journeyStartedAt: String? = null,
+
+    @SerialName("completed_at")
+    val completedAt: String? = null,
+
+    @SerialName("completed_by_user_id")
+    val completedByUserId: Int? = null
 )
 
 class SocialRepository {
@@ -542,6 +578,52 @@ class SocialRepository {
             }.sortedByDescending { it.totalPoints }
         } catch (e: Exception) {
             Log.e("SOCIAL_REPOSITORY", "Error fetching team members", e)
+            emptyList()
+        }
+    }
+
+    suspend fun getCompletedTeamJourneys(teamId: Int): List<CompletedTeamJourneyUi> {
+        return try {
+            supabase
+                .from("team_completed_journeys")
+                .select(
+                    columns = Columns.list(
+                        "completed_journey_id",
+                        "team_id",
+                        "destination_id",
+                        "destination_name",
+                        "target_km",
+                        "completed_km",
+                        "journey_start_km",
+                        "journey_end_km",
+                        "journey_started_at",
+                        "completed_at",
+                        "completed_by_user_id"
+                    )
+                ) {
+                    filter {
+                        eq("team_id", teamId)
+                    }
+                }
+                .decodeList<SocialDbCompletedTeamJourneyRow>()
+                .map { row ->
+                    CompletedTeamJourneyUi(
+                        completedJourneyId = row.completedJourneyId,
+                        teamId = row.teamId,
+                        destinationId = row.destinationId,
+                        destinationName = row.destinationName,
+                        targetKm = row.targetKm,
+                        completedKm = row.completedKm,
+                        journeyStartKm = row.journeyStartKm,
+                        journeyEndKm = row.journeyEndKm,
+                        journeyStartedAt = row.journeyStartedAt,
+                        completedAt = row.completedAt,
+                        completedByUserId = row.completedByUserId
+                    )
+                }
+                .sortedByDescending { it.completedAt ?: "" }
+        } catch (e: Exception) {
+            Log.e("SOCIAL_REPOSITORY", "Error fetching completed team journeys", e)
             emptyList()
         }
     }

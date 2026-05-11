@@ -2,6 +2,7 @@ package com.example.followme02.screen.social
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,12 +16,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,8 +34,10 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,19 +47,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.followme02.R
 import com.example.followme02.screen.profile.ProfileAvatar
 import com.example.followme02.viewmodel.SocialViewModel
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.TextButton
-import androidx.compose.ui.res.stringResource
-import com.example.followme02.R
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,9 +66,9 @@ fun TeamScreen(
     val colorScheme = MaterialTheme.colorScheme
     val destinations = viewModel.availableDestinations.value
     val leaderboardMembers = viewModel.getSortedLeaderboard()
+
     var showInviteSheet by remember { mutableStateOf(false) }
     var inviteQuery by remember { mutableStateOf("") }
-    var inviteResult by remember { mutableStateOf<SocialUserSearchResultUi?>(null) }
 
     var showJourneyPicker by remember { mutableStateOf(false) }
     var selectedMember by remember { mutableStateOf<TeamMemberUi?>(null) }
@@ -154,7 +153,7 @@ fun TeamScreen(
                                     }
                                 }
                             )
-                            // INVITE BUTTON (leader only)
+
                             if (state.currentTeam.isCurrentUserLeader) {
                                 Button(
                                     onClick = {
@@ -163,7 +162,7 @@ fun TeamScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     shape = RoundedCornerShape(16.dp)
                                 ) {
-                                    Text("Invite new member")
+                                    Text(stringResource(R.string.social_team_invite_new_member))
                                 }
                             }
 
@@ -184,28 +183,42 @@ fun TeamScreen(
                         )
                     }
                 }
-                if (state.invites.isNotEmpty()) {
 
+                if (state.currentTeam != null && state.completedTeamJourneys.isNotEmpty()) {
+                    item {
+                        SectionHeader(
+                            title = stringResource(R.string.social_team_completed_journeys_title)
+                        )
+                    }
+
+                    items(state.completedTeamJourneys) { journey ->
+                        CompletedTeamJourneyCard(journey = journey)
+                    }
+                }
+
+                if (state.invites.isNotEmpty()) {
                     item {
                         Text(
-                            text = "Team Invites",
+                            text = stringResource(R.string.social_team_invites_title),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
                     }
 
                     items(state.invites) { invite ->
-
-                        val teamName = invite.teams?.team_name ?: "Team ${invite.team_id}"
+                        val teamName = invite.teams?.team_name
+                            ?: stringResource(R.string.social_team_default_team_name, invite.team_id)
 
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
-
                                 Text(
-                                    text = "You are invited to $teamName",
+                                    text = stringResource(
+                                        R.string.social_team_invited_to_team,
+                                        teamName
+                                    ),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -215,13 +228,12 @@ fun TeamScreen(
                                 Row(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-
                                     Button(
                                         onClick = {
                                             viewModel.acceptInvite(invite)
                                         }
                                     ) {
-                                        Text("Accept")
+                                        Text(stringResource(R.string.social_team_accept))
                                     }
 
                                     OutlinedButton(
@@ -229,13 +241,14 @@ fun TeamScreen(
                                             viewModel.declineInvite(invite)
                                         }
                                     ) {
-                                        Text("Decline")
+                                        Text(stringResource(R.string.social_team_decline))
                                     }
                                 }
                             }
                         }
                     }
                 }
+
                 item {
                     SectionHeader(title = stringResource(R.string.leaderboard))
                 }
@@ -257,7 +270,6 @@ fun TeamScreen(
                 } else {
                     items(leaderboardMembers) { member ->
                         Column {
-
                             TeamLeaderboardRow(
                                 member = member,
                                 rank = leaderboardMembers.indexOf(member) + 1,
@@ -267,8 +279,8 @@ fun TeamScreen(
                                 }
                             )
 
-                            // 🔹 ACTION BUTTONS (LEADER ONLY)
-                            if (state.currentTeam?.isCurrentUserLeader == true &&
+                            if (
+                                state.currentTeam?.isCurrentUserLeader == true &&
                                 !member.isCurrentUser
                             ) {
                                 Row(
@@ -277,14 +289,12 @@ fun TeamScreen(
                                         .padding(horizontal = 16.dp),
                                     horizontalArrangement = Arrangement.End
                                 ) {
-
-
                                     Spacer(modifier = Modifier.width(8.dp))
 
                                     TextButton(
                                         onClick = {
                                             viewModel.kickUser(
-                                                teamId = state.currentTeam!!.teamId,
+                                                teamId = state.currentTeam.teamId,
                                                 userId = member.userId
                                             )
                                         }
@@ -298,7 +308,6 @@ fun TeamScreen(
                             }
                         }
                     }
-
 
                     item {
                         Spacer(modifier = Modifier.height(16.dp))
@@ -340,7 +349,12 @@ fun TeamScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     shape = RoundedCornerShape(16.dp)
                                 ) {
-                                    Text(stringResource(R.string.selected) + " ${destination.second}")
+                                    Text(
+                                        text = stringResource(
+                                            R.string.social_team_selected_destination,
+                                            destination.second
+                                        )
+                                    )
                                 }
                             } else {
                                 OutlinedButton(
@@ -409,7 +423,7 @@ fun TeamScreen(
             )
         }
     }
-    // INVITE SHEET (LEGG HER)
+
     if (showInviteSheet) {
         ModalBottomSheet(
             onDismissRequest = { showInviteSheet = false }
@@ -419,9 +433,8 @@ fun TeamScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-
                 Text(
-                    text = "Invite user",
+                    text = stringResource(R.string.social_team_invite_user_title),
                     style = MaterialTheme.typography.titleLarge
                 )
 
@@ -430,7 +443,9 @@ fun TeamScreen(
                 OutlinedTextField(
                     value = inviteQuery,
                     onValueChange = { inviteQuery = it },
-                    label = { Text("Search username or email") },
+                    label = {
+                        Text(stringResource(R.string.social_team_search_username_or_email))
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -443,13 +458,12 @@ fun TeamScreen(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Search")
+                    Text(stringResource(R.string.social_team_search))
                 }
 
                 val result = viewModel.uiState.value.friendSearchResult
 
                 result?.let { user ->
-
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
@@ -467,11 +481,12 @@ fun TeamScreen(
                                 teamId = teamId,
                                 userId = user.userId
                             )
+
                             showInviteSheet = false
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Invite")
+                        Text(stringResource(R.string.social_team_invite))
                     }
                 }
 
@@ -481,7 +496,6 @@ fun TeamScreen(
     }
 }
 
-
 @Composable
 private fun TeamJourneyCard(
     team: SocialTeamUi,
@@ -489,7 +503,8 @@ private fun TeamJourneyCard(
     onClick: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+    val isDark = isSystemInDarkTheme()
+    val hasActiveJourney = team.hasActiveJourney
 
     Card(
         modifier = if (isLeader) {
@@ -535,14 +550,35 @@ private fun TeamJourneyCard(
                         color = colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
                     )
 
-                    if (isLeader) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = stringResource(R.string.tap_to_change_destination),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = colorScheme.primary
-                        )
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    val helperText = when {
+                        hasActiveJourney && isLeader -> {
+                            stringResource(R.string.tap_to_change_destination)
+                        }
+
+                        hasActiveJourney -> {
+                            stringResource(R.string.social_team_working_towards_destination)
+                        }
+
+                        isLeader -> {
+                            stringResource(R.string.social_team_completed_leader_choose_new)
+                        }
+
+                        else -> {
+                            stringResource(R.string.social_team_completed_waiting_for_leader)
+                        }
                     }
+
+                    Text(
+                        text = helperText,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isLeader) {
+                            colorScheme.primary
+                        } else {
+                            colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -577,7 +613,11 @@ private fun TeamJourneyCard(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = team.destinationName,
+                    text = if (hasActiveJourney) {
+                        team.destinationName
+                    } else {
+                        stringResource(R.string.social_team_no_active_journey)
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = colorScheme.onPrimaryContainer
@@ -586,33 +626,155 @@ private fun TeamJourneyCard(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            LinearProgressIndicator(
-                progress = { team.progressFraction },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .clip(RoundedCornerShape(50)),
-                color = colorScheme.primary,
-                trackColor = colorScheme.onPrimaryContainer.copy(alpha = 0.12f)
-            )
+            if (hasActiveJourney) {
+                LinearProgressIndicator(
+                    progress = { team.progressFraction },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(10.dp)
+                        .clip(RoundedCornerShape(50)),
+                    color = colorScheme.primary,
+                    trackColor = colorScheme.onPrimaryContainer.copy(alpha = 0.12f)
+                )
 
-            Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(
+                            R.string.social_team_progress_percent,
+                            (team.progressFraction * 100).toInt()
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = colorScheme.primary
+                    )
+
+                    Text(
+                        text = stringResource(
+                            R.string.social_team_progress_km,
+                            formatKm(team.progressKm),
+                            formatKm(team.targetKm)
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
+                    )
+                }
+            } else {
+                if (isLeader) {
+                    Button(
+                        onClick = onClick,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text(stringResource(R.string.social_team_choose_new_destination))
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.social_team_no_active_goal),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CompletedTeamJourneyCard(
+    journey: CompletedTeamJourneyUi
+) {
+    val colorScheme = MaterialTheme.colorScheme
+    val isDark = isSystemInDarkTheme()
+    val completedDate = journey.completedAt?.take(10)
+        ?: stringResource(R.string.social_team_unknown_date)
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isDark) {
+                colorScheme.surfaceContainer
+            } else {
+                colorScheme.surface
+            }
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isDark) 2.dp else 4.dp
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(colorScheme.primaryContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.social_team_completed_checkmark),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = colorScheme.onPrimaryContainer
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = journey.destinationName,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = colorScheme.onSurface
+                    )
+
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    Text(
+                        text = stringResource(
+                            R.string.social_team_completed_date,
+                            completedDate
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${(team.progressFraction * 100).toInt()}% " + stringResource(R.string.complete),
+                    text = stringResource(
+                        R.string.social_team_goal_km,
+                        formatKm(journey.targetKm)
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = colorScheme.primary
+                    color = colorScheme.onSurfaceVariant
                 )
 
                 Text(
-                    text = "${formatKm(team.progressKm)} / ${formatKm(team.targetKm)} " + stringResource(R.string.km),
+                    text = stringResource(
+                        R.string.social_team_done_km,
+                        formatKm(journey.completedKm)
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.primary
                 )
             }
         }
@@ -627,7 +789,7 @@ fun TeamLeaderboardRow(
     onClick: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+    val isDark = isSystemInDarkTheme()
 
     val valueText = when (selectedType) {
         LeaderboardType.POINTS -> "${member.totalPoints} " + stringResource(R.string.pts)
@@ -640,7 +802,11 @@ fun TeamLeaderboardRow(
             .clickable { onClick() },
         shape = RoundedCornerShape(22.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isDark) colorScheme.surfaceContainer else colorScheme.surface
+            containerColor = if (isDark) {
+                colorScheme.surfaceContainer
+            } else {
+                colorScheme.surface
+            }
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = if (isDark) 2.dp else 4.dp
@@ -653,7 +819,7 @@ fun TeamLeaderboardRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "#$rank",
+                text = stringResource(R.string.social_team_rank, rank),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.primary
@@ -680,6 +846,7 @@ fun TeamLeaderboardRow(
 
                     if (member.isCurrentUser) {
                         Spacer(modifier = Modifier.width(8.dp))
+
                         Text(
                             text = stringResource(R.string.you),
                             style = MaterialTheme.typography.labelMedium,
@@ -749,7 +916,10 @@ private fun TeamMemberProfileContent(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = stringResource(R.string.level) + " ${member.level}",
+                    text = stringResource(
+                        R.string.social_team_level_value,
+                        member.level
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = colorScheme.primary
@@ -791,13 +961,17 @@ private fun TeamMiniStatCard(
     modifier: Modifier = Modifier
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+    val isDark = isSystemInDarkTheme()
 
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isDark) colorScheme.surfaceContainer else colorScheme.surface
+            containerColor = if (isDark) {
+                colorScheme.surfaceContainer
+            } else {
+                colorScheme.surface
+            }
         )
     ) {
         Column(

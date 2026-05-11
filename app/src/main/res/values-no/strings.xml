@@ -224,6 +224,39 @@
     <string name="join">Bli med</string>
     <string name="request_sent">Forespørsel sendt</string>
     <string name="members">%1$d medlemmer</string>
+    <string name="social_team_invite_new_member">Inviter nytt medlem</string>
+    <string name="social_team_completed_journeys_title">Fullførte team journeys</string>
+
+    <string name="social_team_invites_title">Team-invitasjoner</string>
+    <string name="social_team_invited_to_team">Du er invitert til %1$s</string>
+    <string name="social_team_default_team_name">Team %1$d</string>
+    <string name="social_team_accept">Godta</string>
+    <string name="social_team_decline">Avslå</string>
+
+    <string name="social_team_invite_user_title">Inviter bruker</string>
+    <string name="social_team_search_username_or_email">Søk etter brukernavn eller e-post</string>
+    <string name="social_team_search">Søk</string>
+    <string name="social_team_invite">Inviter</string>
+
+    <string name="social_team_working_towards_destination">Teamet jobber mot denne destinasjonen.</string>
+    <string name="social_team_completed_leader_choose_new">Forrige team journey er fullført. Velg en ny destinasjon.</string>
+    <string name="social_team_completed_waiting_for_leader">Forrige team journey er fullført. Venter på at teamleder skal velge en ny destinasjon.</string>
+
+    <string name="social_team_no_active_journey">Ingen aktiv team journey</string>
+    <string name="social_team_choose_new_destination">Velg ny destinasjon</string>
+    <string name="social_team_no_active_goal">Ingen aktiv mål akkurat nå.</string>
+
+    <string name="social_team_completed_checkmark">✓</string>
+    <string name="social_team_completed_date">Fullført %1$s</string>
+    <string name="social_team_goal_km">Mål: %1$s km</string>
+    <string name="social_team_done_km">Fullført: %1$s km</string>
+    <string name="social_team_unknown_date">ukjent dato</string>
+
+    <string name="social_team_selected_destination">Valgt %1$s</string>
+    <string name="social_team_progress_percent">%1$d%% fullført</string>
+    <string name="social_team_progress_km">%1$s / %2$s km</string>
+    <string name="social_team_rank">#%1$d</string>
+    <string name="social_team_level_value">Nivå %1$d</string>
 
     <!-- - WORKOUT - -->
     <string name="training_sessions">Treningsøkter</string>

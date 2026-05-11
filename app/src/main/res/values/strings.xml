@@ -224,6 +224,40 @@
     <string name="join">Join</string>
     <string name="request_sent">Request sent</string>
     <string name="members">%1$d members</string>
+
+    <string name="social_team_invite_new_member">Invite new member</string>
+    <string name="social_team_completed_journeys_title">Completed team journeys</string>
+
+    <string name="social_team_invites_title">Team invites</string>
+    <string name="social_team_invited_to_team">You are invited to %1$s</string>
+    <string name="social_team_default_team_name">Team %1$d</string>
+    <string name="social_team_accept">Accept</string>
+    <string name="social_team_decline">Decline</string>
+
+    <string name="social_team_invite_user_title">Invite user</string>
+    <string name="social_team_search_username_or_email">Search username or email</string>
+    <string name="social_team_search">Search</string>
+    <string name="social_team_invite">Invite</string>
+
+    <string name="social_team_working_towards_destination">Team is working towards this destination.</string>
+    <string name="social_team_completed_leader_choose_new">The last team journey is completed. Choose a new destination.</string>
+    <string name="social_team_completed_waiting_for_leader">The last team journey is completed. Waiting for team leader to choose a new destination.</string>
+
+    <string name="social_team_no_active_journey">No active team journey</string>
+    <string name="social_team_choose_new_destination">Choose new destination</string>
+    <string name="social_team_no_active_goal">No active goal right now.</string>
+
+    <string name="social_team_completed_checkmark">✓</string>
+    <string name="social_team_completed_date">Completed %1$s</string>
+    <string name="social_team_goal_km">Goal: %1$s km</string>
+    <string name="social_team_done_km">Done: %1$s km</string>
+    <string name="social_team_unknown_date">unknown date</string>
+
+    <string name="social_team_selected_destination">Selected %1$s</string>
+    <string name="social_team_progress_percent">%1$d%% complete</string>
+    <string name="social_team_progress_km">%1$s / %2$s km</string>
+    <string name="social_team_rank">#%1$d</string>
+    <string name="social_team_level_value">Level %1$d</string>
     <!-- - WORKOUT - -->
     <string name="training_sessions">Training Sessions</string>
     <string name="distance">Distance (km)</string>
