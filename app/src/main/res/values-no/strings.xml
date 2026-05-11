@@ -258,6 +258,16 @@
     <string name="social_team_rank">#%1$d</string>
     <string name="social_team_level_value">Nivå %1$d</string>
 
+    <string name="social_team_completed_popup_title">Team journey fullført</string>
+    <string name="social_team_completed_popup_message">Teamet har nådd %1$s.</string>
+    <string name="social_team_completed_popup_destination">Destinasjon</string>
+    <string name="social_team_completed_popup_goal">Mål</string>
+    <string name="social_team_completed_popup_completed">Fullført</string>
+    <string name="social_team_completed_popup_completed_date">Fullført dato</string>
+    <string name="social_team_completed_popup_close">Lukk</string>
+    <string name="social_team_completed_popup_image_cd">Bilde av %1$s</string>
+    <string name="social_team_completed_popup_no_fun_fact">Ingen funfact er lagt til for denne destinasjonen enda.</string>
+
     <!-- - WORKOUT - -->
     <string name="training_sessions">Treningsøkter</string>
     <string name="distance">Distanse (km)</string>

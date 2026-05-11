@@ -55,6 +55,14 @@ import androidx.navigation.NavController
 import com.example.followme02.R
 import com.example.followme02.screen.profile.ProfileAvatar
 import com.example.followme02.viewmodel.SocialViewModel
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+import androidx.compose.ui.platform.LocalContext
+import android.content.Context
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import java.text.Normalizer
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +81,7 @@ fun TeamScreen(
     var showJourneyPicker by remember { mutableStateOf(false) }
     var selectedMember by remember { mutableStateOf<TeamMemberUi?>(null) }
     var showLeaveTeamDialog by remember { mutableStateOf(false) }
+    var selectedCompletedJourney by remember { mutableStateOf<CompletedTeamJourneyUi?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.loadSocialData()
@@ -192,7 +201,12 @@ fun TeamScreen(
                     }
 
                     items(state.completedTeamJourneys) { journey ->
-                        CompletedTeamJourneyCard(journey = journey)
+                        CompletedTeamJourneyCard(
+                            journey = journey,
+                            onClick = {
+                                selectedCompletedJourney = journey
+                            }
+                        )
                     }
                 }
 
@@ -422,6 +436,15 @@ fun TeamScreen(
                 }
             )
         }
+    }
+
+    if (selectedCompletedJourney != null) {
+        CompletedTeamJourneyDialog(
+            journey = selectedCompletedJourney!!,
+            onDismiss = {
+                selectedCompletedJourney = null
+            }
+        )
     }
 
     if (showInviteSheet) {
@@ -686,7 +709,8 @@ private fun TeamJourneyCard(
 
 @Composable
 private fun CompletedTeamJourneyCard(
-    journey: CompletedTeamJourneyUi
+    journey: CompletedTeamJourneyUi,
+    onClick: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val isDark = isSystemInDarkTheme()
@@ -694,7 +718,9 @@ private fun CompletedTeamJourneyCard(
         ?: stringResource(R.string.social_team_unknown_date)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isDark) {
@@ -996,6 +1022,147 @@ private fun TeamMiniStatCard(
             )
         }
     }
+}
+
+@Composable
+private fun CompletedTeamJourneyDialog(
+    journey: CompletedTeamJourneyUi,
+    onDismiss: () -> Unit
+) {
+    val colorScheme = MaterialTheme.colorScheme
+
+    val factText = journey.factText
+        ?.takeIf { it.isNotBlank() }
+        ?: stringResource(R.string.social_team_completed_popup_no_fun_fact)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = journey.destinationName,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.ExtraBold,
+                color = colorScheme.onSurface
+            )
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                CompletedTeamJourneyImage(journey = journey)
+
+                Text(
+                    text = factText,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = colorScheme.onSurface
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onDismiss
+            ) {
+                Text(stringResource(R.string.social_team_completed_popup_close))
+            }
+        },
+        shape = RoundedCornerShape(28.dp),
+        containerColor = colorScheme.surface
+    )
+}
+
+@Composable
+private fun CompletedTeamJourneyImage(
+    journey: CompletedTeamJourneyUi
+) {
+    val context = LocalContext.current
+    val imageValue = journey.imageUrl?.trim()
+
+    val isRemoteImage = imageValue?.startsWith("http://") == true ||
+            imageValue?.startsWith("https://") == true
+
+    val drawableResId = remember(imageValue, journey.destinationName) {
+        findDestinationDrawableResId(
+            context = context,
+            imageValue = imageValue,
+            destinationName = journey.destinationName
+        )
+    }
+
+    when {
+        isRemoteImage -> {
+            AsyncImage(
+                model = imageValue,
+                contentDescription = stringResource(
+                    R.string.social_team_completed_popup_image_cd,
+                    journey.destinationName
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(190.dp)
+                    .clip(RoundedCornerShape(18.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        drawableResId != 0 -> {
+            Image(
+                painter = painterResource(id = drawableResId),
+                contentDescription = stringResource(
+                    R.string.social_team_completed_popup_image_cd,
+                    journey.destinationName
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(190.dp)
+                    .clip(RoundedCornerShape(18.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+}
+
+private fun findDestinationDrawableResId(
+    context: Context,
+    imageValue: String?,
+    destinationName: String
+): Int {
+    val candidates = mutableListOf<String>()
+
+    val dbImageName = imageValue
+        ?.trim()
+        ?.substringAfterLast("/")
+        ?.substringAfterLast("\\")
+        ?.substringBeforeLast(".")
+        ?.toDrawableResourceName()
+
+    if (!dbImageName.isNullOrBlank()) {
+        candidates.add(dbImageName)
+    }
+
+    val destinationBasedName = "destinations_${destinationName.toDrawableResourceName()}"
+    candidates.add(destinationBasedName)
+
+    return candidates
+        .distinct()
+        .firstNotNullOfOrNull { resourceName ->
+            val resId = context.resources.getIdentifier(
+                resourceName,
+                "drawable",
+                context.packageName
+            )
+
+            if (resId != 0) resId else null
+        } ?: 0
+}
+
+private fun String.toDrawableResourceName(): String {
+    val withoutAccents = Normalizer.normalize(this, Normalizer.Form.NFD)
+        .replace("\\p{Mn}+".toRegex(), "")
+
+    return withoutAccents
+        .lowercase(Locale.ROOT)
+        .replace("[^a-z0-9_]+".toRegex(), "_")
+        .trim('_')
 }
 
 private fun formatKm(km: Double): String {

@@ -288,6 +288,16 @@
     <string name="activity_type">Activity type</string>
     <string name="duration_minutes">Duration (minutes)</string>
 
+    <string name="social_team_completed_popup_title">Team journey completed</string>
+    <string name="social_team_completed_popup_message">The team has reached %1$s.</string>
+    <string name="social_team_completed_popup_destination">Destination</string>
+    <string name="social_team_completed_popup_goal">Goal</string>
+    <string name="social_team_completed_popup_completed">Completed</string>
+    <string name="social_team_completed_popup_completed_date">Completed date</string>
+    <string name="social_team_completed_popup_close">Close</string>
+    <string name="social_team_completed_popup_image_cd">Image of %1$s</string>
+    <string name="social_team_completed_popup_no_fun_fact">No fun fact has been added for this destination yet.</string>
+
     <!-- ================= WORKOUT DRAFT DEMO ================= -->
 
     <!-- Screen -->

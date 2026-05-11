@@ -161,6 +161,17 @@ private data class SocialDbCompletedTeamJourneyRow(
     @SerialName("completed_by_user_id")
     val completedByUserId: Int? = null
 )
+@Serializable
+private data class SocialDbCompletedJourneyDestinationRow(
+    @SerialName("destination_id")
+    val destinationId: Int,
+
+    @SerialName("fact_text")
+    val factText: String? = null,
+
+    @SerialName("image_url")
+    val imageUrl: String? = null
+)
 
 class SocialRepository {
 
@@ -584,7 +595,7 @@ class SocialRepository {
 
     suspend fun getCompletedTeamJourneys(teamId: Int): List<CompletedTeamJourneyUi> {
         return try {
-            supabase
+            val rows = supabase
                 .from("team_completed_journeys")
                 .select(
                     columns = Columns.list(
@@ -606,22 +617,47 @@ class SocialRepository {
                     }
                 }
                 .decodeList<SocialDbCompletedTeamJourneyRow>()
-                .map { row ->
-                    CompletedTeamJourneyUi(
-                        completedJourneyId = row.completedJourneyId,
-                        teamId = row.teamId,
-                        destinationId = row.destinationId,
-                        destinationName = row.destinationName,
-                        targetKm = row.targetKm,
-                        completedKm = row.completedKm,
-                        journeyStartKm = row.journeyStartKm,
-                        journeyEndKm = row.journeyEndKm,
-                        journeyStartedAt = row.journeyStartedAt,
-                        completedAt = row.completedAt,
-                        completedByUserId = row.completedByUserId
-                    )
+
+            val destinationDetails = rows
+                .mapNotNull { it.destinationId }
+                .distinct()
+                .associateWith { destinationId ->
+                    supabase
+                        .from("destinations")
+                        .select(
+                            columns = Columns.list(
+                                "destination_id",
+                                "fact_text",
+                                "image_url"
+                            )
+                        ) {
+                            filter {
+                                eq("destination_id", destinationId)
+                            }
+                        }
+                        .decodeList<SocialDbCompletedJourneyDestinationRow>()
+                        .firstOrNull()
                 }
-                .sortedByDescending { it.completedAt ?: "" }
+
+            rows.map { row ->
+                val details = row.destinationId?.let { destinationDetails[it] }
+
+                CompletedTeamJourneyUi(
+                    completedJourneyId = row.completedJourneyId,
+                    teamId = row.teamId,
+                    destinationId = row.destinationId,
+                    destinationName = row.destinationName,
+                    targetKm = row.targetKm,
+                    completedKm = row.completedKm,
+                    journeyStartKm = row.journeyStartKm,
+                    journeyEndKm = row.journeyEndKm,
+                    journeyStartedAt = row.journeyStartedAt,
+                    completedAt = row.completedAt,
+                    completedByUserId = row.completedByUserId,
+                    factText = details?.factText,
+                    imageUrl = details?.imageUrl
+                )
+            }.sortedByDescending { it.completedAt ?: "" }
         } catch (e: Exception) {
             Log.e("SOCIAL_REPOSITORY", "Error fetching completed team journeys", e)
             emptyList()

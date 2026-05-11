@@ -80,7 +80,9 @@ data class CompletedTeamJourneyUi(
     val journeyEndKm: Double,
     val journeyStartedAt: String? = null,
     val completedAt: String? = null,
-    val completedByUserId: Int? = null
+    val completedByUserId: Int? = null,
+    val factText: String? = null,
+    val imageUrl: String? = null
 )
 
 data class TeamMemberUi(
