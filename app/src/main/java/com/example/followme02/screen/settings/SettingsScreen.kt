@@ -87,7 +87,7 @@ fun SettingsScreen(
 
         item {
             SettingsToggle(
-                text = stringResource(R.string.dark_mode),
+                text = if (isDarkMode) "Light mode" else "Dark mode",
                 checked = isDarkMode,
                 onCheckedChange = { onToggleDarkMode() }
             )
@@ -149,7 +149,7 @@ fun SettingsScreen(
 
     if (showEditDialog) {
         AlertDialog(
-            onDismissRequest = {  },
+            onDismissRequest = { showEditDialog = false },
 
             title = {
                 Text(stringResource(R.string.edit_username))
@@ -167,6 +167,7 @@ fun SettingsScreen(
                 TextButton(
                     onClick = {
                         onUpdateUsername(newUsername)
+                        showEditDialog = false
                     }
                 ) {
                     Text(stringResource(R.string.save))
@@ -175,7 +176,7 @@ fun SettingsScreen(
 
             dismissButton = {
                 TextButton(
-                    onClick = {  }
+                    onClick = { showEditDialog = false }
                 ) {
                     Text(stringResource(R.string.cancel))
                 }
@@ -185,7 +186,7 @@ fun SettingsScreen(
 
     if (showDeleteDialog) {
         AlertDialog(
-            onDismissRequest = { },
+            onDismissRequest = { showDeleteDialog = false },
 
             title = {
                 Text(stringResource(R.string.delete))
@@ -213,7 +214,7 @@ fun SettingsScreen(
 
             dismissButton = {
                 TextButton(
-                    onClick = {  }
+                    onClick = { showDeleteDialog = false }
                 ) {
                     Text(stringResource(R.string.cancel))
                 }

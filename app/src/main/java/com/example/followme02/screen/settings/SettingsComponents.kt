@@ -15,6 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.Icon
 
 @Composable
 fun SectionTitle(text: String) {
@@ -46,15 +50,31 @@ fun SettingsItem(
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.bodyLarge,
-            color = if (destructive)
-                MaterialTheme.colorScheme.onErrorContainer
-            else
-                MaterialTheme.colorScheme.onSurface
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (destructive)
+                    MaterialTheme.colorScheme.onErrorContainer
+                else
+                    MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            if (!destructive) {
+                Icon(
+                    imageVector = Icons.Default.ChevronRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
 }
 
