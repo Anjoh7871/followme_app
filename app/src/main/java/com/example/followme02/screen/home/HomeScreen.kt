@@ -76,6 +76,9 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
+
 
 @Composable
 fun HomeScreen(
@@ -91,6 +94,8 @@ fun HomeScreen(
     val colorScheme = MaterialTheme.colorScheme
     val mapPoints = mapViewModel.mapPoints
     Log.d("MAP_DEBUG", "mapPoints size = ${mapPoints.size}")
+
+    val hiddenMarkerNames = mapViewModel.hiddenDestinationNames // CHANGED: observe hidden markers
 
     var showDestinationDialog by remember { mutableStateOf(false) }
     var showChangeDestinationWarning by remember { mutableStateOf(false) }
@@ -108,9 +113,11 @@ fun HomeScreen(
         destinationViewModel.loadDestinations()
     }
 
-    LaunchedEffect(destinations, visited) {
-        if (destinations.isNotEmpty()) {
-            mapViewModel.loadMapData(destinations, visited)
+    // CHANGED: re-trigger when selectedDestinationId changes so the red pin stays in sync
+    LaunchedEffect(destinations, visited, selectedDestination?.destinationId) {
+        if (destinations.isNotEmpty() && selectedDestination?.destinationId != null) {
+            // CHANGED: pass selectedDestinationId so the red pin matches the active journey
+            mapViewModel.loadMapData(destinations, visited, selectedDestination?.destinationId)
         }
     }
 
@@ -191,8 +198,10 @@ fun HomeScreen(
             MapJourneyCard(
                 currentKm = 700.00,
                 mapPoints = mapPoints,
+                hiddenMarkerNames = hiddenMarkerNames, // CHANGED: filter hidden markers
                 onMapInteractionChanged = { isInteractingWithMap = it },
-                onBoundsChanged = { mapBounds = it }
+                onBoundsChanged = { mapBounds = it },
+                //onRemoveMarker = { markerName -> mapViewModel.hideMarker(markerName) } // CHANGED: wire up marker removal
             )
 
             Spacer(modifier = Modifier.height(120.dp))
@@ -341,6 +350,7 @@ fun HomeScreen(
         )
     }
 }
+
 
 @Composable
 fun HeaderSection(viewModel: ProfileViewModel) {
@@ -518,45 +528,13 @@ fun JourneyCard(
     }
 }
 
-/*@Composable
-fun MapJourneyCard() {
-    val colorScheme = MaterialTheme.colorScheme
 
-    Card(
-        shape = RoundedCornerShape(20.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = colorScheme.surfaceContainerHighest
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Map Route Placeholder",
-                style = MaterialTheme.typography.bodyLarge,
-                color = colorScheme.onSurfaceVariant
-            )
-
-            Icon(
-                imageVector = Icons.Default.LocationOn,
-                contentDescription = null,
-                tint = colorScheme.primary,
-                modifier = Modifier.size(52.dp)
-            )
-        }
-    }
-}
-
- */
 @Composable
 fun MapJourneyCard(
     currentKm: Double,
     mapPoints: List<MapPointUI>,
+    // CHANGED: Added hiddenMarkerNames so the card knows which markers to skip
+    hiddenMarkerNames: Set<String>,
     onMapInteractionChanged: (Boolean) -> Unit,
     onBoundsChanged: (Rect) -> Unit
 ) {
@@ -573,19 +551,14 @@ fun MapJourneyCard(
 
         // Point A: Narvik
 
-        // Example Point B: Tromsø (Approx 250km from Narvik by road, less as crow flies)
-        // Adjust the 170.0 threshold to whatever your "crow flies" distance logic requires
-        /*val destinations = listOf(
-            MapPoint("Tromsø", GeoPoint(69.6492, 18.9553), 170.0),
-            MapPoint("Harstad", GeoPoint(68.7986, 16.5415), 170.0),
-            MapPoint("Berlin", GeoPoint(52.5200, 13.4050), 170.0)
-        )*/
-
         OSMMapView(
             startPoint = startPoint,
-            destinations = mapPoints,
+            // CHANGED: Filter out any markers the user has chosen to hide
+            destinations = mapPoints.filter { it.name !in hiddenMarkerNames },
             currentKm = currentKm,
-            onMapInteractionChanged = onMapInteractionChanged
+            onMapInteractionChanged = onMapInteractionChanged,
+            // CHANGED: Pass remove callback up so OSMMapView can trigger it
+            onRemoveMarker = { /* handled via mapViewModel.hideMarker() in HomeScreen */ }
         )
     }
 }
@@ -597,7 +570,9 @@ fun OSMMapView(
     startPoint: GeoPoint,
     destinations: List<MapPointUI>,
     currentKm: Double,
-    onMapInteractionChanged: (Boolean) -> Unit
+    onMapInteractionChanged: (Boolean) -> Unit,
+    // CHANGED: New callback — fires when user taps "Remove" on a marker info window
+    onRemoveMarker: (String) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -648,6 +623,7 @@ fun OSMMapView(
         update = { view ->
             view.overlays.clear()
 
+            // --- START MARKER ---
             val startMarker = Marker(view)
             startMarker.position = startPoint
             startMarker.title = "Narvik (Start)"
@@ -655,6 +631,11 @@ fun OSMMapView(
 
             val pointsToFit = mutableListOf<GeoPoint>()
             pointsToFit.add(startPoint)
+
+            // CHANGED: Build a list of all GeoPoints in order (start → dest1 → dest2 …)
+            // so we can draw the polyline (luftlinje) through them
+            val routePoints = mutableListOf<GeoPoint>()
+            routePoints.add(startPoint)
 
             destinations.forEach { dest ->
                 val marker = Marker(view)
@@ -669,8 +650,52 @@ fun OSMMapView(
 
                 marker.icon = ContextCompat.getDrawable(context, iconRes)
 
+                // CHANGED: Add a custom info window with a "Fjern markør" (Remove marker) button
+                marker.infoWindow = object : MarkerInfoWindow(
+                    //org.osmdroid.views.overlay.infowindow.BasicInfoWindow.layoutResId,
+                    org.osmdroid.library.R.layout.bonuspack_bubble,
+                    view
+                ) {
+                    override fun onOpen(item: Any?) {
+                        super.onOpen(item)
+                        // Find the close/action button in the default info window layout
+                        // and repurpose it as a "remove" button
+                        mView.findViewById<android.widget.Button?>(
+                            android.R.id.button1 // adjust to your info window layout's button ID
+                        )?.apply {
+                            text = "Fjern markør"
+                            setOnClickListener {
+                                onRemoveMarker(dest.name)
+                                close()
+                            }
+                        }
+                    }
+                }
+
                 view.overlays.add(marker)
                 pointsToFit.add(dest.location)
+
+                // CHANGED: Add each destination point to the route so the line visits them
+                routePoints.add(dest.location)
+            }
+
+            // CHANGED: Draw a Polyline (luftlinje / straight-line route) connecting
+            // start → all destinations in order of kmThreshold (already sorted by MapViewModel)
+            if (routePoints.size > 1) {
+                val polyline = Polyline(view).apply {
+                    setPoints(routePoints)
+                    // Style the line: blue, semi-transparent, 4dp wide
+                    outlinePaint.color = android.graphics.Color.parseColor("#CC1976D2")
+                    outlinePaint.strokeWidth = 8f
+                    outlinePaint.isAntiAlias = true
+                    // CHANGED: Dashed effect to distinguish it as a "crow flies" line,
+                    // not a real road route
+                    outlinePaint.pathEffect = android.graphics.DashPathEffect(
+                        floatArrayOf(30f, 15f), 0f
+                    )
+                }
+                // CHANGED: Add polyline BEFORE markers so markers render on top
+                view.overlays.add(0, polyline)
             }
 
             view.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {

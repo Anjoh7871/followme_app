@@ -52,7 +52,7 @@ class MapRepository {
                 url.openConnection() as HttpURLConnection
             }
 
-            connection.setRequestProperty("User-Agent", "YourApp")
+            connection.setRequestProperty("User-Agent", "followme_app")
 
             val response = withContext(Dispatchers.IO) {
                 connection.inputStream.bufferedReader().readText()
