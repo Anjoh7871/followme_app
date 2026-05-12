@@ -130,7 +130,8 @@ fun ProfileScreen(
                 else -> {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
                             .background(
                                 brush = Brush.verticalGradient(
                                     colors = listOf(
