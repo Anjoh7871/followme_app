@@ -258,6 +258,30 @@
     <string name="social_team_progress_km">%1$s / %2$s km</string>
     <string name="social_team_rank">#%1$d</string>
     <string name="social_team_level_value">Level %1$d</string>
+
+    <string name="team_activity_log_title">Team activity log</string>
+    <string name="team_activity_see_all">See all</string>
+
+    <string name="team_activity_workout_title">%1$s trained</string>
+    <string name="team_activity_workout_description">%1$s km</string>
+
+    <string name="team_activity_member_joined_title">%1$s joined the team</string>
+    <string name="team_activity_member_joined_description">Became a member of the team.</string>
+
+    <string name="team_activity_member_left_title">%1$s left the team</string>
+    <string name="team_activity_member_left_description">No longer a member of the team.</string>
+
+    <string name="team_activity_destination_selected_title">%1$s selected a destination</string>
+    <string name="team_activity_destination_selected_description">New destination: %1$s</string>
+
+    <string name="team_activity_journey_completed_title">Team journey completed</string>
+    <string name="team_activity_journey_completed_description">Completed destination: %1$s</string>
+
+    <string name="team_activity_unknown_user">Unknown user</string>
+    <string name="team_activity_unknown_destination">Unknown destination</string>
+    <string name="team_activity_no_activity_title">No team activity yet</string>
+    <string name="team_activity_no_activity_description">Team activity will appear here when members train, join, leave, or choose destinations.</string>
+
     <!-- - WORKOUT - -->
     <string name="training_sessions">Training Sessions</string>
     <string name="distance">Distance (km)</string>

@@ -104,9 +104,14 @@ data class SearchableTeamUi(
 )
 
 data class SocialActivityUi(
-    val title: String,
-    val description: String,
-    val createdAt: String? = null
+    val activityId: Long? = null,
+    val title: String = "",
+    val description: String = "",
+    val createdAt: String? = null,
+    val type: TeamActivityType = TeamActivityType.UNKNOWN,
+    val actorUsername: String? = null,
+    val distanceKm: Double? = null,
+    val destinationName: String? = null
 )
 
 data class SocialUiState(
@@ -131,9 +136,19 @@ data class SocialUiState(
     val teamMembers: List<TeamMemberUi> = emptyList(),
     val availableTeams: List<SearchableTeamUi> = emptyList(),
     val recentTeamActivity: List<SocialActivityUi> = emptyList(),
+    val allTeamActivity: List<SocialActivityUi> = emptyList(),
     val completedTeamJourneys: List<CompletedTeamJourneyUi> = emptyList(),
 
     val joinRequests: List<SocialRepository.JoinRequestRow> = emptyList(),
     val myJoinRequests: List<SocialRepository.JoinRequestRow> = emptyList(),
     val invites: List<SocialRepository.TeamInviteRow> = emptyList()
 )
+
+enum class TeamActivityType {
+    WORKOUT,
+    MEMBER_JOINED,
+    MEMBER_LEFT,
+    DESTINATION_SELECTED,
+    JOURNEY_COMPLETED,
+    UNKNOWN
+}

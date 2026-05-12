@@ -269,6 +269,29 @@
     <string name="social_team_completed_popup_image_cd">Bilde av %1$s</string>
     <string name="social_team_completed_popup_no_fun_fact">Ingen funfact er lagt til for denne destinasjonen enda.</string>
 
+    <string name="team_activity_log_title">Teamaktivitet</string>
+    <string name="team_activity_see_all">Se alle</string>
+
+    <string name="team_activity_workout_title">%1$s trente</string>
+    <string name="team_activity_workout_description">%1$s km</string>
+
+    <string name="team_activity_member_joined_title">%1$s ble med i teamet</string>
+    <string name="team_activity_member_joined_description">Ble medlem av teamet.</string>
+
+    <string name="team_activity_member_left_title">%1$s forlot teamet</string>
+    <string name="team_activity_member_left_description">Er ikke lenger medlem av teamet.</string>
+
+    <string name="team_activity_destination_selected_title">%1$s valgte en destinasjon</string>
+    <string name="team_activity_destination_selected_description">Ny destinasjon: %1$s</string>
+
+    <string name="team_activity_journey_completed_title">Team journey fullført</string>
+    <string name="team_activity_journey_completed_description">Fullført destinasjon: %1$s</string>
+
+    <string name="team_activity_unknown_user">Ukjent bruker</string>
+    <string name="team_activity_unknown_destination">Ukjent destinasjon</string>
+    <string name="team_activity_no_activity_title">Ingen teamaktivitet enda</string>
+    <string name="team_activity_no_activity_description">Teamaktivitet vises her når medlemmer trener, blir med, forlater teamet eller velger destinasjoner.</string>
+
     <!-- - WORKOUT - -->
     <string name="training_sessions">Treningsøkter</string>
     <string name="distance">Distanse (km)</string>

@@ -56,6 +56,12 @@ class SocialViewModel : ViewModel() {
                     emptyList()
                 }
 
+                val allTeamActivity = if (currentTeam != null) {
+                    repository.getAllTeamActivity()
+                } else {
+                    emptyList()
+                }
+
                 val completedTeamJourneys = if (currentTeam != null) {
                     repository.getCompletedTeamJourneys(currentTeam.teamId)
                 } else {
@@ -75,6 +81,7 @@ class SocialViewModel : ViewModel() {
                     currentTeam = currentTeam,
                     teamMembers = teamMembers,
                     recentTeamActivity = recentTeamActivity,
+                    allTeamActivity = allTeamActivity,
                     completedTeamJourneys = completedTeamJourneys,
                     availableTeams = availableTeams,
                     friendActivities = friendActivities,
