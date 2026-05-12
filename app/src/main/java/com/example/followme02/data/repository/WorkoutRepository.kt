@@ -120,14 +120,12 @@ class WorkoutRepository {
             val userId = getCurrentDbUserId() ?: return false
             val typeId = getTrainingTypeId(workout.exerciseType) ?: return false
 
-            val isoDate = workout.date + "T12:00:00Z"
-
             val payload = TrainingSessionInsert(
                 userId = userId,
                 typeId = typeId,
                 distanceKm = workout.distanceKm.toDouble(),
                 durationMinutes = workout.durationMinutes,
-                trainingDate = isoDate
+                trainingDate = workout.date
             )
 
             Log.d("WORKOUT_REPOSITORY", "Insert payload = $payload")
@@ -171,7 +169,7 @@ class WorkoutRepository {
                     exerciseType = dbNameToExerciseType(typeName),
                     distanceKm = session.distanceKm.toFloat(),
                     durationMinutes = session.durationMinutes ?: 0,
-                    date = session.trainingDate?.take(10) ?: ""
+                    date = session.trainingDate ?: ""
                 )
             }.sortedByDescending { it.date }
         } catch (e: Exception) {

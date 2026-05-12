@@ -22,7 +22,9 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -40,7 +42,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,6 +62,8 @@ import com.example.followme02.model.Workout
 import com.example.followme02.viewmodel.WorkoutViewModel
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.math.max
@@ -91,21 +97,39 @@ fun WorkoutScreen2(
     var durationMinutes by remember { mutableStateOf(workout.durationMinutes.coerceAtLeast(0)) }
 
     val initialDate = remember {
-        runCatching { LocalDate.parse(workout.date, formatter) }.getOrElse { today }
+        runCatching { LocalDate.parse(workout.date.take(10), formatter) }.getOrElse { today }
     }
     var selectedDate by remember { mutableStateOf(initialDate) }
 
+    val initialTime = remember {
+        runCatching {
+            LocalDateTime.parse(workout.date).toLocalTime().withSecond(0).withNano(0)
+        }.getOrElse {
+            LocalTime.now().withSecond(0).withNano(0)
+        }
+    }
+    var selectedTime by remember { mutableStateOf(initialTime) }
+
     var typeExpanded by remember { mutableStateOf(false) }
     var showDateDialog by remember { mutableStateOf(false) }
+    var showTimeDialog by remember { mutableStateOf(false) }
 
     fun loadWorkoutIntoForm(item: Workout) {
         selectedWorkoutId = item.id
         selectedType = item.exerciseType
         distanceKm = item.distanceKm
         durationMinutes = item.durationMinutes
-        selectedDate = runCatching {
-            LocalDate.parse(item.date, formatter)
-        }.getOrElse { today }
+
+        val parsedDateTime = runCatching {
+            LocalDateTime.parse(item.date)
+        }.getOrNull()
+
+        selectedDate = parsedDateTime?.toLocalDate()
+            ?: runCatching { LocalDate.parse(item.date.take(10), formatter) }.getOrElse { today }
+
+        selectedTime = parsedDateTime?.toLocalTime()?.withSecond(0)?.withNano(0)
+            ?: LocalTime.now().withSecond(0).withNano(0)
+
         localMessage = "Økta ble valgt i lista."
     }
 
@@ -115,6 +139,7 @@ fun WorkoutScreen2(
         distanceKm = 0f
         durationMinutes = 0
         selectedDate = today
+        selectedTime = LocalTime.now().withSecond(0).withNano(0)
         localMessage = "Skjema tømt."
     }
 
@@ -129,12 +154,14 @@ fun WorkoutScreen2(
             return
         }
 
+        val trainingDateTime = LocalDateTime.of(selectedDate, selectedTime)
+
         val newWorkout = Workout(
             id = 0,
             exerciseType = selectedType,
             distanceKm = distanceKm,
             durationMinutes = durationMinutes,
-            date = selectedDate.format(formatter)
+            date = trainingDateTime.toString()
         )
 
         viewModel.addWorkout(newWorkout)
@@ -156,7 +183,10 @@ fun WorkoutScreen2(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(stringResource(R.string.training_sessions), style = MaterialTheme.typography.headlineMedium)
+        Text(
+            stringResource(R.string.training_sessions),
+            style = MaterialTheme.typography.headlineMedium
+        )
 
         Text(
             stringResource(R.string.registrer_trenings),
@@ -165,7 +195,10 @@ fun WorkoutScreen2(
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(12.dp)) {
-                Text(stringResource(R.string.existing_sessions), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.existing_sessions),
+                    style = MaterialTheme.typography.titleMedium
+                )
                 Spacer(modifier = Modifier.width(8.dp))
 
                 when {
@@ -197,7 +230,10 @@ fun WorkoutScreen2(
             }
         }
 
-        Text(stringResource(R.string.activity_type), style = MaterialTheme.typography.titleMedium)
+        Text(
+            stringResource(R.string.activity_type),
+            style = MaterialTheme.typography.titleMedium
+        )
 
         ExposedDropdownMenuBox(
             expanded = typeExpanded,
@@ -260,7 +296,10 @@ fun WorkoutScreen2(
             onValueChange = { distanceKm = it }
         )
 
-        Text(stringResource(R.string.duration_minutes), style = MaterialTheme.typography.titleMedium)
+        Text(
+            stringResource(R.string.duration_minutes),
+            style = MaterialTheme.typography.titleMedium
+        )
 
         DurationStepper(
             value = durationMinutes,
@@ -285,6 +324,22 @@ fun WorkoutScreen2(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(R.string.choose_date)) }
+            )
+        }
+
+        Text("Klokkeslett", style = MaterialTheme.typography.titleMedium)
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { showTimeDialog = true }
+        ) {
+            OutlinedTextField(
+                value = selectedTime.toString().take(5),
+                onValueChange = {},
+                enabled = false,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Velg klokkeslett") }
             )
         }
 
@@ -332,6 +387,39 @@ fun WorkoutScreen2(
             ) {
                 DatePicker(state = datePickerState)
             }
+        }
+
+        if (showTimeDialog) {
+            val timePickerState = rememberTimePickerState(
+                initialHour = selectedTime.hour,
+                initialMinute = selectedTime.minute,
+                is24Hour = true
+            )
+
+            AlertDialog(
+                onDismissRequest = { showTimeDialog = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            selectedTime = LocalTime.of(
+                                timePickerState.hour,
+                                timePickerState.minute
+                            )
+                            showTimeDialog = false
+                        }
+                    ) {
+                        Text(stringResource(R.string.ok))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showTimeDialog = false }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                },
+                text = {
+                    TimePicker(state = timePickerState)
+                }
+            )
         }
 
         Row(
@@ -464,10 +552,16 @@ private fun DistanceStepper(
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(onClick = { onValueChange(value + step) }) {
-                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.increase))
+                    Icon(
+                        Icons.Default.KeyboardArrowUp,
+                        contentDescription = stringResource(R.string.increase)
+                    )
                 }
                 IconButton(onClick = { onValueChange(max(minValue, value - step)) }) {
-                    Icon(Icons.Default.KeyboardArrowDown, contentDescription =stringResource(R.string.decrease))
+                    Icon(
+                        Icons.Default.KeyboardArrowDown,
+                        contentDescription = stringResource(R.string.decrease)
+                    )
                 }
             }
         }
@@ -508,10 +602,16 @@ private fun DurationStepper(
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(onClick = { onValueChange(value + step) }) {
-                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.increase))
+                    Icon(
+                        Icons.Default.KeyboardArrowUp,
+                        contentDescription = stringResource(R.string.increase)
+                    )
                 }
                 IconButton(onClick = { onValueChange(max(minValue, value - step)) }) {
-                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = stringResource(R.string.decrease))
+                    Icon(
+                        Icons.Default.KeyboardArrowDown,
+                        contentDescription = stringResource(R.string.decrease)
+                    )
                 }
             }
         }
