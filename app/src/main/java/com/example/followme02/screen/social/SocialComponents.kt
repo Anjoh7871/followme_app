@@ -45,6 +45,7 @@ import com.example.followme02.screen.profile.ProfileAvatar
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.res.stringResource
 import com.example.followme02.R
+import androidx.compose.material3.LinearProgressIndicator
 
 @Composable
 fun SocialTabSelector(
@@ -1019,6 +1020,8 @@ fun FriendProfileContent(
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+    val targetKm = 500.0
+    val progress = (friend.totalKm / targetKm).toFloat().coerceIn(0f, 1f)
 
     Card(
         shape = RoundedCornerShape(24.dp),
@@ -1084,16 +1087,67 @@ fun FriendProfileContent(
                     value = friend.totalPoints.toString(),
                     modifier = Modifier.weight(1f)
                 )
+
                 MiniStatCard(
                     title = stringResource(R.string.total_km),
                     value = formatKm(friend.totalKm),
                     modifier = Modifier.weight(1f)
                 )
+
                 MiniStatCard(
                     title = stringResource(R.string.level),
                     value = friend.level.toString(),
                     modifier = Modifier.weight(1f)
                 )
+            }
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = colorScheme.primaryContainer.copy(
+                        alpha = if (isDark) 0.35f else 0.55f
+                    )
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(14.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "${formatKm(friend.totalKm)} / ${formatKm(targetKm)} km",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = colorScheme.onPrimaryContainer
+                        )
+
+                        Text(
+                            text = "${(progress * 100).toInt()}%",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = colorScheme.primary
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LinearProgressIndicator(
+                        progress = { progress },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(10.dp)
+                            .clip(RoundedCornerShape(50)),
+                        color = colorScheme.primary,
+                        trackColor = colorScheme.onPrimaryContainer.copy(alpha = 0.14f)
+                    )
+                }
             }
         }
     }

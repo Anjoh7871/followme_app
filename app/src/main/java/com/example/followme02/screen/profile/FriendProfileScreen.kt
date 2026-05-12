@@ -50,6 +50,10 @@ import androidx.navigation.NavController
 import com.example.followme02.R
 import com.example.followme02.model.JourneyUiModel
 import com.example.followme02.viewmodel.FriendProfileViewModel
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 
 @Composable
 fun FriendProfileScreen(
@@ -144,11 +148,11 @@ fun FriendProfileScreen(
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(28.dp),
+                            shape = RoundedCornerShape(30.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = colorScheme.surface
+                                containerColor = colorScheme.primaryContainer
                             ),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                         ) {
                             Row(
                                 modifier = Modifier
@@ -165,6 +169,27 @@ fun FriendProfileScreen(
                                 Spacer(modifier = Modifier.width(16.dp))
 
                                 Column(modifier = Modifier.weight(1f)) {
+
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(50))
+                                                .background(colorScheme.primary.copy(alpha = 0.12f))
+                                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                                        ) {
+                                            Text(
+                                                text = "ACTIVE",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = colorScheme.primary,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
                                     Text(
                                         text = friend.username,
                                         style = MaterialTheme.typography.headlineSmall,
@@ -183,7 +208,7 @@ fun FriendProfileScreen(
                                     Spacer(modifier = Modifier.height(6.dp))
 
                                     Text(
-                                        text = stringResource(R.string.profile_level)+ " ${friend.level}",
+                                        text = "Lv ${friend.level} • ${formatKm(friend.totalKm)} km",
                                         style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = FontWeight.SemiBold,
                                         color = colorScheme.primary
@@ -376,23 +401,40 @@ private fun CurrentJourneyCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
             containerColor = colorScheme.primaryContainer
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(
-            modifier = Modifier.padding(18.dp)
+            modifier = Modifier
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            colorScheme.primaryContainer,
+                            colorScheme.primaryContainer.copy(alpha = 0.72f)
+                        )
+                    )
+                )
+                .padding(20.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Map,
-                    contentDescription = null,
-                    tint = colorScheme.primary
-                )
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(CircleShape)
+                        .background(colorScheme.surface.copy(alpha = 0.55f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Map,
+                        contentDescription = null,
+                        tint = colorScheme.primary
+                    )
+                }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
                     text = stringResource(R.string.current_journey),
@@ -414,6 +456,16 @@ private fun CurrentJourneyCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             if (journey.hasActiveJourney) {
+
+                Text(
+                    text = "${formatKm(journey.progressKm)} / ${formatKm(journey.targetKm)} km",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.onPrimaryContainer
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 LinearProgressIndicator(
                     progress = { journey.progressFraction },
                     modifier = Modifier
