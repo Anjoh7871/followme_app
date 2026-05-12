@@ -257,6 +257,7 @@
     <string name="social_team_progress_km">%1$s / %2$s km</string>
     <string name="social_team_rank">#%1$d</string>
     <string name="social_team_level_value">Nivå %1$d</string>
+    <string name="friend_profile_level_value">Nivå %1$d</string>
 
     <string name="social_team_completed_popup_title">Team journey fullført</string>
     <string name="social_team_completed_popup_message">Teamet har nådd %1$s.</string>

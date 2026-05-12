@@ -393,19 +393,23 @@ fun TeamScreen(
         }
 
         if (selectedMember != null) {
-            ModalBottomSheet(
-                onDismissRequest = { selectedMember = null },
-                containerColor = colorScheme.surface
-            ) {
-                BottomSheetHeader(
-                    title = stringResource(R.string.member_profile),
-                    onClose = { selectedMember = null }
-                )
+            val member = selectedMember!!
 
-                TeamMemberProfileContent(member = selectedMember!!)
-
-                Spacer(modifier = Modifier.height(20.dp))
-            }
+            FriendProfileBottomSheet(
+                preview = FriendProfileSheetPreview(
+                    userId = member.userId,
+                    username = member.username,
+                    email = member.email,
+                    avatarUrl = member.avatarUrl,
+                    level = member.level,
+                    totalPoints = member.totalPoints,
+                    totalKm = member.totalKm
+                ),
+                showRemoveFriendButton = false,
+                onDismiss = {
+                    selectedMember = null
+                }
+            )
         }
 
         if (showLeaveTeamDialog) {

@@ -536,25 +536,27 @@ fun SocialScreen(
     }
 
     if (currentSheet == SocialSheetType.FRIEND_PROFILE && selectedFriend != null) {
-        ModalBottomSheet(
-            onDismissRequest = {
+        val friend = selectedFriend!!
+
+        FriendProfileBottomSheet(
+            preview = FriendProfileSheetPreview(
+                userId = friend.userId,
+                username = friend.username,
+                email = friend.email,
+                avatarUrl = friend.avatarUrl,
+                level = friend.level,
+                totalPoints = friend.totalPoints,
+                totalKm = friend.totalKm
+            ),
+            showRemoveFriendButton = true,
+            onDismiss = {
                 currentSheet = SocialSheetType.NONE
                 selectedFriend = null
             },
-            containerColor = colorScheme.surface
-        ) {
-            BottomSheetHeader(
-                title = stringResource(R.string.friend_profile),
-                onClose = {
-                    currentSheet = SocialSheetType.NONE
-                    selectedFriend = null
-                }
-            )
-
-            FriendProfileContent(friend = selectedFriend!!)
-
-            Spacer(modifier = Modifier.height(20.dp))
-        }
+            onFriendRemoved = {
+                viewModel.loadSocialData()
+            }
+        )
     }
 }
 
