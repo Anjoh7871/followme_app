@@ -30,9 +30,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +48,8 @@ private enum class SocialSheetType {
     NONE,
     NOTIFICATIONS,
     FRIEND_REQUESTS,
-    FRIEND_PROFILE
+    FRIEND_PROFILE,
+    TEAM_ACTIVITY_LOG
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,7 +111,9 @@ fun SocialScreen(
 
                     SocialHeader(
                         notificationCount = state.friendRequests.size,
-                        onNotificationsClick = { currentSheet = SocialSheetType.NOTIFICATIONS }
+                        onNotificationsClick = {
+                            currentSheet = SocialSheetType.NOTIFICATIONS
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -140,7 +143,9 @@ fun SocialScreen(
                                     item {
                                         FriendRequestsBanner(
                                             requestCount = state.friendRequests.size,
-                                            onClick = { currentSheet = SocialSheetType.FRIEND_REQUESTS }
+                                            onClick = {
+                                                currentSheet = SocialSheetType.FRIEND_REQUESTS
+                                            }
                                         )
                                     }
                                 }
@@ -206,8 +211,6 @@ fun SocialScreen(
                             LazyColumn(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-
-                                // 🔹 YOUR TEAM
                                 item {
                                     SectionHeader(title = stringResource(R.string.your_team))
                                 }
@@ -229,14 +232,14 @@ fun SocialScreen(
                                     } else {
                                         EmptyStateCard(
                                             title = stringResource(R.string.no_team),
-                                            description = stringResource(R.string.create_a_team_below_or_join_an_existing_one)
+                                            description = stringResource(
+                                                R.string.create_a_team_below_or_join_an_existing_one
+                                            )
                                         )
                                     }
                                 }
 
-                                // Join request for leader
                                 if (state.currentTeam?.isCurrentUserLeader == true) {
-
                                     item {
                                         SectionHeader(
                                             title = stringResource(R.string.join_requests),
@@ -252,17 +255,23 @@ fun SocialScreen(
                                             )
                                         }
                                     } else {
-                                        items(state.joinRequests) { req ->   //
-
+                                        items(state.joinRequests) { req ->
                                             Card {
                                                 Row(
-                                                    modifier = Modifier.padding(12.dp),
-                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(12.dp),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
                                                 ) {
-                                                    Text(stringResource(R.string.user_with_name, req.username))
+                                                    Text(
+                                                        text = stringResource(
+                                                            R.string.user_with_name,
+                                                            req.username
+                                                        )
+                                                    )
 
                                                     Row {
-
                                                         Button(
                                                             onClick = {
                                                                 viewModel.approveJoinRequest(req)
@@ -287,32 +296,46 @@ fun SocialScreen(
                                     }
                                 }
 
-
-                                val allActivity = (state.recentTeamActivity + state.friendActivities)
-                                    .sortedByDescending { it.createdAt ?: "" }
+                                val recentTeamActivity = state.recentTeamActivity.take(4)
 
                                 item {
-                                    SectionHeader(
-                                        title = stringResource(R.string.recent_activity),
-                                        trailing = stringResource(
-                                            R.string.updates,
-                                            allActivity.size
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                currentSheet = SocialSheetType.TEAM_ACTIVITY_LOG
+                                            },
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.Bottom
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.recent_activity),
+                                            style = MaterialTheme.typography.titleLarge,
+                                            fontWeight = FontWeight.Bold,
+                                            color = colorScheme.onBackground
                                         )
-                                    )
+
+                                        Text(
+                                            text = stringResource(R.string.team_activity_see_all),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = colorScheme.primary,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    }
                                 }
 
-                                if (allActivity.isEmpty()) {
+                                if (recentTeamActivity.isEmpty()) {
                                     item {
                                         EmptyStateCard(
-                                            title = stringResource(R.string.no_recent_activity_yet),
-                                            description = stringResource(R.string.activity_feed_description)
+                                            title = stringResource(R.string.team_activity_no_activity_title),
+                                            description = stringResource(R.string.team_activity_no_activity_description)
                                         )
                                     }
                                 } else {
-                                    items(allActivity) { activity ->
+                                    items(recentTeamActivity) { activity ->
                                         RecentActivityRow(
-                                            title = activity.title,
-                                            description = formatActivityDescription(activity)
+                                            title = getTeamActivityTitle(activity),
+                                            description = getTeamActivityDescription(activity)
                                         )
                                     }
                                 }
@@ -339,9 +362,8 @@ fun SocialScreen(
                                         onButtonClick = { }
                                     )
                                 }
-                                // 🔹 TEAM INVITES (for user)
-                                if (state.invites.isNotEmpty()) {
 
+                                if (state.invites.isNotEmpty()) {
                                     item {
                                         SectionHeader(
                                             title = stringResource(R.string.Invites),
@@ -350,7 +372,6 @@ fun SocialScreen(
                                     }
 
                                     items(state.invites) { invite ->
-
                                         Card {
                                             Row(
                                                 modifier = Modifier
@@ -359,9 +380,10 @@ fun SocialScreen(
                                                 horizontalArrangement = Arrangement.SpaceBetween,
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
-
-                                                // TODO: bytt til team name senere
-                                                Text(invite.teams?.team_name ?: stringResource(R.string.unknown_team))
+                                                Text(
+                                                    text = invite.teams?.team_name
+                                                        ?: stringResource(R.string.unknown_team)
+                                                )
 
                                                 Row {
                                                     Button(
@@ -406,10 +428,9 @@ fun SocialScreen(
                                     }
                                 } else {
                                     items(filteredTeams) { team ->
-
-                                        val isPending = state.myJoinRequests.any {
-                                            it.team_id == team.teamId
-                                        }
+                                        val isPending =
+                                            state.myJoinRequests.any { it.team_id == team.teamId } ||
+                                                    requestedTeams.value.contains(team.teamId)
 
                                         Card {
                                             Row(
@@ -423,7 +444,10 @@ fun SocialScreen(
                                                     Text(team.teamName)
 
                                                     Text(
-                                                        text = stringResource(R.string.members, team.memberCount),
+                                                        text = stringResource(
+                                                            R.string.members,
+                                                            team.memberCount
+                                                        ),
                                                         style = MaterialTheme.typography.bodySmall
                                                     )
                                                 }
@@ -431,18 +455,17 @@ fun SocialScreen(
                                                 Button(
                                                     onClick = {
                                                         viewModel.requestToJoinTeam(team.teamId)
-
-                                                        // 🔹 UI update med en gang
                                                         requestedTeams.value =
                                                             requestedTeams.value + team.teamId
                                                     },
                                                     enabled = !isPending
                                                 ) {
                                                     Text(
-                                                        if (isPending)
+                                                        if (isPending) {
                                                             stringResource(R.string.request_sent)
-                                                        else
+                                                        } else {
                                                             stringResource(R.string.join)
+                                                        }
                                                     )
                                                 }
                                             }
@@ -479,7 +502,9 @@ fun SocialScreen(
                 if (state.friendRequests.isEmpty()) {
                     EmptyStateCard(
                         title = stringResource(R.string.no_notifications),
-                        description = stringResource(R.string.right_now_notifications_are_based_on_real_friend_requests_from_the_database)
+                        description = stringResource(
+                            R.string.right_now_notifications_are_based_on_real_friend_requests_from_the_database
+                        )
                     )
                 } else {
                     state.friendRequests.forEach { request ->
@@ -490,6 +515,7 @@ fun SocialScreen(
                                 request.username
                             )
                         )
+
                         Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
@@ -523,9 +549,14 @@ fun SocialScreen(
                     state.friendRequests.forEach { request ->
                         FriendRequestRow(
                             request = request,
-                            onAcceptClick = { viewModel.acceptFriendRequest(request.userId) },
-                            onDeclineClick = { viewModel.declineFriendRequest(request.userId) }
+                            onAcceptClick = {
+                                viewModel.acceptFriendRequest(request.userId)
+                            },
+                            onDeclineClick = {
+                                viewModel.declineFriendRequest(request.userId)
+                            }
                         )
+
                         Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
@@ -536,24 +567,65 @@ fun SocialScreen(
     }
 
     if (currentSheet == SocialSheetType.FRIEND_PROFILE && selectedFriend != null) {
-        ModalBottomSheet(
-            onDismissRequest = {
+        val friend = selectedFriend!!
+
+        FriendProfileBottomSheet(
+            preview = FriendProfileSheetPreview(
+                userId = friend.userId,
+                username = friend.username,
+                email = friend.email,
+                avatarUrl = friend.avatarUrl,
+                level = friend.level,
+                totalPoints = friend.totalPoints,
+                totalKm = friend.totalKm
+            ),
+            showRemoveFriendButton = true,
+            onDismiss = {
                 currentSheet = SocialSheetType.NONE
                 selectedFriend = null
             },
+            onFriendRemoved = {
+                viewModel.loadSocialData()
+            }
+        )
+    }
+
+    if (currentSheet == SocialSheetType.TEAM_ACTIVITY_LOG) {
+        ModalBottomSheet(
+            onDismissRequest = { currentSheet = SocialSheetType.NONE },
             containerColor = colorScheme.surface
         ) {
             BottomSheetHeader(
-                title = stringResource(R.string.friend_profile),
-                onClose = {
-                    currentSheet = SocialSheetType.NONE
-                    selectedFriend = null
-                }
+                title = stringResource(R.string.team_activity_log_title),
+                onClose = { currentSheet = SocialSheetType.NONE }
             )
 
-            FriendProfileContent(friend = selectedFriend!!)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                if (state.allTeamActivity.isEmpty()) {
+                    item {
+                        EmptyStateCard(
+                            title = stringResource(R.string.team_activity_no_activity_title),
+                            description = stringResource(R.string.team_activity_no_activity_description)
+                        )
+                    }
+                } else {
+                    items(state.allTeamActivity) { activity ->
+                        RecentActivityRow(
+                            title = getTeamActivityTitle(activity),
+                            description = getTeamActivityDescription(activity)
+                        )
+                    }
+                }
 
-            Spacer(modifier = Modifier.height(20.dp))
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
         }
     }
 }
@@ -581,7 +653,9 @@ private fun SocialHeader(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = stringResource(R.string.see_friends_search_for_users_manage_teams_and_track_social_activity),
+                text = stringResource(
+                    R.string.see_friends_search_for_users_manage_teams_and_track_social_activity
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colorScheme.onSurfaceVariant
             )
@@ -607,13 +681,93 @@ private fun SocialHeader(
     }
 }
 
-private fun formatActivityDescription(activity: SocialActivityUi): String {
-    val date = activity.createdAt?.take(10)
+@Composable
+private fun getTeamActivityTitle(activity: SocialActivityUi): String {
+    val actor = activity.actorUsername
+        ?: stringResource(R.string.team_activity_unknown_user)
 
-    return if (date.isNullOrBlank()) {
-        activity.description
-    } else {
-        "${activity.description}\n$date"
+    return when (activity.type) {
+        TeamActivityType.WORKOUT -> {
+            stringResource(R.string.team_activity_workout_title, actor)
+        }
+
+        TeamActivityType.MEMBER_JOINED -> {
+            stringResource(R.string.team_activity_member_joined_title, actor)
+        }
+
+        TeamActivityType.MEMBER_LEFT -> {
+            stringResource(R.string.team_activity_member_left_title, actor)
+        }
+
+        TeamActivityType.DESTINATION_SELECTED -> {
+            stringResource(R.string.team_activity_destination_selected_title, actor)
+        }
+
+        TeamActivityType.JOURNEY_COMPLETED -> {
+            stringResource(R.string.team_activity_journey_completed_title)
+        }
+
+        TeamActivityType.UNKNOWN -> {
+            activity.title.ifBlank {
+                stringResource(R.string.recent_activity)
+            }
+        }
     }
 }
 
+@Composable
+private fun getTeamActivityDescription(activity: SocialActivityUi): String {
+    val destination = activity.destinationName
+        ?: stringResource(R.string.team_activity_unknown_destination)
+
+    val description = when (activity.type) {
+        TeamActivityType.WORKOUT -> {
+            stringResource(
+                R.string.team_activity_workout_description,
+                formatActivityKm(activity.distanceKm ?: 0.0)
+            )
+        }
+
+        TeamActivityType.MEMBER_JOINED -> {
+            stringResource(R.string.team_activity_member_joined_description)
+        }
+
+        TeamActivityType.MEMBER_LEFT -> {
+            stringResource(R.string.team_activity_member_left_description)
+        }
+
+        TeamActivityType.DESTINATION_SELECTED -> {
+            stringResource(
+                R.string.team_activity_destination_selected_description,
+                destination
+            )
+        }
+
+        TeamActivityType.JOURNEY_COMPLETED -> {
+            stringResource(
+                R.string.team_activity_journey_completed_description,
+                destination
+            )
+        }
+
+        TeamActivityType.UNKNOWN -> {
+            activity.description
+        }
+    }
+
+    val date = activity.createdAt?.take(10)
+
+    return if (date.isNullOrBlank()) {
+        description
+    } else {
+        "$description\n$date"
+    }
+}
+
+private fun formatActivityKm(km: Double): String {
+    return if (km % 1.0 == 0.0) {
+        km.toInt().toString()
+    } else {
+        "%.1f".format(km)
+    }
+}

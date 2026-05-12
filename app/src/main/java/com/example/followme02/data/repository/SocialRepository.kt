@@ -18,6 +18,7 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import io.github.jan.supabase.postgrest.query.Columns
 import com.example.followme02.screen.social.CompletedTeamJourneyUi
+import com.example.followme02.screen.social.TeamActivityType
 
 @Serializable
 private data class SocialDbUserIdRow(
@@ -171,6 +172,35 @@ private data class SocialDbCompletedJourneyDestinationRow(
 
     @SerialName("image_url")
     val imageUrl: String? = null
+)
+@Serializable
+private data class SocialDbTeamActivityLogRow(
+    @SerialName("activity_id")
+    val activityId: Long,
+
+    @SerialName("team_id")
+    val teamId: Int,
+
+    @SerialName("activity_type")
+    val activityType: String,
+
+    @SerialName("actor_user_id")
+    val actorUserId: Int? = null,
+
+    @SerialName("actor_username")
+    val actorUsername: String? = null,
+
+    @SerialName("distance_km")
+    val distanceKm: Double? = null,
+
+    @SerialName("destination_id")
+    val destinationId: Int? = null,
+
+    @SerialName("destination_name")
+    val destinationName: String? = null,
+
+    @SerialName("created_at")
+    val createdAt: String? = null
 )
 
 class SocialRepository {
@@ -665,82 +695,71 @@ class SocialRepository {
     }
 
     suspend fun getRecentTeamActivity(): List<SocialActivityUi> {
+        return getTeamActivityLog(limit = 4)
+    }
+
+    suspend fun getAllTeamActivity(): List<SocialActivityUi> {
+        return getTeamActivityLog(limit = null)
+    }
+
+    private suspend fun getTeamActivityLog(limit: Int?): List<SocialActivityUi> {
         return try {
             val currentUserId = getCurrentDbUserId() ?: return emptyList()
             val team = getCurrentTeamDbRow(currentUserId) ?: return emptyList()
 
-            val memberships = supabase
-                .from("team_memberships")
-                .select(columns = Columns.list("team_id", "user_id", "joined_at")) {
+            val rows = supabase
+                .from("team_activity_log")
+                .select(
+                    columns = Columns.list(
+                        "activity_id",
+                        "team_id",
+                        "activity_type",
+                        "actor_user_id",
+                        "actor_username",
+                        "distance_km",
+                        "destination_id",
+                        "destination_name",
+                        "created_at"
+                    )
+                ) {
                     filter {
                         eq("team_id", team.teamId)
                     }
                 }
-                .decodeList<SocialDbTeamMembershipRow>()
+                .decodeList<SocialDbTeamActivityLogRow>()
 
-            val joinActivities = memberships.mapNotNull { membership ->
-                val user = getUserRow(membership.userId) ?: return@mapNotNull null
-
-                val title = if (user.userId == currentUserId) {
-                    "You joined ${team.teamName}"
-                } else {
-                    "${user.username} joined ${team.teamName}"
-                }
-
-                val description = if (user.userId == currentUserId) {
-                    "You became a member of this team."
-                } else {
-                    "${user.username} became a member of your team."
-                }
-
-                SocialActivityUi(
-                    title = title,
-                    description = description,
-                    createdAt = membership.joinedAt
-                )
-            }
-
-            val workoutActivities = memberships.flatMap { membership ->
-                val user = getUserRow(membership.userId) ?: return@flatMap emptyList()
-
-                val sessions = supabase
-                    .from("training_sessions")
-                    .select(columns = Columns.list("user_id", "distance_km", "created_at")) {
-                        filter {
-                            eq("user_id", membership.userId)
-                        }
-                    }
-                    .decodeList<SocialDbTrainingSessionActivityRow>()
-
-                sessions.map { session ->
-                    val distanceText = formatKmForActivity(session.distanceKm ?: 0.0)
-
-                    val title = if (user.userId == currentUserId) {
-                        "You logged a workout"
-                    } else {
-                        "${user.username} logged a workout"
-                    }
-
-                    val description = if (user.userId == currentUserId) {
-                        "You added $distanceText km to the team progress."
-                    } else {
-                        "${user.username} added $distanceText km to the team progress."
-                    }
-
+            val mapped = rows
+                .sortedByDescending { it.createdAt ?: "" }
+                .map { row ->
                     SocialActivityUi(
-                        title = title,
-                        description = description,
-                        createdAt = session.createdAt
+                        activityId = row.activityId,
+                        createdAt = row.createdAt,
+                        type = row.activityType.toTeamActivityType(),
+                        actorUsername = row.actorUsername,
+                        distanceKm = row.distanceKm,
+                        destinationName = row.destinationName
                     )
                 }
-            }
 
-            (joinActivities + workoutActivities)
-                .sortedByDescending { it.createdAt ?: "" }
-                .take(4)
+            if (limit != null) {
+                mapped.take(limit)
+            } else {
+                mapped
+            }
         } catch (e: Exception) {
-            Log.e("SOCIAL_REPOSITORY", "Error fetching recent team activity", e)
+            Log.e("SOCIAL_REPOSITORY", "Error fetching team activity log", e)
             emptyList()
+        }
+    }
+
+    private fun String.toTeamActivityType(): TeamActivityType {
+        return when (uppercase()) {
+            "WORKOUT" -> TeamActivityType.WORKOUT
+            "MEMBER_JOINED" -> TeamActivityType.MEMBER_JOINED
+            "MEMBER_LEFT" -> TeamActivityType.MEMBER_LEFT
+            "DESTINATION_SELECTED" -> TeamActivityType.DESTINATION_SELECTED
+            "JOURNEY_COMPLETED" -> TeamActivityType.JOURNEY_COMPLETED
+            else -> TeamActivityType.UNKNOWN
         }
     }
 
