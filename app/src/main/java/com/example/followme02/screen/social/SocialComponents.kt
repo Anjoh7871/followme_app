@@ -502,7 +502,7 @@ fun TeamOverviewCard(
                 }
 
                 TextButton(onClick = onViewMembersClick) {
-                    Text(stringResource(R.string.members))
+                    Text(stringResource(R.string.view_members))
                 }
             }
         }

@@ -224,6 +224,7 @@
     <string name="join">Join</string>
     <string name="request_sent">Request sent</string>
     <string name="members">%1$d members</string>
+    <string name="view_members">view members</string>
 
     <string name="social_team_invite_new_member">Invite new member</string>
     <string name="social_team_completed_journeys_title">Completed team journeys</string>

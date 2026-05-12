@@ -224,6 +224,7 @@
     <string name="join">Bli med</string>
     <string name="request_sent">Forespørsel sendt</string>
     <string name="members">%1$d medlemmer</string>
+    <string name="view_members">se medlemer</string>
     <string name="social_team_invite_new_member">Inviter nytt medlem</string>
     <string name="social_team_completed_journeys_title">Fullførte team journeys</string>
 
